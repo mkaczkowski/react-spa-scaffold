@@ -31,5 +31,6 @@ src/locales/*.mjs
 *.config.js
 
 # Misc
+tmp
 *.log
 npm-debug.log*

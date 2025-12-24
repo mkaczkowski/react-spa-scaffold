@@ -61,6 +61,8 @@ See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).
 
 ## Testing
 
+See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
+
 Tests in `tests/unit/` mirror `src/` structure. 80% coverage required.
 
 ```typescript
@@ -69,7 +71,7 @@ import { screen, renderHook } from '@testing-library/react';
 import { render, mockMatchMedia, server } from '@/test';
 ```
 
-MSW handlers auto-reset after each test. See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
+MSW handlers auto-reset after each test.
 
 ## Common Gotchas
 
