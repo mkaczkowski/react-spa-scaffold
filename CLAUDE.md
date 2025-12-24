@@ -58,7 +58,7 @@ e2e/                 # Playwright E2E tests
 
 **State**: Zustand (persisted preferences) → TanStack Query (server data) → Context (shared UI) → useState (local)
 
-See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for detailed patterns.
+See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for detailed patterns and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md) for the complete component blueprint.
 
 ### Translations (CRITICAL)
 
