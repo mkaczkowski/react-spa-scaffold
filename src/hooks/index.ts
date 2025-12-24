@@ -4,3 +4,4 @@ export { useTouchSizes } from './useTouchSizes';
 export { useLanguage } from './useLanguage';
 export { useExampleQuery } from './useExampleQuery';
 export { useContactForm } from './useContactForm';
+export { useMobileContext } from '@/contexts/mobileContext';

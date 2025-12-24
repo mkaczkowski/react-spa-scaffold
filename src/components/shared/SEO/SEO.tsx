@@ -1,4 +1,6 @@
-interface SEOProps {
+import { APP_CONFIG } from '@/lib/config';
+
+export interface SEOProps {
   title?: string;
   description?: string;
   keywords?: string[];
@@ -8,7 +10,6 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const DEFAULT_TITLE = 'My App';
 const DEFAULT_DESCRIPTION = 'A modern React application';
 
 /**
@@ -24,7 +25,7 @@ export function SEO({
   canonical,
   noIndex = false,
 }: SEOProps) {
-  const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
+  const fullTitle = title ? `${title} | ${APP_CONFIG.name}` : APP_CONFIG.name;
 
   return (
     <>

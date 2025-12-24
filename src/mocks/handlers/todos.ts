@@ -4,9 +4,12 @@
  */
 import { delay, http, HttpResponse } from 'msw';
 
-import { mockTodos, type Todo } from '../fixtures/todos';
+import { API_CONFIG } from '@/lib/config';
+import type { Todo } from '@/types/api';
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
+import { mockTodos } from '../fixtures/todos';
+
+const BASE_URL = API_CONFIG.baseUrl;
 
 export const todosHandlers = [
   // GET /todos - List todos with optional limit

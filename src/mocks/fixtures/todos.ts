@@ -3,12 +3,9 @@
  * Matches the JSONPlaceholder API structure used by useExampleQuery.
  */
 
-export interface Todo {
-  userId: number;
-  id: number;
-  title: string;
-  completed: boolean;
-}
+import type { Todo } from '@/types/api';
+
+export type { Todo };
 
 /**
  * Sample todos for testing.
