@@ -1,8 +1,9 @@
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useThemeEffect } from '@/hooks/useThemeEffect';
 import { usePreferencesStore } from '@/stores/preferencesStore';
-import { act, mockMatchMedia, renderHook } from '@/test';
+import { mockMatchMedia } from '@/test';
 
 describe('useThemeEffect', () => {
   beforeEach(() => {

@@ -1,7 +1,8 @@
+import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { initPreferencesSync, usePreferencesStore } from '@/stores/preferencesStore';
-import { act, mockMatchMedia } from '@/test';
+import { mockMatchMedia } from '@/test';
 
 describe('preferencesStore', () => {
   beforeEach(() => {

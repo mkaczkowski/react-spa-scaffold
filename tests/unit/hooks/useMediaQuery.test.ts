@@ -1,7 +1,8 @@
+import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BREAKPOINTS, useIsDesktop, useIsMobile, useMediaQuery } from '@/hooks/useMediaQuery';
-import { act, mockMatchMedia, renderHook } from '@/test';
+import { mockMatchMedia } from '@/test';
 
 describe('useMediaQuery', () => {
   beforeEach(() => {

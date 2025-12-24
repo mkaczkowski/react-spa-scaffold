@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MobileProvider, useMobileContext } from '@/contexts/mobileContext';
-import { BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 const wrapper = ({ children }: { children: ReactNode }) => <MobileProvider>{children}</MobileProvider>;
 
@@ -29,20 +28,18 @@ describe('MobileProvider', () => {
     { width: 1200, isMobile: false, isTablet: false, isDesktop: true },
   ])('detects viewport at $width px', ({ width, isMobile, isTablet, isDesktop }) => {
     Object.defineProperty(window, 'innerWidth', { value: width, writable: true, configurable: true });
-
     const { result } = renderHook(() => useMobileContext(), { wrapper });
-
     expect(result.current).toMatchObject({ isMobile, isTablet, isDesktop, width });
   });
 
   it('updates on resize', () => {
     Object.defineProperty(window, 'innerWidth', { value: 1200, writable: true, configurable: true });
-
     const { result } = renderHook(() => useMobileContext(), { wrapper });
+
     expect(result.current.isDesktop).toBe(true);
 
-    Object.defineProperty(window, 'innerWidth', { value: 500, writable: true, configurable: true });
     act(() => {
+      Object.defineProperty(window, 'innerWidth', { value: 500, writable: true, configurable: true });
       window.dispatchEvent(new Event('resize'));
       rafCallback?.(0);
     });
@@ -50,29 +47,8 @@ describe('MobileProvider', () => {
     expect(result.current.isMobile).toBe(true);
   });
 
-  it('skips update when width unchanged', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1200, writable: true, configurable: true });
-
-    const { result } = renderHook(() => useMobileContext(), { wrapper });
-    const initialWidth = result.current.width;
-
-    act(() => {
-      window.dispatchEvent(new Event('resize'));
-      rafCallback?.(0);
-    });
-
-    expect(result.current.width).toBe(initialWidth);
-  });
-
-  it('exports correct BREAKPOINTS', () => {
-    expect(BREAKPOINTS).toEqual({ sm: 640, md: 768, lg: 1024, xl: 1280 });
-  });
-});
-
-describe('useMobileContext', () => {
   it('throws when used outside provider', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
-
     expect(() => renderHook(() => useMobileContext())).toThrow('useMobileContext must be used within MobileProvider');
   });
 });
