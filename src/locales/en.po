@@ -11,26 +11,55 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:21
+#. Button label to navigate back to the home page from 404 error
+#: src/pages/NotFound.tsx:21
+msgid "Back to Home"
+msgstr "Back to Home"
+
+#. Accessibility label for the language selector dropdown button
+#: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:24
 msgid "Change language"
 msgstr "Change language"
 
-#: src/App.tsx:14
+#. Instructions for developers on how to start customizing the app
+#: src/pages/Home.tsx:10
 msgid "Get started by editing <0>src/App.tsx</0>"
 msgstr "Get started by editing <0>src/App.tsx</0>"
 
+#: src/components/ui/loading.tsx:54
+msgid "Loading..."
+msgstr "Loading..."
+
+#. Application name displayed in the header navigation
 #: src/components/layout/Header.tsx:10
 msgid "My App"
 msgstr "My App"
 
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx:19
+#. Heading shown on 404 error page when URL doesn't exist
+#: src/pages/NotFound.tsx:13
+msgid "Page Not Found"
+msgstr "Page Not Found"
+
+#. Accessibility label when clicking will switch to dark theme
+#. Accessibility label when clicking will switch to dark theme
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:23
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:26
 msgid "Switch to dark mode"
 msgstr "Switch to dark mode"
 
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx:19
+#. Accessibility label when clicking will switch to light theme
+#. Accessibility label when clicking will switch to light theme
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:22
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:27
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: src/App.tsx:11
+#. Explanation message on 404 error page
+#: src/pages/NotFound.tsx:16
+msgid "The page you're looking for doesn't exist or has been moved."
+msgstr "The page you're looking for doesn't exist or has been moved."
+
+#. Main heading on the home page
+#: src/pages/Home.tsx:7
 msgid "Welcome to My App"
 msgstr "Welcome to My App"

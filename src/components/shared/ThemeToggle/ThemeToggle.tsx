@@ -18,9 +18,16 @@ export function ThemeToggle() {
   // Determine the aria-label based on current theme
   const getAriaLabel = () => {
     if (theme === 'system') {
-      return resolvedTheme === 'dark' ? t`Switch to light mode` : t`Switch to dark mode`;
+      return resolvedTheme === 'dark'
+        ? t({
+            message: 'Switch to light mode',
+            comment: 'Accessibility label when clicking will switch to light theme',
+          })
+        : t({ message: 'Switch to dark mode', comment: 'Accessibility label when clicking will switch to dark theme' });
     }
-    return theme === 'light' ? t`Switch to dark mode` : t`Switch to light mode`;
+    return theme === 'light'
+      ? t({ message: 'Switch to dark mode', comment: 'Accessibility label when clicking will switch to dark theme' })
+      : t({ message: 'Switch to light mode', comment: 'Accessibility label when clicking will switch to light theme' });
   };
 
   // Show the icon for the current resolved theme
