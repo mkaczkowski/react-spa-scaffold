@@ -127,6 +127,53 @@ src/components/shared/
 
 ---
 
+## File Organization
+
+### Default: Single File
+
+Keep types, helpers, and component together in one file. This is the pattern used throughout this codebase—even `dropdown-menu.tsx` at 228 lines remains a single file.
+
+```tsx
+// button.tsx - types and component together
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary';
+}
+
+const buttonVariants = cva(/* ... */);
+
+export function Button({ variant, className, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant }), className)} {...props} />;
+}
+```
+
+### When to Split
+
+Split only when you have a **concrete reason**, not preemptively:
+
+| Situation | Action |
+|-----------|--------|
+| Types reused by other components | Move to `@/types/` |
+| Helper reused elsewhere | Move to `@/lib/` |
+| File exceeds ~300 lines | Consider splitting by concern |
+| Multiple sub-components | Create folder with separate files |
+
+### Splitting Example
+
+For a complex component like a data table:
+
+```
+src/components/shared/DataTable/
+├── DataTable.tsx          # Main component
+├── DataTableHeader.tsx    # Sub-component
+├── DataTableRow.tsx       # Sub-component
+├── columns.tsx            # Column configuration
+└── index.ts               # export { DataTable } from './DataTable';
+```
+
+**Avoid**: Separate `.types.ts` or `.helpers.ts` files for code used only by that component. Keep related code together.
+
+---
+
 ## Styling with CVA
 
 Use [Class Variance Authority](https://cva.style/docs) for variant-based styling:
