@@ -18,7 +18,14 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t`Change language`}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={t({
+            message: 'Change language',
+            comment: 'Accessibility label for the language selector dropdown button',
+          })}
+        >
           <Languages className="size-5" />
         </Button>
       </DropdownMenuTrigger>

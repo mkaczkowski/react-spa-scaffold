@@ -269,19 +269,35 @@ function HomePage() {
 }
 ```
 
-### Internationalization
+### Internationalization (Lingui)
 
-```typescript
+This project uses [LinguiJS](https://lingui.dev/) for internationalization with **mandatory translator comments**.
+
+**Always add comments** to help translators understand context:
+
+```tsx
+import { Trans } from '@lingui/react/macro';
 import { useLingui } from '@lingui/react/macro';
-import { LanguageSwitcher } from '@/components/shared';
 
 function Header() {
   const { t } = useLingui();
 
   return (
     <header>
-      <h1>{ t`Welcome` } < /h1>
-    < LanguageSwitcher / >
+      {/* Trans component with comment */}
+      <h1>
+        <Trans comment="Main welcome heading on the home page">Welcome</Trans>
+      </h1>
+
+      {/* t() function with comment */}
+      <button
+        aria-label={t({
+          message: 'Close menu',
+          comment: 'Accessibility label for mobile menu close button',
+        })}
+      />
+
+      <LanguageSwitcher />
     </header>
   );
 }
