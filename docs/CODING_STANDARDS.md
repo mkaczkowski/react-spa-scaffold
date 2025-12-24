@@ -1,20 +1,6 @@
 # Coding Standards
 
-## File Organization
-
-```
-src/
-├── components/
-│   ├── layout/     # Page structure (Header)
-│   ├── shared/     # Feature components (ThemeToggle, LanguageSwitcher)
-│   └── ui/         # Primitives (Button, Spinner)
-├── hooks/          # Custom React hooks
-├── stores/         # Zustand stores
-├── contexts/       # React Context providers
-├── lib/            # Utilities, API client, config
-├── types/          # Shared TypeScript definitions
-└── pages/          # Page components
-```
+See [Architecture Guide](./ARCHITECTURE.md#project-structure) for project structure.
 
 ## Components
 
@@ -46,13 +32,11 @@ interface User {
 
 ## State Management
 
-| Use Case            | Tool                              |
-| ------------------- | --------------------------------- |
-| Persisted app state | Zustand with `persist` middleware |
-| Server/async data   | TanStack Query                    |
-| Shared UI state     | React Context                     |
+See [Architecture Guide](./ARCHITECTURE.md#state-management) for when to use each solution.
 
-Query hooks extract the fetcher function:
+### Query Hooks
+
+Extract the fetcher function:
 
 ```tsx
 async function fetchTodos(): Promise<Todo[]> {
@@ -67,7 +51,9 @@ export function useTodosQuery() {
 }
 ```
 
-Context hooks throw if used outside their provider:
+### Context Hooks
+
+Throw if used outside their provider:
 
 ```tsx
 const MyContext = createContext<MyValue | null>(null);
