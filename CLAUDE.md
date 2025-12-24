@@ -35,6 +35,7 @@ src/
 ├── components/      # ui/ (primitives), layout/, shared/ (features)
 ├── contexts/        # React Context providers
 ├── hooks/           # Custom React hooks
+├── i18n/            # Lingui setup
 ├── lib/             # api.ts, routes.ts, validations.ts, config.ts, utils.ts
 ├── locales/         # Translation files (.po)
 ├── mocks/           # MSW handlers and fixtures
@@ -89,50 +90,9 @@ import { render, mockMatchMedia, server } from '@/test';
 
 See [docs/TESTING.md](docs/TESTING.md) for patterns and [docs/E2E_TESTING.md](docs/E2E_TESTING.md) for Playwright.
 
-## Key Files Reference
-
-| Purpose               | Location                    |
-| --------------------- | --------------------------- |
-| API client            | `src/lib/api.ts`            |
-| App config            | `src/lib/config.ts`         |
-| Route constants       | `src/lib/routes.ts`         |
-| Zod schemas           | `src/lib/validations.ts`    |
-| Preferences store     | `src/stores/preferencesStore.ts` |
-| Test utilities        | `src/test/index.ts`         |
-| MSW handlers          | `src/mocks/handlers/`       |
-| Test setup            | `src/test-setup.ts`         |
-
-## Documentation
-
-See `/docs/` for detailed guides: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [CODING_STANDARDS.md](docs/CODING_STANDARDS.md), [TESTING.md](docs/TESTING.md), [E2E_TESTING.md](docs/E2E_TESTING.md), [INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).
-
 ## Common Gotchas
 
 1. **Node.js >= 22.0.0** required (check `.nvmrc`)
-2. **Translation comments mandatory**—ESLint warns on `<Trans>` or `t()` without `comment`
-3. **Named exports only**—except page components (default exports for lazy loading)
-4. **Conventional commits**—enforced by commitlint
-5. **Context hooks throw** if used outside their provider (e.g., `useMobile()`)
-6. **Barrel exports**—each directory has `index.ts` for clean imports
-
-## Environment Variables
-
-Copy `.env.example` to `.env.local` for local development:
-
-```bash
-VITE_APP_NAME=MyApp
-VITE_APP_URL=http://localhost:5173
-VITE_API_URL=https://jsonplaceholder.typicode.com
-VITE_SENTRY_DSN=  # Optional: Sentry error tracking
-```
-
-## CI Pipeline
-
-GitHub Actions runs on every PR:
-1. Lint (ESLint + Prettier)
-2. Type check (TypeScript)
-3. Security audit (npm audit)
-4. Build (Vite production build)
-5. Unit tests (Vitest with 80% coverage)
-6. E2E tests (Playwright)
-7. Lighthouse CI (performance/accessibility audits)
+2. **Conventional commits**—enforced by commitlint
+3. **Context hooks throw** if used outside their provider (e.g., `useMobile()`)
+4. **Barrel exports**—each directory has `index.ts` for clean imports
