@@ -48,6 +48,69 @@ e2e/               # Playwright tests
 
 See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md).
 
+## UI Components (Shadcn/UI)
+
+This project uses **Shadcn/UI** with radix-nova style. Components live in `src/components/ui/`.
+
+### Adding New Components
+
+```bash
+npx shadcn@latest add button           # Single component
+npx shadcn@latest add dialog card input # Multiple components
+```
+
+**Pattern**: Import directly (no barrel exports for UI):
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+```
+
+## MCP Servers (PREFER OVER WebSearch)
+
+Use MCP servers for documentation lookup. They provide **structured, version-accurate data** directly from source—faster and more reliable than web scraping.
+
+### Why MCP over WebSearch?
+
+- **Accuracy**: MCP fetches from official sources, not potentially outdated blog posts
+- **Version-aware**: Gets docs for the exact library version you're using
+- **Structured**: Returns code snippets, types, and examples in consistent format
+- **Faster**: Direct API calls vs parsing HTML from search results
+
+### Shadcn MCP (UI Components)
+
+| Need                | Tool                                             |
+| ------------------- | ------------------------------------------------ |
+| Find component      | `mcp__shadcn__search_items_in_registries`        |
+| View component code | `mcp__shadcn__view_items_in_registries`          |
+| Usage examples      | `mcp__shadcn__get_item_examples_from_registries` |
+| CLI add command     | `mcp__shadcn__get_add_command_for_items`         |
+
+### Context7 MCP (All 3rd Party Libraries)
+
+Use for **any npm package** documentation—not just React libraries:
+
+```
+resolve-library-id → get-library-docs
+```
+
+**Examples**:
+
+- `react-hook-form` - Form validation patterns
+- `@tanstack/react-query` - Query/mutation usage
+- `zustand` - Store patterns
+- `zod` - Schema validation
+- `date-fns` - Date formatting
+- `msw` - Mock service worker setup
+
+### Decision Flow
+
+```
+Need UI component?     → Shadcn MCP
+Need library docs?     → Context7 MCP (any npm package)
+Need general info?     → WebSearch (fallback only)
+```
+
 ## Translations (CRITICAL)
 
 All user-facing text MUST have translator comments. ESLint enforces this.

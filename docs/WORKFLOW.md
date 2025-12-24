@@ -110,3 +110,61 @@ See [docs/TESTING.md](TESTING.md) for detailed patterns.
 │   └── tdd-workflow/SKILL.md    # TDD guidance
 └── settings.local.json          # Permissions
 ```
+
+## MCP Server Integration
+
+Use MCP servers instead of WebSearch for documentation. They provide **structured, version-accurate data** directly from source.
+
+### Why MCP over WebSearch?
+
+| Benefit           | Explanation                                            |
+| ----------------- | ------------------------------------------------------ |
+| **Accuracy**      | Fetches from official sources, not outdated blog posts |
+| **Version-aware** | Gets docs for the exact library version in use         |
+| **Structured**    | Returns code snippets, types, examples consistently    |
+| **Faster**        | Direct API calls vs parsing HTML from search results   |
+
+### Shadcn MCP (UI Components)
+
+```
+mcp__shadcn__search_items_in_registries    # Find components
+mcp__shadcn__view_items_in_registries      # View component code
+mcp__shadcn__get_item_examples_from_registries  # Usage examples
+mcp__shadcn__get_add_command_for_items     # CLI add command
+mcp__shadcn__list_items_in_registries      # List all components
+```
+
+### Context7 MCP (All 3rd Party Libraries)
+
+Use for **any npm package**—not just React libraries:
+
+```
+resolve-library-id    # Get library ID (e.g., "react-hook-form")
+get-library-docs      # Fetch documentation
+```
+
+**Common libraries in this project**:
+
+- `react-hook-form` - Form handling
+- `@tanstack/react-query` - Server state
+- `zustand` - Client state
+- `zod` - Validation schemas
+- `@lingui/react` - i18n
+- `msw` - API mocking
+
+### Decision Flow
+
+```
+Need UI component?     → Shadcn MCP
+Need library docs?     → Context7 MCP (any npm package)
+Need general info?     → WebSearch (fallback only)
+```
+
+### Adding Shadcn Components
+
+```bash
+npx shadcn@latest add button           # Single component
+npx shadcn@latest add dialog card input # Multiple components
+```
+
+Components are installed to `src/components/ui/`. Import directly (no barrel exports).
