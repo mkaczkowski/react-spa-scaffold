@@ -10,7 +10,7 @@ export default defineConfig({
     {
       path: '<rootDir>/src/locales/{locale}',
       include: ['src'],
-      exclude: ['**/node_modules/**', '**/*.test.{ts,tsx}', '**/*.stories.{ts,tsx}'],
+      exclude: ['**/node_modules/**', '**/*.test.{ts,tsx}'],
     },
   ],
   format: 'po',

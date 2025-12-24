@@ -14,10 +14,29 @@ updates:
           - 'react*'
           - 'lucide-react'
           - 'sonner'
+          - 'radix-ui'
           - '@radix-ui/*'
           - 'class-variance-authority'
           - 'clsx'
           - 'tailwind-merge'
+          - 'tw-animate-css'
+          - '@fontsource-variable/*'
+          - 'zustand'
+        update-types:
+          - 'minor'
+          - 'patch'
+      routing:
+        patterns:
+          - 'react-router*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      data-fetching:
+        patterns:
+          - '@tanstack/*'
+          - 'react-hook-form'
+          - '@hookform/*'
+          - 'zod'
         update-types:
           - 'minor'
           - 'patch'
@@ -49,13 +68,20 @@ updates:
         patterns:
           - '@testing-library/*'
           - '@playwright/*'
+          - 'msw'
         update-types:
           - 'minor'
           - 'patch'
       monitoring:
         patterns:
           - '@sentry/*'
-          - 'bundlewatch'
+        update-types:
+          - 'minor'
+          - 'patch'
+      styling:
+        patterns:
+          - 'tailwindcss'
+          - '@tailwindcss/*'
         update-types:
           - 'minor'
           - 'patch'

@@ -1,15 +1,36 @@
 msgid ""
 msgstr ""
 "Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
-#: src/App.tsx
-msgid "Welcome to My App"
-msgstr "Willkommen bei Meine App"
+#: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:21
+msgid "Change language"
+msgstr "Sprache ändern"
 
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx
+#: src/App.tsx:14
+msgid "Get started by editing <0>src/App.tsx</0>"
+msgstr "Beginne mit der Bearbeitung von <0>src/App.tsx</0>"
+
+#: src/components/layout/Header.tsx:10
+msgid "My App"
+msgstr "Meine App"
+
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:19
 msgid "Switch to dark mode"
 msgstr "Zum Dunkelmodus wechseln"
 
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:19
 msgid "Switch to light mode"
 msgstr "Zum Hellmodus wechseln"
+
+#: src/App.tsx:11
+msgid "Welcome to My App"
+msgstr "Willkommen bei Meine App"

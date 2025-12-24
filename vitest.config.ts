@@ -12,7 +12,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: ['**/*.test.{ts,tsx}', '**/index.ts', 'src/types/**', 'src/components/ui/**', '.storybook/**'],
+      exclude: ['**/*.test.{ts,tsx}', '**/index.ts', 'src/types/**', 'src/components/ui/**'],
       thresholds: {
         lines: 60,
         functions: 60,
