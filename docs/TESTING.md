@@ -31,6 +31,20 @@ describe('formatDate', () => {
 });
 ```
 
+## Imports
+
+```typescript
+// Vitest - test framework
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Testing Library - DOM utilities
+import { screen, renderHook, act, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+// Custom utilities from @/test
+import { render, mockMatchMedia, createTestQueryClient, server } from '@/test';
+```
+
 ## Core Patterns
 
 ### Use `it.each` for Similar Tests
@@ -51,31 +65,29 @@ it('formats 1024 bytes', () => expect(formatBytes(1024)).toBe('1 KB'));
 it('formats 1MB', () => expect(formatBytes(1024 * 1024)).toBe('1 MB'));
 ```
 
-### Hoist Shared Helpers
+### Use Shared Mocks
 
 ```typescript
-// ✅ Good - single helper at module scope
-const createMatchMedia = (matches: boolean) =>
-  vi.fn().mockImplementation((query: string) => ({
-    matches,
-    media: query,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  }));
+import { mockMatchMedia } from '@/test';
 
 describe('useMediaQuery', () => {
-  // uses createMatchMedia
-});
+  beforeEach(() => {
+    window.matchMedia = mockMatchMedia(false);
+  });
 
-describe('useIsMobile', () => {
-  // reuses same createMatchMedia
+  it('detects desktop viewport', () => {
+    window.matchMedia = mockMatchMedia(true); // matches min-width query
+    const { result } = renderHook(() => useIsDesktop());
+    expect(result.current).toBe(true);
+  });
 });
 ```
 
 ### Component Testing
 
 ```typescript
-import { render, screen } from '@/test'; // Custom render with providers
+import { screen } from '@testing-library/react';
+import { render } from '@/test';
 
 describe('Header', () => {
   it('renders navigation links', () => {
@@ -123,23 +135,27 @@ it('updates after async action', async () => {
 ### Mocking
 
 ```typescript
-// Mock modules before imports
+import { mockMatchMedia } from '@/test';
+
+// Mock modules at top of file
 vi.mock('@/lib/storage', () => ({
   setStorageItem: vi.fn(() => true),
 }));
 
-// Mock browser APIs
+// Mock browser APIs using shared utilities
 beforeEach(() => {
-  window.matchMedia = createMatchMedia(false);
+  window.matchMedia = mockMatchMedia(false);
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
-// Mock fetch
+// Mock fetch for API tests
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+beforeEach(() => {
+  global.fetch = mockFetch;
+});
 mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
 ```
 
