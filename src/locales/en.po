@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. Button label to navigate back to the home page from 404 error
-#: src/pages/NotFound.tsx:21
+#: src/pages/NotFound.tsx:23
 msgid "Back to Home"
 msgstr "Back to Home"
 
@@ -42,15 +42,15 @@ msgstr "Page Not Found"
 
 #. Accessibility label when clicking will switch to dark theme
 #. Accessibility label when clicking will switch to dark theme
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx:23
 #: src/components/shared/ThemeToggle/ThemeToggle.tsx:26
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:29
 msgid "Switch to dark mode"
 msgstr "Switch to dark mode"
 
 #. Accessibility label when clicking will switch to light theme
 #. Accessibility label when clicking will switch to light theme
 #: src/components/shared/ThemeToggle/ThemeToggle.tsx:22
-#: src/components/shared/ThemeToggle/ThemeToggle.tsx:27
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:30
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 

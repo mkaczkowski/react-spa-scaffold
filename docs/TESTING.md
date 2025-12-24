@@ -159,6 +159,34 @@ beforeEach(() => {
 mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
 ```
 
+### MSW (Mock Service Worker)
+
+MSW handlers are organized in `src/mocks/`:
+
+```
+src/mocks/
+├── handlers/
+│   ├── index.ts     # Combines all handlers
+│   └── todos.ts     # Example domain handlers
+├── fixtures/
+│   └── todos.ts     # Response data
+├── browser.ts       # Browser worker setup
+└── node.ts          # Node server for tests
+```
+
+Override handlers per-test:
+
+```typescript
+import { http, HttpResponse, server } from '@/test';
+
+it('handles API error', async () => {
+  server.use(http.get('/api/todos', () => new HttpResponse(null, { status: 500 })));
+  // Test error handling...
+});
+```
+
+MSW handlers auto-reset after each test via `src/test-setup.ts`.
+
 ### Store Testing (Zustand)
 
 ```typescript

@@ -1,98 +1,80 @@
 # CLAUDE.md
 
-This file provides guidance for Claude (and other AI assistants) when working with this codebase.
+AI assistant guidance for this React 19 + TypeScript + Vite 7 codebase. See [README.md](README.md) for project overview and tech rationale.
 
-## Project Overview
-
-Production-ready React starter template with React 19, TypeScript, and Vite 7. An opinionated foundation with optional features—customize freely.
-
-## Essential Commands
+## Commands
 
 ```bash
-npm run dev              # Start dev server (http://localhost:5173)
-npm run build            # Production build (TypeScript check + Vite)
-npm run typecheck        # TypeScript type checking only
+npm run dev              # Dev server at localhost:5173
+npm run build            # Production build (typecheck + bundle)
+npm run typecheck        # TypeScript only
 npm run lint             # ESLint check
-npm run lint:fix         # ESLint with auto-fix
-npm run format           # Prettier format all files
-npm run test             # Run Vitest tests once
-npm run test:watch       # Vitest in watch mode
-npm run test:coverage    # Tests with coverage (80% threshold required)
-npm run e2e              # Playwright E2E tests
-npm run i18n:extract     # Extract translation strings to .po files
+npm run lint:fix         # ESLint auto-fix
+npm run format           # Prettier format
+npm run test             # Vitest once
+npm run test:watch       # Vitest watch mode
+npm run test:coverage    # Coverage (80% threshold)
+npm run e2e              # Playwright E2E
+npm run i18n:extract     # Extract translations to .po
 ```
-
-## Tech Stack
-
-React 19 + TypeScript + Vite 7 with Tailwind CSS 4 and shadcn/ui. State via Zustand (client) and TanStack Query (server). Forms with React Hook Form + Zod. i18n via Lingui. Testing with Vitest + Playwright + MSW.
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full tech stack and system design.
 
 ## Project Structure
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full structure and data flow.
+
 ```
 src/
-├── components/      # ui/ (primitives), layout/, shared/ (features)
-├── contexts/        # React Context providers
-├── hooks/           # Custom React hooks
-├── i18n/            # Lingui setup
-├── lib/             # api.ts, routes.ts, validations.ts, config.ts, utils.ts
-├── locales/         # Translation files (.po)
-├── mocks/           # MSW handlers and fixtures
-├── pages/           # Route components (lazy-loaded, use default exports)
-├── stores/          # Zustand stores
-├── test/            # Test utilities
-└── types/           # TypeScript definitions
+├── components/    # ui/ (primitives), layout/, shared/ (features)
+├── contexts/      # React Context providers
+├── hooks/         # Custom hooks
+├── lib/           # api, routes, config, utils, format, storage
+├── pages/         # Lazy-loaded route components
+├── stores/        # Zustand stores
+└── types/         # TypeScript definitions
 
-tests/unit/          # Vitest tests (mirrors src/ structure)
-e2e/                 # Playwright E2E tests
+tests/unit/        # Vitest (mirrors src/)
+e2e/               # Playwright tests
 ```
 
 ## Code Patterns
 
-**Imports**: Always use `@/` path alias (e.g., `import { api } from '@/lib/api'`)
+**Imports**: Always use `@/` path alias
 
-**Components**: Named exports with `Props` interface. Exception: page components use default exports for lazy loading.
+**Components**: Named exports + `Props` interface. Pages use default exports for lazy loading.
 
-**TypeScript**: `type` for unions/literals, `interface` for object shapes.
+**TypeScript**: `type` for unions, `interface` for objects
 
-**State**: Zustand (persisted preferences) → TanStack Query (server data) → Context (shared UI) → useState (local)
+**State hierarchy**: Zustand (persisted) → TanStack Query (server) → Context (UI) → useState (local)
 
-See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for detailed patterns and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md) for the complete component blueprint.
+See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md).
 
-### Translations (CRITICAL)
+## Translations (CRITICAL)
 
-All user-facing text MUST include a translator comment:
+All user-facing text MUST have translator comments. ESLint enforces this.
 
 ```tsx
-<Trans comment="Main heading on dashboard">Welcome back</Trans>
-
-const { t } = useLingui();
-t({ message: 'Close', comment: 'Close dialog button' })
+<Trans comment="Dashboard heading">Welcome back</Trans>;
+t({ message: 'Close', comment: 'Close button' });
 ```
 
-ESLint enforces this. See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md) for full guide.
+See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).
 
 ## Testing
 
-**Location**: `tests/unit/` mirrors `src/` structure (e.g., `src/hooks/useX.ts` → `tests/unit/hooks/useX.test.ts`)
+Tests in `tests/unit/` mirror `src/` structure. 80% coverage required.
 
-**Coverage**: 80% threshold required—CI fails below this.
-
-**Key imports**:
 ```typescript
 import { describe, it, expect, vi } from 'vitest';
 import { screen, renderHook } from '@testing-library/react';
 import { render, mockMatchMedia, server } from '@/test';
 ```
 
-**MSW is pre-configured**—handlers auto-reset after each test, no manual setup needed.
-
-See [docs/TESTING.md](docs/TESTING.md) for patterns and [docs/E2E_TESTING.md](docs/E2E_TESTING.md) for Playwright.
+MSW handlers auto-reset after each test. See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
 
 ## Common Gotchas
 
 1. **Node.js >= 22.0.0** required (check `.nvmrc`)
-2. **Conventional commits**—enforced by commitlint
-3. **Context hooks throw** if used outside their provider (e.g., `useMobile()`)
-4. **Barrel exports**—each directory has `index.ts` for clean imports
+2. **Conventional commits** enforced by commitlint
+3. **Context hooks throw** outside provider (e.g., `useMobileContext()`)
+4. **Barrel exports** in each directory via `index.ts`
+5. **UI components** import directly: `@/components/ui/button` (no barrel)

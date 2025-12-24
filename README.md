@@ -166,28 +166,31 @@ src/
 ├── contexts/        # React Context providers
 ├── hooks/           # Custom React hooks
 ├── i18n/            # Internationalization (optional)
-├── lib/             # Utilities
+├── lib/             # Utilities, API client, config
 ├── locales/         # Translation files (optional)
 ├── mocks/           # MSW handlers and fixtures (optional)
 ├── stores/          # Zustand stores (optional)
+├── test/            # Test utilities and providers
 └── types/           # TypeScript types
 
-tests/
-└── unit/            # Unit tests
+tests/unit/          # Vitest tests (mirrors src/)
+e2e/                 # Playwright E2E tests
 ```
+
+See [CLAUDE.md](CLAUDE.md) for code patterns and developer workflow.
 
 ## Scripts
 
-| Command                 | Description             |
-| ----------------------- | ----------------------- |
-| `npm run dev`           | Start dev server        |
-| `npm run build`         | Production build        |
-| `npm run test`          | Run unit tests          |
-| `npm run test:coverage` | Run tests with coverage |
-| `npm run e2e`           | Run E2E tests           |
-| `npm run lint:fix`      | Fix lint issues         |
-| `npm run format`        | Format code             |
-| `npm run i18n:extract`  | Extract i18n strings    |
+| Command                 | Description                   |
+| ----------------------- | ----------------------------- |
+| `npm run dev`           | Start dev server              |
+| `npm run build`         | Production build              |
+| `npm run typecheck`     | TypeScript type checking      |
+| `npm run lint:fix`      | ESLint with auto-fix          |
+| `npm run test`          | Run unit tests                |
+| `npm run test:coverage` | Tests with coverage (80% min) |
+| `npm run e2e`           | Run Playwright E2E tests      |
+| `npm run i18n:extract`  | Extract translation strings   |
 
 ## Adding Components
 
@@ -199,73 +202,59 @@ npx shadcn@latest add button card dialog input
 
 ### TanStack Query
 
-```typescript
+```tsx
 import { useExampleQuery } from '@/hooks/useExampleQuery';
 
 function MyComponent() {
   const { data, isLoading, error } = useExampleQuery();
 
-  if (isLoading) return <div>Loading
-...
-  </div>;
-  if (error) return <div>Error
-:
-  {
-    error.message
-  }
-  </div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
-  return <div>{ data?.map(item => item.title)
-}
-  </div>;
+  return (
+    <ul>
+      {data?.map((item) => (
+        <li key={item.id}>{item.title}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
 ### React Hook Form + Zod
 
-```typescript
+```tsx
 import { useContactForm } from '@/hooks/useContactForm';
 
 function ContactForm() {
   const { form, onSubmit, isSubmitting, errors } = useContactForm();
 
   return (
-    <form onSubmit = { onSubmit } >
-      <input { ...form.register('name') }
-  />
-  {
-    errors.name && <span>{ errors.name.message } < /span>}
-    < button
-    type = "submit"
-    disabled = { isSubmitting } > Submit < /button>
-      < /form>
-  )
-    ;
-  }
+    <form onSubmit={onSubmit}>
+      <input {...form.register('name')} />
+      {errors.name && <span>{errors.name.message}</span>}
+      <button type="submit" disabled={isSubmitting}>
+        Submit
+      </button>
+    </form>
+  );
+}
 ```
 
 ### SEO Component (React 19 Native Metadata)
 
 React 19 natively supports document metadata tags that are automatically hoisted to `<head>`:
 
-```typescript
+```tsx
 import { SEO } from '@/components/shared';
 
 function HomePage() {
   return (
     <>
-      <SEO
-        title = "Home"
-  description = "Welcome to our app"
-  keywords = { ['react', 'typescript'
-]
-}
-  />
-  < main > Content
-  here < /main>
-  < />
-)
-  ;
+      <SEO title="Home" description="Welcome to our app" keywords={['react', 'typescript']} />
+      <main>Content here</main>
+    </>
+  );
 }
 ```
 

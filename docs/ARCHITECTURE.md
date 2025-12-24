@@ -1,18 +1,20 @@
 # Architecture Guide
 
+High-level architecture and key decisions. For API details, see [API Reference](./API_REFERENCE.md).
+
 ## Tech Stack
 
-| Layer          | Technology                               |
-| -------------- | ---------------------------------------- |
-| Framework      | React 19 + TypeScript                    |
-| Build          | Vite 7                                   |
-| Routing        | React Router 7 (lazy-loaded pages)       |
-| Styling        | Tailwind CSS 4                           |
-| State          | Zustand (persisted) + TanStack Query (server) |
-| Forms          | React Hook Form + Zod                    |
-| i18n           | Lingui                                   |
-| Testing        | Vitest (unit) + Playwright (e2e)         |
-| Error Tracking | Sentry (lazy-loaded in production)       |
+| Layer          | Technology               | Why                                         |
+| -------------- | ------------------------ | ------------------------------------------- |
+| Framework      | React 19 + TypeScript    | Largest ecosystem, concurrent features      |
+| Build          | Vite 7                   | 10-100x faster than Webpack, native ESM     |
+| Routing        | React Router 7           | De facto standard, lazy loading support     |
+| Styling        | Tailwind CSS 4           | No runtime cost, scales with team size      |
+| State          | Zustand + TanStack Query | Minimal boilerplate, separation of concerns |
+| Forms          | React Hook Form + Zod    | Minimal re-renders, type-safe validation    |
+| i18n           | Lingui                   | Smaller runtime, compile-time extraction    |
+| Testing        | Vitest + Playwright      | Fast, Vite-native, true cross-browser       |
+| Error Tracking | Sentry                   | Industry standard, lazy-loaded              |
 
 ## Project Structure
 
@@ -21,7 +23,7 @@ src/
 ├── components/
 │   ├── layout/     # Page structure (Header)
 │   ├── shared/     # Feature components (ThemeToggle, LanguageSwitcher)
-│   └── ui/         # Primitives (Button, Spinner, Skeleton)
+│   └── ui/         # Primitives (Button, Spinner) - shadcn/ui
 ├── contexts/       # React Context providers
 ├── hooks/          # Custom React hooks
 ├── i18n/           # Internationalization setup
@@ -35,8 +37,14 @@ src/
 
 tests/unit/         # Vitest tests (mirrors src/ structure)
 e2e/                # Playwright end-to-end tests
-docs/               # Project documentation
 ```
+
+### Why This Structure?
+
+- **components/ui/**: Primitives from shadcn/ui. Direct imports (`@/components/ui/button`) because shadcn recommends against barrel exports for tree-shaking.
+- **components/shared/**: Feature components with barrel exports. Each feature folder contains component + index.ts.
+- **lib/**: Pure utilities with no React dependencies. Can be tested without rendering.
+- **pages/**: One component per route. Default exports enable lazy loading.
 
 ## Data Flow
 
@@ -57,16 +65,26 @@ docs/               # Project documentation
    Preferences         (API Cache)          (Mobile, etc)
 ```
 
-## Provider Hierarchy
+## Key Architectural Decisions
 
-Providers wrap the app in this order (outermost to innermost):
+### 1. Provider Hierarchy
+
+Providers wrap the app in this specific order:
 
 ```tsx
 <StrictMode>
-  <QueryProvider>        {/* TanStack Query client */}
-    <I18nProvider>       {/* Lingui translations */}
-      <BrowserRouter>    {/* React Router */}
-        <MobileProvider> {/* Viewport detection */}
+  <QueryProvider>
+    {' '}
+    {/* TanStack Query - outermost for global cache */}
+    <I18nProvider>
+      {' '}
+      {/* Lingui - translations available everywhere */}
+      <BrowserRouter>
+        {' '}
+        {/* React Router - routing context */}
+        <MobileProvider>
+          {' '}
+          {/* Viewport - depends on router for SSR */}
           <ErrorBoundary>
             <App />
             <Toaster />
@@ -78,101 +96,90 @@ Providers wrap the app in this order (outermost to innermost):
 </StrictMode>
 ```
 
-## State Management
+**Why this order?**
 
-| Use Case              | Solution               | Location           |
-| --------------------- | ---------------------- | ------------------ |
-| User preferences      | Zustand + persist      | `stores/`          |
-| Server/async data     | TanStack Query         | `hooks/use*Query`  |
-| Shared UI state       | React Context          | `contexts/`        |
-| Component-local state | useState/useReducer    | Component file     |
+- QueryProvider outermost so cache persists across route changes
+- I18nProvider before Router so route components can use translations
+- MobileProvider inside Router for potential SSR viewport detection
+- ErrorBoundary innermost to catch errors in App without breaking providers
 
-See [Coding Standards](./CODING_STANDARDS.md#state-management) for implementation patterns.
+### 2. State Management Separation
 
-## API Layer
+| Use Case              | Solution            | Location          | Why                           |
+| --------------------- | ------------------- | ----------------- | ----------------------------- |
+| User preferences      | Zustand + persist   | `stores/`         | Survives refresh, syncs tabs  |
+| Server/async data     | TanStack Query      | `hooks/use*Query` | Automatic caching, refetching |
+| Shared UI state       | React Context       | `contexts/`       | Prop drilling avoidance       |
+| Component-local state | useState/useReducer | Component file    | Simplest solution             |
 
-Located in `lib/api.ts`. Provides typed HTTP methods with automatic error handling.
+**Key invariant**: Server state (TanStack Query) and client state (Zustand) never overlap. If data comes from an API, use Query. If it's user preference, use Zustand.
+
+### 3. Lazy Loading Strategy
+
+Pages are lazy-loaded to reduce initial bundle size:
 
 ```tsx
+// App.tsx
+const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
+
+// Routes
+<Suspense fallback={<PageSkeleton />}>
+  <Routes>
+    <Route path={ROUTES.HOME} element={<HomePage />} />
+  </Routes>
+</Suspense>;
+```
+
+**Why pages only?**
+
+- Pages are the largest units and least likely to be needed immediately
+- UI components are small and frequently reused—overhead of lazy loading outweighs benefit
+- Shared components may be needed before Suspense resolves
+
+### 4. Error Handling Layers
+
+| Layer      | Mechanism      | Catches                 |
+| ---------- | -------------- | ----------------------- |
+| Component  | ErrorBoundary  | React render errors     |
+| API        | ApiClientError | Network/HTTP errors     |
+| Global     | window.onerror | Uncaught exceptions     |
+| Production | Sentry         | All errors with context |
+
+**Key invariant**: Errors should never silently fail. Every error either:
+
+- Shows user feedback (toast, error UI)
+- Logs to console (development)
+- Reports to Sentry (production)
+
+### 5. Translation Enforcement
+
+All user-facing text must have translator comments. This is enforced by ESLint.
+
+**Why mandatory comments?**
+
+- Translators lack code context—"Close" could be adjective or verb
+- Comments appear in PO files, reducing translation errors
+- ESLint catches missing comments before merge
+
+## Import Conventions
+
+```tsx
+// UI primitives: direct import (no barrel)
+import { Button } from '@/components/ui/button';
+
+// Shared components: barrel export
+import { ThemeToggle } from '@/components/shared';
+
+// Utilities
 import { api } from '@/lib/api';
-
-// Usage
-const data = await api.get<User[]>('/users');
-await api.post('/users', { name: 'John' });
-await api.put('/users/1', { name: 'Jane' });
-await api.delete('/users/1');
+import { render } from '@/test';
 ```
-
-Features:
-- Automatic JSON serialization
-- Timeout handling (default: 30s)
-- Custom `ApiClientError` class with status codes
-
-## Routing
-
-Routes defined in `lib/routes.ts` as typed constants:
-
-```tsx
-export const ROUTES = {
-  HOME: '/',
-  NOT_FOUND: '*',
-} as const;
-
-// Usage in components
-<Link to={ROUTES.HOME}>Home</Link>
-```
-
-Pages are lazy-loaded for code splitting:
-
-```tsx
-const HomePage = lazy(() => import('@/pages/Home'));
-```
-
-## Configuration
-
-Environment-based config in `lib/config.ts`:
-
-```tsx
-export const API_CONFIG = {
-  baseUrl: import.meta.env.VITE_API_URL,
-  timeout: 30000,
-};
-
-export const APP_CONFIG = {
-  name: import.meta.env.VITE_APP_NAME,
-  url: import.meta.env.VITE_APP_URL,
-};
-```
-
-## Path Aliases
-
-Configured in `tsconfig.json`:
-
-```tsx
-import { api } from '@/lib/api';           // src/lib/api.ts
-import { Button } from '@/components/ui';  // src/components/ui/index.ts
-import { render } from '@/test';           // src/test/index.ts
-```
-
-## Error Handling
-
-1. **ErrorBoundary** - Catches React component errors
-2. **ApiClientError** - Typed API errors with status codes
-3. **Sentry** - Production error tracking (lazy-loaded)
-4. **Global handlers** - `window.onerror`, `onunhandledrejection`
-
-## Key Conventions
-
-1. **Named exports** - Use named exports, not default (except pages for lazy loading)
-2. **Barrel exports** - Each directory has `index.ts` for clean imports
-3. **Type inference** - Let TypeScript infer when obvious, explicit for APIs
-4. **Translations** - All user-facing text wrapped with `<Trans>` or `t()`
-5. **Test location** - Unit tests in `tests/unit/` mirroring `src/` structure
 
 ## Related Docs
 
-- [Component Guidelines](./COMPONENT_GUIDELINES.md) - Complete React + TypeScript component blueprint
-- [Coding Standards](./CODING_STANDARDS.md) - TypeScript, components, state patterns
+- [API Reference](./API_REFERENCE.md) - Utilities, hooks, and common patterns
+- [Component Guidelines](./COMPONENT_GUIDELINES.md) - React component blueprint
+- [Coding Standards](./CODING_STANDARDS.md) - TypeScript and state patterns
 - [Testing](./TESTING.md) - Unit testing guidelines
 - [E2E Testing](./E2E_TESTING.md) - Playwright patterns
 - [Internationalization](./INTERNATIONALIZATION.md) - Lingui i18n setup

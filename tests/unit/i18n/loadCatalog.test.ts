@@ -51,7 +51,7 @@ describe('dynamicActivate', () => {
     (i18n as { messages: Record<string, object> }).messages = { en: { hello: 'Hello' } };
 
     // Try to load non-default locale (will fail in test env)
-    await dynamicActivate('pl');
+    await dynamicActivate('de');
 
     // Should activate the default locale since it's already loaded
     expect(i18n.activate).toHaveBeenCalledWith('en');
@@ -62,7 +62,7 @@ describe('dynamicActivate', () => {
     (i18n as { messages: Record<string, object> }).messages = {};
 
     // Try to load a locale (will fail in test env due to dynamic import)
-    await dynamicActivate('pl');
+    await dynamicActivate('de');
 
     // Should have logged an error about failing to load
     expect(console.error).toHaveBeenCalled();

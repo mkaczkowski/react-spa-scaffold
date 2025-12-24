@@ -1,6 +1,7 @@
 # React + TypeScript Component Guidelines
 
 A focused blueprint for writing React components. For related patterns, see:
+
 - [Coding Standards](./CODING_STANDARDS.md) - TypeScript, state management, hooks
 - [Testing](./TESTING.md) - Unit testing patterns
 - [Internationalization](./INTERNATIONALIZATION.md) - i18n with Lingui
@@ -76,7 +77,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? <Spinner /> : children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';
@@ -106,12 +107,14 @@ export function List<T>({ items, renderItem, keyExtractor }: ListProps<T>) {
 
 ## Component Categories
 
-| Category | Location | Naming | Export |
-|----------|----------|--------|--------|
-| UI Primitives | `components/ui/` | `button.tsx` (lowercase) | Named |
-| Feature Components | `components/shared/Feature/` | `Feature.tsx` (PascalCase) | Named |
-| Layout | `components/layout/` | `Header.tsx` (PascalCase) | Named |
-| Pages | `pages/` | `Home.tsx` (PascalCase) | Default (for lazy loading) |
+| Category           | Location                     | Naming                     | Export  | Barrel |
+| ------------------ | ---------------------------- | -------------------------- | ------- | ------ |
+| UI Primitives      | `components/ui/`             | `button.tsx` (lowercase)   | Named   | No\*   |
+| Feature Components | `components/shared/Feature/` | `Feature.tsx` (PascalCase) | Named   | Yes    |
+| Layout             | `components/layout/`         | `Header.tsx` (PascalCase)  | Named   | Yes    |
+| Pages              | `pages/`                     | `Home.tsx` (PascalCase)    | Default | No     |
+
+\*UI primitives use direct imports (`@/components/ui/button`) following shadcn/ui conventions.
 
 ### Feature Component Structure
 
@@ -150,12 +153,12 @@ export function Button({ variant, className, ...props }: ButtonProps) {
 
 Split only when you have a **concrete reason**, not preemptively:
 
-| Situation | Action |
-|-----------|--------|
-| Types reused by other components | Move to `@/types/` |
-| Helper reused elsewhere | Move to `@/lib/` |
-| File exceeds ~300 lines | Consider splitting by concern |
-| Multiple sub-components | Create folder with separate files |
+| Situation                        | Action                            |
+| -------------------------------- | --------------------------------- |
+| Types reused by other components | Move to `@/types/`                |
+| Helper reused elsewhere          | Move to `@/lib/`                  |
+| File exceeds ~300 lines          | Consider splitting by concern     |
+| Multiple sub-components          | Create folder with separate files |
 
 ### Splitting Example
 
@@ -203,12 +206,10 @@ const badgeVariants = cva(
       variant: 'default',
       size: 'md',
     },
-  }
+  },
 );
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
 export function Badge({ variant, size, className, ...props }: BadgeProps) {
   return <span className={cn(badgeVariants({ variant, size }), className)} {...props} />;
@@ -218,9 +219,9 @@ export function Badge({ variant, size, className, ...props }: BadgeProps) {
 ### `cn()` Utility
 
 ```tsx
-cn('px-4 py-2', 'px-6')           // → 'py-2 px-6' (later overrides)
-cn('text-red-500', className)      // → allows prop override
-cn(isActive && 'bg-primary')       // → conditional classes
+cn('px-4 py-2', 'px-6'); // → 'py-2 px-6' (later overrides)
+cn('text-red-500', className); // → allows prop override
+cn(isActive && 'bg-primary'); // → conditional classes
 ```
 
 ---
@@ -296,5 +297,5 @@ Before submitting a component:
 - [ ] Handles loading/error states for async data
 - [ ] Uses `cn()` for className merging
 - [ ] Accessible (roles, aria-labels, keyboard nav)
-- [ ] Barrel export in `index.ts`
+- [ ] Barrel export in `index.ts` (except UI primitives)
 - [ ] Test file in `tests/unit/`

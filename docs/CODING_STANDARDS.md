@@ -1,23 +1,6 @@
 # Coding Standards
 
-See [Architecture Guide](./ARCHITECTURE.md#project-structure) for project structure.
-
-## Components
-
-Use named exports with props interface:
-
-```tsx
-export interface MyComponentProps {
-  title: string;
-  count?: number;
-}
-
-export function MyComponent({ title, count = 0 }: MyComponentProps) {
-  // ...
-}
-```
-
-See [Component Guidelines](./COMPONENT_GUIDELINES.md) for the complete blueprint including styling with CVA and accessibility patterns.
+See [Architecture Guide](./ARCHITECTURE.md) for project structure and [Component Guidelines](./COMPONENT_GUIDELINES.md) for the complete React component blueprint.
 
 ## TypeScript
 

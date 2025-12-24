@@ -78,7 +78,7 @@ describe('api client', () => {
         json: hasJson ? () => Promise.resolve({ message }) : () => Promise.reject(new Error('No JSON')),
       });
 
-      const error = await api.get('/error').catch((e) => e);
+      const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
       expect(error).toBeInstanceOf(ApiClientError);
       expect(error.message).toBe(message);
@@ -99,7 +99,7 @@ describe('api client', () => {
       const promise = api.get('/slow', { timeout: 50 });
       vi.advanceTimersByTime(100);
 
-      const error = await promise.catch((e) => e);
+      const error = (await promise.catch((e) => e)) as ApiClientError;
       expect(error.code).toBe('TIMEOUT');
       expect(error.status).toBe(408);
 
@@ -112,7 +112,7 @@ describe('api client', () => {
     ])('handles $code errors', async ({ rejection, code }) => {
       mockFetch.mockRejectedValueOnce(rejection);
 
-      const error = await api.get('/error').catch((e) => e);
+      const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
       expect(error).toBeInstanceOf(ApiClientError);
       expect(error.code).toBe(code);
