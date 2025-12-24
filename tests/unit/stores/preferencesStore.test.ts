@@ -3,15 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { initPreferencesSync, usePreferencesStore } from '@/stores/preferencesStore';
 
-// Mock matchMedia for system theme detection
-const mockMatchMedia = (matches: boolean) => {
-  return vi.fn().mockImplementation((query: string) => ({
+const mockMatchMedia = (matches: boolean) =>
+  vi.fn().mockImplementation((query: string) => ({
     matches,
     media: query,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
   }));
-};
 
 describe('preferencesStore', () => {
   beforeEach(() => {
@@ -24,132 +22,61 @@ describe('preferencesStore', () => {
   });
 
   describe('setTheme', () => {
-    it('sets theme to light', () => {
-      act(() => {
-        usePreferencesStore.getState().setTheme('light');
-      });
-      expect(usePreferencesStore.getState().theme).toBe('light');
-    });
-
-    it('sets theme to dark', () => {
-      act(() => {
-        usePreferencesStore.getState().setTheme('dark');
-      });
-      expect(usePreferencesStore.getState().theme).toBe('dark');
-    });
-
-    it('sets theme to system', () => {
-      act(() => {
-        usePreferencesStore.getState().setTheme('system');
-      });
-      expect(usePreferencesStore.getState().theme).toBe('system');
+    it.each(['light', 'dark', 'system'] as const)('sets theme to %s', (theme) => {
+      act(() => usePreferencesStore.getState().setTheme(theme));
+      expect(usePreferencesStore.getState().theme).toBe(theme);
     });
   });
 
   describe('toggleTheme', () => {
-    it('toggles from light to dark', () => {
-      usePreferencesStore.setState({ theme: 'light' });
+    it.each([
+      { initial: 'light', systemDark: false, expected: 'dark' },
+      { initial: 'dark', systemDark: false, expected: 'light' },
+      { initial: 'system', systemDark: false, expected: 'dark' },
+      { initial: 'system', systemDark: true, expected: 'light' },
+    ] as const)('toggles from $initial to $expected', ({ initial, systemDark, expected }) => {
+      window.matchMedia = mockMatchMedia(systemDark);
+      usePreferencesStore.setState({ theme: initial });
 
-      act(() => {
-        usePreferencesStore.getState().toggleTheme();
-      });
+      act(() => usePreferencesStore.getState().toggleTheme());
 
-      expect(usePreferencesStore.getState().theme).toBe('dark');
-    });
-
-    it('toggles from dark to light', () => {
-      usePreferencesStore.setState({ theme: 'dark' });
-
-      act(() => {
-        usePreferencesStore.getState().toggleTheme();
-      });
-
-      expect(usePreferencesStore.getState().theme).toBe('light');
-    });
-
-    it('toggles from system (light) to dark', () => {
-      window.matchMedia = mockMatchMedia(false); // System prefers light
-      usePreferencesStore.setState({ theme: 'system' });
-
-      act(() => {
-        usePreferencesStore.getState().toggleTheme();
-      });
-
-      expect(usePreferencesStore.getState().theme).toBe('dark');
-    });
-
-    it('toggles from system (dark) to light', () => {
-      window.matchMedia = mockMatchMedia(true); // System prefers dark
-      usePreferencesStore.setState({ theme: 'system' });
-
-      act(() => {
-        usePreferencesStore.getState().toggleTheme();
-      });
-
-      expect(usePreferencesStore.getState().theme).toBe('light');
+      expect(usePreferencesStore.getState().theme).toBe(expected);
     });
   });
 
   describe('getResolvedTheme', () => {
-    it('returns light when theme is light', () => {
-      usePreferencesStore.setState({ theme: 'light' });
-      expect(usePreferencesStore.getState().getResolvedTheme()).toBe('light');
-    });
-
-    it('returns dark when theme is dark', () => {
-      usePreferencesStore.setState({ theme: 'dark' });
-      expect(usePreferencesStore.getState().getResolvedTheme()).toBe('dark');
-    });
-
-    it('returns system preference when theme is system (light)', () => {
-      window.matchMedia = mockMatchMedia(false);
-      usePreferencesStore.setState({ theme: 'system' });
-      expect(usePreferencesStore.getState().getResolvedTheme()).toBe('light');
-    });
-
-    it('returns system preference when theme is system (dark)', () => {
-      window.matchMedia = mockMatchMedia(true);
-      usePreferencesStore.setState({ theme: 'system' });
-      expect(usePreferencesStore.getState().getResolvedTheme()).toBe('dark');
+    it.each([
+      { theme: 'light', systemDark: false, expected: 'light' },
+      { theme: 'dark', systemDark: false, expected: 'dark' },
+      { theme: 'system', systemDark: false, expected: 'light' },
+      { theme: 'system', systemDark: true, expected: 'dark' },
+    ] as const)('resolves $theme to $expected', ({ theme, systemDark, expected }) => {
+      window.matchMedia = mockMatchMedia(systemDark);
+      usePreferencesStore.setState({ theme });
+      expect(usePreferencesStore.getState().getResolvedTheme()).toBe(expected);
     });
   });
 
   describe('reset', () => {
     it('resets to initial state', () => {
       usePreferencesStore.setState({ theme: 'dark' });
-
-      act(() => {
-        usePreferencesStore.getState().reset();
-      });
-
+      act(() => usePreferencesStore.getState().reset());
       expect(usePreferencesStore.getState().theme).toBe('system');
     });
   });
 
   describe('initPreferencesSync', () => {
-    it('returns a cleanup function', () => {
-      const cleanup = initPreferencesSync();
-      expect(typeof cleanup).toBe('function');
-      cleanup();
-    });
-
-    it('adds storage event listener', () => {
-      const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
+    it('adds and removes storage event listener', () => {
+      const addSpy = vi.spyOn(window, 'addEventListener');
+      const removeSpy = vi.spyOn(window, 'removeEventListener');
 
       const cleanup = initPreferencesSync();
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith('storage', expect.any(Function));
+      expect(addSpy).toHaveBeenCalledWith('storage', expect.any(Function));
 
       cleanup();
-    });
 
-    it('removes storage event listener on cleanup', () => {
-      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
-
-      const cleanup = initPreferencesSync();
-      cleanup();
-
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('storage', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('storage', expect.any(Function));
     });
   });
 });

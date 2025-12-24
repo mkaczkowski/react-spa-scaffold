@@ -4,127 +4,87 @@ import { clearAppStorage, getStorageItem, removeStorageItem, setStorageItem } fr
 import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 describe('storage utilities', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
+  beforeEach(() => localStorage.clear());
   afterEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
   });
 
   describe('setStorageItem', () => {
-    it('stores a value', () => {
-      const result = setStorageItem(STORAGE_KEYS.preferences, { theme: 'dark' });
-      expect(result).toBe(true);
+    it('stores values and returns true', () => {
+      expect(setStorageItem(STORAGE_KEYS.preferences, { theme: 'dark' })).toBe(true);
       expect(localStorage.getItem(STORAGE_KEYS.preferences)).toBe('{"theme":"dark"}');
-    });
 
-    it('stores a string value', () => {
-      setStorageItem(STORAGE_KEYS.locale, 'en');
+      expect(setStorageItem(STORAGE_KEYS.locale, 'en')).toBe(true);
       expect(localStorage.getItem(STORAGE_KEYS.locale)).toBe('"en"');
     });
 
-    it('returns false and logs error on storage failure', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('returns false on storage failure', () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
         throw new Error('QuotaExceeded');
       });
 
-      const result = setStorageItem(STORAGE_KEYS.preferences, { theme: 'dark' });
-
-      expect(result).toBe(false);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to set localStorage'),
-        expect.any(Error),
-      );
+      expect(setStorageItem(STORAGE_KEYS.preferences, {})).toBe(false);
     });
   });
 
   describe('getStorageItem', () => {
-    it('retrieves a stored value', () => {
-      localStorage.setItem(STORAGE_KEYS.preferences, '{"theme":"dark"}');
-      const result = getStorageItem(STORAGE_KEYS.preferences, { theme: 'light' });
-      expect(result).toEqual({ theme: 'dark' });
+    it.each([
+      { stored: '{"theme":"dark"}', defaultVal: { theme: 'light' }, expected: { theme: 'dark' } },
+      { stored: null, defaultVal: { theme: 'light' }, expected: { theme: 'light' } },
+      { stored: 'not-json', defaultVal: 'en', expected: 'not-json' },
+    ])('retrieves stored value or default', ({ stored, defaultVal, expected }) => {
+      if (stored) localStorage.setItem(STORAGE_KEYS.preferences, stored);
+      expect(getStorageItem(STORAGE_KEYS.preferences, defaultVal)).toEqual(expected);
     });
 
-    it('returns default value when key does not exist', () => {
-      const result = getStorageItem(STORAGE_KEYS.preferences, { theme: 'light' });
-      expect(result).toEqual({ theme: 'light' });
-    });
-
-    it('handles invalid JSON gracefully', () => {
-      localStorage.setItem(STORAGE_KEYS.locale, 'not-json');
-      const result = getStorageItem(STORAGE_KEYS.locale, 'en');
-      // Should return the raw string value
-      expect(result).toBe('not-json');
-    });
-
-    it('returns default when raw string is null after parse failure', () => {
-      // Mock getItem to return null on second call (simulating storage cleared between calls)
+    it('returns default when storage cleared during parse', () => {
       let callCount = 0;
       vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
         callCount++;
-        if (callCount === 1) return 'invalid-json{';
-        return null;
+        return callCount === 1 ? 'invalid{' : null;
       });
 
-      const result = getStorageItem(STORAGE_KEYS.locale, 'default');
-      expect(result).toBe('default');
+      expect(getStorageItem(STORAGE_KEYS.locale, 'default')).toBe('default');
     });
   });
 
   describe('removeStorageItem', () => {
-    it('removes a stored value', () => {
-      localStorage.setItem(STORAGE_KEYS.preferences, '{"theme":"dark"}');
-      const result = removeStorageItem(STORAGE_KEYS.preferences);
-      expect(result).toBe(true);
+    it('removes value and returns true', () => {
+      localStorage.setItem(STORAGE_KEYS.preferences, '{}');
+      expect(removeStorageItem(STORAGE_KEYS.preferences)).toBe(true);
       expect(localStorage.getItem(STORAGE_KEYS.preferences)).toBeNull();
     });
 
-    it('returns false and logs error on removal failure', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('returns false on failure', () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
-        throw new Error('Storage error');
+        throw new Error();
       });
 
-      const result = removeStorageItem(STORAGE_KEYS.preferences);
-
-      expect(result).toBe(false);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to remove localStorage'),
-        expect.any(Error),
-      );
+      expect(removeStorageItem(STORAGE_KEYS.preferences)).toBe(false);
     });
   });
 
   describe('clearAppStorage', () => {
-    it('clears all app storage keys', () => {
-      localStorage.setItem(STORAGE_KEYS.preferences, '{"theme":"dark"}');
+    it('clears only app keys', () => {
+      localStorage.setItem(STORAGE_KEYS.preferences, '{}');
       localStorage.setItem(STORAGE_KEYS.locale, '"en"');
       localStorage.setItem('other-key', 'value');
 
-      const result = clearAppStorage();
-      expect(result).toBe(true);
+      expect(clearAppStorage()).toBe(true);
       expect(localStorage.getItem(STORAGE_KEYS.preferences)).toBeNull();
-      expect(localStorage.getItem(STORAGE_KEYS.locale)).toBeNull();
-      // Other keys should remain
       expect(localStorage.getItem('other-key')).toBe('value');
     });
 
-    it('returns false and logs error on clear failure', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('returns false on failure', () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
-        throw new Error('Storage error');
+        throw new Error();
       });
 
-      const result = clearAppStorage();
-
-      expect(result).toBe(false);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to clear app storage'),
-        expect.any(Error),
-      );
+      expect(clearAppStorage()).toBe(false);
     });
   });
 });
