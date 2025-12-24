@@ -17,7 +17,7 @@ export function MyComponent({ title, count = 0 }: MyComponentProps) {
 }
 ```
 
-See [Component Guidelines](./COMPONENT_GUIDELINES.md) for the complete blueprint including styling with CVA, state patterns, testing, and full examples.
+See [Component Guidelines](./COMPONENT_GUIDELINES.md) for the complete blueprint including styling with CVA and accessibility patterns.
 
 ## TypeScript
 
