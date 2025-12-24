@@ -24,143 +24,70 @@ npm run i18n:extract     # Extract translation strings to .po files
 
 ## Tech Stack
 
-| Layer      | Technology                                    |
-| ---------- | --------------------------------------------- |
-| Framework  | React 19 + TypeScript (strict mode)           |
-| Build      | Vite 7                                        |
-| Styling    | Tailwind CSS 4 + shadcn/ui components         |
-| Routing    | React Router 7 (lazy-loaded pages)            |
-| State      | Zustand (client) + TanStack Query (server)    |
-| Forms      | React Hook Form + Zod validation              |
-| i18n       | Lingui (with mandatory translator comments)   |
-| Testing    | Vitest (unit) + Playwright (E2E) + MSW (mocks)|
-| Quality    | ESLint + Prettier + Husky + Commitlint        |
+React 19 + TypeScript + Vite 7 with Tailwind CSS 4 and shadcn/ui. State via Zustand (client) and TanStack Query (server). Forms with React Hook Form + Zod. i18n via Lingui. Testing with Vitest + Playwright + MSW.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full tech stack and system design.
 
 ## Project Structure
 
 ```
 src/
-├── components/
-│   ├── ui/          # shadcn/ui primitives (Button, Dropdown, etc.)
-│   ├── layout/      # Page structure (Header)
-│   └── shared/      # Feature components (ThemeToggle, LanguageSwitcher, SEO)
-├── contexts/        # React Context providers (QueryProvider, MobileProvider)
-├── hooks/           # Custom hooks (useMediaQuery, useThemeEffect, etc.)
-├── i18n/            # Internationalization setup
-├── lib/             # Utilities
-│   ├── api.ts       # Typed HTTP client with ApiClientError
-│   ├── routes.ts    # Typed route constants
-│   ├── validations.ts # Zod schemas
-│   ├── config.ts    # Environment-based configuration
-│   └── utils.ts     # cn() utility for class merging
-├── locales/         # Translation files (.po format)
+├── components/      # ui/ (primitives), layout/, shared/ (features)
+├── contexts/        # React Context providers
+├── hooks/           # Custom React hooks
+├── lib/             # api.ts, routes.ts, validations.ts, config.ts, utils.ts
+├── locales/         # Translation files (.po)
 ├── mocks/           # MSW handlers and fixtures
-├── pages/           # Route page components (lazy-loaded)
-├── stores/          # Zustand stores (preferencesStore)
-├── test/            # Test utilities (render, mocks, providers)
-└── types/           # Shared TypeScript definitions
+├── pages/           # Route components (lazy-loaded, use default exports)
+├── stores/          # Zustand stores
+├── test/            # Test utilities
+└── types/           # TypeScript definitions
 
 tests/unit/          # Vitest tests (mirrors src/ structure)
 e2e/                 # Playwright E2E tests
-docs/                # Detailed documentation
 ```
 
 ## Code Patterns
 
-### Path Aliases
+**Imports**: Always use `@/` path alias (e.g., `import { api } from '@/lib/api'`)
 
-Always use `@/` for imports:
-```typescript
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui';
-import { render } from '@/test';
-```
+**Components**: Named exports with `Props` interface. Exception: page components use default exports for lazy loading.
 
-### Components
+**TypeScript**: `type` for unions/literals, `interface` for object shapes.
 
-Use named exports with Props interface:
-```tsx
-export interface MyComponentProps {
-  title: string;
-  count?: number;
-}
+**State**: Zustand (persisted preferences) → TanStack Query (server data) → Context (shared UI) → useState (local)
 
-export function MyComponent({ title, count = 0 }: MyComponentProps) {
-  // ...
-}
-```
+See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for detailed patterns.
 
-Exception: Page components use default exports for lazy loading.
+### Translations (CRITICAL)
 
-### TypeScript
-
-- Use `type` for unions/literals: `type Theme = 'light' | 'dark' | 'system'`
-- Use `interface` for object shapes: `interface User { id: string; name: string; }`
-- Let TypeScript infer when obvious, be explicit for API boundaries
-
-### State Management
-
-| Use Case              | Solution           |
-| --------------------- | ------------------ |
-| User preferences      | Zustand + persist  |
-| Server/async data     | TanStack Query     |
-| Shared UI state       | React Context      |
-| Component-local       | useState/useReducer|
-
-### Translations (IMPORTANT)
-
-All user-facing text MUST be wrapped with translations AND include a comment:
+All user-facing text MUST include a translator comment:
 
 ```tsx
-import { Trans } from '@lingui/react/macro';
-import { useLingui } from '@lingui/react/macro';
+<Trans comment="Main heading on dashboard">Welcome back</Trans>
 
-// JSX content
-<Trans comment="Main heading on dashboard page">Welcome back</Trans>
-
-// Strings (aria-labels, placeholders)
 const { t } = useLingui();
-<Button aria-label={t({ message: 'Close', comment: 'Close dialog button' })} />
+t({ message: 'Close', comment: 'Close dialog button' })
 ```
 
-ESLint will warn about untranslated strings. Tests, mocks, and UI primitives are excluded.
+ESLint enforces this. See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md) for full guide.
 
 ## Testing
 
-### Test Files Location
+**Location**: `tests/unit/` mirrors `src/` structure (e.g., `src/hooks/useX.ts` → `tests/unit/hooks/useX.test.ts`)
 
-Tests live in `tests/unit/` mirroring the `src/` structure:
-- `src/hooks/useMediaQuery.ts` → `tests/unit/hooks/useMediaQuery.test.ts`
-- `src/components/Header.tsx` → `tests/unit/components/Header.test.tsx`
+**Coverage**: 80% threshold required—CI fails below this.
 
-### Writing Tests
-
+**Key imports**:
 ```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, renderHook, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { screen, renderHook } from '@testing-library/react';
 import { render, mockMatchMedia, server } from '@/test';
-
-describe('MyComponent', () => {
-  it('renders correctly', () => {
-    render(<MyComponent />);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-});
 ```
 
-Use `it.each` for parameterized tests:
-```typescript
-it.each([
-  { input: 0, expected: '0 Bytes' },
-  { input: 1024, expected: '1 KB' },
-])('formats $input bytes', ({ input, expected }) => {
-  expect(formatBytes(input)).toBe(expected);
-});
-```
+**MSW is pre-configured**—handlers auto-reset after each test, no manual setup needed.
 
-### Coverage Requirement
-
-80% threshold for lines, branches, functions, and statements. Tests will fail if below.
+See [docs/TESTING.md](docs/TESTING.md) for patterns and [docs/E2E_TESTING.md](docs/E2E_TESTING.md) for Playwright.
 
 ## Key Files Reference
 
@@ -177,30 +104,16 @@ it.each([
 
 ## Documentation
 
-Detailed guides in `/docs/`:
-- `ARCHITECTURE.md` - System design, data flow, provider hierarchy
-- `CODING_STANDARDS.md` - TypeScript, component, state patterns
-- `TESTING.md` - Vitest patterns, mocking, coverage
-- `E2E_TESTING.md` - Playwright patterns and fixtures
-- `INTERNATIONALIZATION.md` - Lingui i18n usage
+See `/docs/` for detailed guides: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [CODING_STANDARDS.md](docs/CODING_STANDARDS.md), [TESTING.md](docs/TESTING.md), [E2E_TESTING.md](docs/E2E_TESTING.md), [INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).
 
 ## Common Gotchas
 
-1. **Node version**: Requires Node.js >= 22.0.0 (check `.nvmrc`)
-
-2. **Translation comments are mandatory**: ESLint warns on `<Trans>` or `t()` without a `comment` prop
-
-3. **Named exports only**: Use named exports everywhere except page components (which need default for lazy loading)
-
-4. **Test coverage**: CI fails if coverage drops below 80%
-
-5. **Conventional commits**: Commit messages must follow conventional commit format (enforced by commitlint)
-
-6. **Barrel exports**: Each component directory has an `index.ts` for clean imports
-
-7. **Context hooks throw**: Context hooks like `useMobile()` throw if used outside their provider
-
-8. **MSW is pre-configured**: No manual setup needed in tests—handlers auto-reset after each test
+1. **Node.js >= 22.0.0** required (check `.nvmrc`)
+2. **Translation comments mandatory**—ESLint warns on `<Trans>` or `t()` without `comment`
+3. **Named exports only**—except page components (default exports for lazy loading)
+4. **Conventional commits**—enforced by commitlint
+5. **Context hooks throw** if used outside their provider (e.g., `useMobile()`)
+6. **Barrel exports**—each directory has `index.ts` for clean imports
 
 ## Environment Variables
 
