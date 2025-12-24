@@ -7,17 +7,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { render } from '@/test-utils';
 
 describe('Spinner', () => {
-  it('renders with default size', () => {
-    const { container } = render(<Spinner />);
-    expect(container.querySelector('svg')).toBeInTheDocument();
-  });
-
-  it('renders with different sizes', () => {
-    const { container: sm } = render(<Spinner size="sm" />);
-    const { container: lg } = render(<Spinner size="lg" />);
-
-    expect(sm.querySelector('svg')).toHaveClass('size-4');
-    expect(lg.querySelector('svg')).toHaveClass('size-8');
+  it.each([
+    { size: 'sm', expectedClass: 'size-4' },
+    { size: 'default', expectedClass: 'size-6' },
+    { size: 'lg', expectedClass: 'size-8' },
+  ] as const)('renders $size size with $expectedClass', ({ size, expectedClass }) => {
+    const { container } = render(<Spinner size={size} />);
+    expect(container.querySelector('svg')).toHaveClass(expectedClass);
   });
 
   it('accepts custom className', () => {
@@ -27,58 +23,54 @@ describe('Spinner', () => {
 });
 
 describe('Loading', () => {
-  it('renders spinner', () => {
-    const { container } = render(<Loading />);
+  it('renders spinner with optional text', () => {
+    const { container, rerender } = render(<Loading />);
     expect(container.querySelector('svg')).toBeInTheDocument();
-  });
 
-  it('renders text when provided', () => {
-    render(<Loading text="Please wait..." />);
+    rerender(<Loading text="Please wait..." />);
     expect(screen.getByText('Please wait...')).toBeInTheDocument();
   });
 
-  it('renders full screen version', () => {
+  it('renders full screen when specified', () => {
     const { container } = render(<Loading fullScreen />);
     expect(container.firstChild).toHaveClass('fixed', 'inset-0');
   });
 });
 
-describe('PageLoading', () => {
-  it('renders loading state', () => {
-    render(<PageLoading />);
+describe('PageLoading / InlineLoading', () => {
+  it.each([
+    { Component: PageLoading, name: 'PageLoading' },
+    { Component: InlineLoading, name: 'InlineLoading' },
+  ])('$name renders loading text', ({ Component }) => {
+    render(<Component />);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });
 
-describe('InlineLoading', () => {
-  it('renders inline loading', () => {
-    render(<InlineLoading />);
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-});
-
-describe('Skeleton components', () => {
-  it('renders Skeleton', () => {
+describe('Skeleton', () => {
+  it('renders with animate-pulse', () => {
     const { container } = render(<Skeleton className="h-10 w-full" />);
     expect(container.firstChild).toHaveClass('animate-pulse');
   });
 
-  it('renders SkeletonText with multiple lines', () => {
+  it('renders SkeletonText with specified lines', () => {
     const { container } = render(<SkeletonText lines={3} />);
-    const skeletons = container.querySelectorAll('.animate-pulse');
-    expect(skeletons.length).toBe(3);
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(3);
   });
 
   it('renders SkeletonCard', () => {
     const { container } = render(<SkeletonCard />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
+});
 
-  it('renders SkeletonAvatar with different sizes', () => {
-    const { container: sm } = render(<SkeletonAvatar size="sm" />);
-    const { container: lg } = render(<SkeletonAvatar size="lg" />);
-
-    expect(sm.firstChild).toHaveClass('size-8');
-    expect(lg.firstChild).toHaveClass('size-12');
+describe('SkeletonAvatar', () => {
+  it.each([
+    { size: 'sm', expectedClass: 'size-8' },
+    { size: 'default', expectedClass: 'size-10' },
+    { size: 'lg', expectedClass: 'size-12' },
+  ] as const)('renders $size with $expectedClass', ({ size, expectedClass }) => {
+    const { container } = render(<SkeletonAvatar size={size} />);
+    expect(container.firstChild).toHaveClass(expectedClass);
   });
 });
