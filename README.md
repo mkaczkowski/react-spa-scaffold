@@ -169,6 +169,7 @@ src/
 ├── lib/             # Utilities, API client, config
 ├── locales/         # Translation files (optional)
 ├── mocks/           # MSW handlers and fixtures (optional)
+├── pages/           # Route page components
 ├── stores/          # Zustand stores (optional)
 ├── test/            # Test utilities and providers
 └── types/           # TypeScript types
@@ -186,8 +187,11 @@ See [CLAUDE.md](CLAUDE.md) for code patterns and developer workflow.
 | `npm run dev`           | Start dev server              |
 | `npm run build`         | Production build              |
 | `npm run typecheck`     | TypeScript type checking      |
+| `npm run lint`          | ESLint check                  |
 | `npm run lint:fix`      | ESLint with auto-fix          |
+| `npm run format`        | Prettier format all files     |
 | `npm run test`          | Run unit tests                |
+| `npm run test:watch`    | Unit tests in watch mode      |
 | `npm run test:coverage` | Tests with coverage (80% min) |
 | `npm run e2e`           | Run Playwright E2E tests      |
 | `npm run i18n:extract`  | Extract translation strings   |
@@ -195,130 +199,8 @@ See [CLAUDE.md](CLAUDE.md) for code patterns and developer workflow.
 ## Adding Components
 
 ```bash
-npx shadcn@latest add button card dialog input
+npx shadcn@latest add button card dialog
 ```
-
-## Example Usage
-
-### TanStack Query
-
-```tsx
-import { useExampleQuery } from '@/hooks/useExampleQuery';
-
-function MyComponent() {
-  const { data, isLoading, error } = useExampleQuery();
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  return (
-    <ul>
-      {data?.map((item) => (
-        <li key={item.id}>{item.title}</li>
-      ))}
-    </ul>
-  );
-}
-```
-
-### React Hook Form + Zod
-
-```tsx
-import { useContactForm } from '@/hooks/useContactForm';
-
-function ContactForm() {
-  const { form, onSubmit, isSubmitting, errors } = useContactForm();
-
-  return (
-    <form onSubmit={onSubmit}>
-      <input {...form.register('name')} />
-      {errors.name && <span>{errors.name.message}</span>}
-      <button type="submit" disabled={isSubmitting}>
-        Submit
-      </button>
-    </form>
-  );
-}
-```
-
-### SEO Component (React 19 Native Metadata)
-
-React 19 natively supports document metadata tags that are automatically hoisted to `<head>`:
-
-```tsx
-import { SEO } from '@/components/shared';
-
-function HomePage() {
-  return (
-    <>
-      <SEO title="Home" description="Welcome to our app" keywords={['react', 'typescript']} />
-      <main>Content here</main>
-    </>
-  );
-}
-```
-
-### Internationalization (Lingui)
-
-This project uses [LinguiJS](https://lingui.dev/) for internationalization with **mandatory translator comments**.
-
-**Always add comments** to help translators understand context:
-
-```tsx
-import { Trans } from '@lingui/react/macro';
-import { useLingui } from '@lingui/react/macro';
-
-function Header() {
-  const { t } = useLingui();
-
-  return (
-    <header>
-      {/* Trans component with comment */}
-      <h1>
-        <Trans comment="Main welcome heading on the home page">Welcome</Trans>
-      </h1>
-
-      {/* t() function with comment */}
-      <button
-        aria-label={t({
-          message: 'Close menu',
-          comment: 'Accessibility label for mobile menu close button',
-        })}
-      />
-
-      <LanguageSwitcher />
-    </header>
-  );
-}
-```
-
-### API Mocking (MSW)
-
-[Mock Service Worker](https://mswjs.io/) is configured for API mocking in tests. Handlers are defined in
-`src/mocks/handlers/`:
-
-```typescript
-// In your test file
-import { http, HttpResponse, server } from '@/test';
-
-it('handles error state', () => {
-  // Override handler for this specific test
-  server.use(
-    http.get('https://api.example.com/data', () => {
-      return new HttpResponse(null, { status: 500 });
-    }),
-  );
-
-  // Test error handling...
-});
-```
-
-**Adding new handlers:**
-
-1. Create handler file in `src/mocks/handlers/` (e.g., `users.ts`)
-2. Define handlers using `http.get()`, `http.post()`, etc.
-3. Export and add to `src/mocks/handlers/index.ts`
-4. Create fixtures in `src/mocks/fixtures/` as needed
 
 ## License
 
