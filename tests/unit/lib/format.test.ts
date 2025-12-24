@@ -61,6 +61,36 @@ describe('formatRelativeTime', () => {
     const result = formatRelativeTime('invalid');
     expect(result).toBe('Invalid date');
   });
+
+  it('formats seconds', () => {
+    const recentDate = new Date(Date.now() - 1000 * 30); // 30 seconds ago
+    const result = formatRelativeTime(recentDate, 'en-US');
+    expect(result).toMatch(/second|now/i);
+  });
+
+  it('formats minutes', () => {
+    const pastDate = new Date(Date.now() - 1000 * 60 * 5); // 5 minutes ago
+    const result = formatRelativeTime(pastDate, 'en-US');
+    expect(result).toMatch(/minute/i);
+  });
+
+  it('formats months', () => {
+    const pastDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 45); // ~1.5 months ago
+    const result = formatRelativeTime(pastDate, 'en-US');
+    expect(result).toMatch(/month/i);
+  });
+
+  it('formats years', () => {
+    const pastDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 400); // ~1+ year ago
+    const result = formatRelativeTime(pastDate, 'en-US');
+    expect(result).toMatch(/year/i);
+  });
+
+  it('handles timestamp numbers', () => {
+    const timestamp = Date.now() - 1000 * 60 * 60; // 1 hour ago as number
+    const result = formatRelativeTime(timestamp, 'en-US');
+    expect(result).toMatch(/hour|ago/i);
+  });
 });
 
 describe('formatNumber', () => {

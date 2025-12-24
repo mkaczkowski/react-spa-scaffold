@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { clearAppStorage, getStorageItem, removeStorageItem, setStorageItem } from '@/lib/storage';
 import { STORAGE_KEYS } from '@/lib/storageKeys';
@@ -10,6 +10,7 @@ describe('storage utilities', () => {
 
   afterEach(() => {
     localStorage.clear();
+    vi.restoreAllMocks();
   });
 
   describe('setStorageItem', () => {
@@ -22,6 +23,21 @@ describe('storage utilities', () => {
     it('stores a string value', () => {
       setStorageItem(STORAGE_KEYS.locale, 'en');
       expect(localStorage.getItem(STORAGE_KEYS.locale)).toBe('"en"');
+    });
+
+    it('returns false and logs error on storage failure', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('QuotaExceeded');
+      });
+
+      const result = setStorageItem(STORAGE_KEYS.preferences, { theme: 'dark' });
+
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to set localStorage'),
+        expect.any(Error),
+      );
     });
   });
 
@@ -43,6 +59,19 @@ describe('storage utilities', () => {
       // Should return the raw string value
       expect(result).toBe('not-json');
     });
+
+    it('returns default when raw string is null after parse failure', () => {
+      // Mock getItem to return null on second call (simulating storage cleared between calls)
+      let callCount = 0;
+      vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) return 'invalid-json{';
+        return null;
+      });
+
+      const result = getStorageItem(STORAGE_KEYS.locale, 'default');
+      expect(result).toBe('default');
+    });
   });
 
   describe('removeStorageItem', () => {
@@ -51,6 +80,21 @@ describe('storage utilities', () => {
       const result = removeStorageItem(STORAGE_KEYS.preferences);
       expect(result).toBe(true);
       expect(localStorage.getItem(STORAGE_KEYS.preferences)).toBeNull();
+    });
+
+    it('returns false and logs error on removal failure', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      const result = removeStorageItem(STORAGE_KEYS.preferences);
+
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to remove localStorage'),
+        expect.any(Error),
+      );
     });
   });
 
@@ -66,6 +110,21 @@ describe('storage utilities', () => {
       expect(localStorage.getItem(STORAGE_KEYS.locale)).toBeNull();
       // Other keys should remain
       expect(localStorage.getItem('other-key')).toBe('value');
+    });
+
+    it('returns false and logs error on clear failure', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      const result = clearAppStorage();
+
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to clear app storage'),
+        expect.any(Error),
+      );
     });
   });
 });

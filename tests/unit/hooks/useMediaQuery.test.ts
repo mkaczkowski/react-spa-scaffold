@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BREAKPOINTS, useMediaQuery } from '@/hooks/useMediaQuery';
+import { BREAKPOINTS, useIsDesktop, useIsMobile, useMediaQuery } from '@/hooks/useMediaQuery';
 
 describe('useMediaQuery', () => {
   const createMatchMedia = (matches: boolean) => {
@@ -67,5 +67,63 @@ describe('BREAKPOINTS', () => {
     expect(BREAKPOINTS.md).toBe(768);
     expect(BREAKPOINTS.lg).toBe(1024);
     expect(BREAKPOINTS.xl).toBe(1280);
+  });
+});
+
+describe('useIsMobile', () => {
+  const createMatchMedia = (matches: boolean) => {
+    return vi.fn().mockImplementation((query: string) => ({
+      matches,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+  };
+
+  it('returns true when viewport is mobile-sized', () => {
+    // Mobile is when min-width: 768px does NOT match
+    window.matchMedia = createMatchMedia(false);
+
+    const { result } = renderHook(() => useIsMobile());
+
+    expect(result.current).toBe(true);
+  });
+
+  it('returns false when viewport is larger than mobile', () => {
+    // Not mobile when min-width: 768px matches
+    window.matchMedia = createMatchMedia(true);
+
+    const { result } = renderHook(() => useIsMobile());
+
+    expect(result.current).toBe(false);
+  });
+});
+
+describe('useIsDesktop', () => {
+  const createMatchMedia = (matches: boolean) => {
+    return vi.fn().mockImplementation((query: string) => ({
+      matches,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+  };
+
+  it('returns true when viewport is desktop-sized', () => {
+    // Desktop is when min-width: 1024px matches
+    window.matchMedia = createMatchMedia(true);
+
+    const { result } = renderHook(() => useIsDesktop());
+
+    expect(result.current).toBe(true);
+  });
+
+  it('returns false when viewport is smaller than desktop', () => {
+    // Not desktop when min-width: 1024px does NOT match
+    window.matchMedia = createMatchMedia(false);
+
+    const { result } = renderHook(() => useIsDesktop());
+
+    expect(result.current).toBe(false);
   });
 });
