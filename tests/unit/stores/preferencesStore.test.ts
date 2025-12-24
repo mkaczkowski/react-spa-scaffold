@@ -1,15 +1,7 @@
-import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { initPreferencesSync, usePreferencesStore } from '@/stores/preferencesStore';
-
-const mockMatchMedia = (matches: boolean) =>
-  vi.fn().mockImplementation((query: string) => ({
-    matches,
-    media: query,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  }));
+import { act, mockMatchMedia } from '@/test-utils';
 
 describe('preferencesStore', () => {
   beforeEach(() => {

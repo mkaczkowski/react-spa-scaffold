@@ -1,30 +1,18 @@
-import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BREAKPOINTS, useIsDesktop, useIsMobile, useMediaQuery } from '@/hooks/useMediaQuery';
-
-const createMatchMedia = (matches: boolean) =>
-  vi.fn().mockImplementation((query: string) => ({
-    matches,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }));
+import { act, mockMatchMedia, renderHook } from '@/test-utils';
 
 describe('useMediaQuery', () => {
   beforeEach(() => {
-    window.matchMedia = createMatchMedia(false);
+    window.matchMedia = mockMatchMedia(false);
   });
 
   it.each([
     { matches: false, expected: false },
     { matches: true, expected: true },
   ])('returns $expected when query matches=$matches', ({ matches, expected }) => {
-    window.matchMedia = createMatchMedia(matches);
+    window.matchMedia = mockMatchMedia(matches);
     const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
     expect(result.current).toBe(expected);
   });
@@ -61,7 +49,7 @@ describe('useIsMobile / useIsDesktop', () => {
     { hook: useIsDesktop, matches: true, expected: true, name: 'useIsDesktop (desktop)' },
     { hook: useIsDesktop, matches: false, expected: false, name: 'useIsDesktop (mobile)' },
   ])('$name returns $expected', ({ hook, matches, expected }) => {
-    window.matchMedia = createMatchMedia(matches);
+    window.matchMedia = mockMatchMedia(matches);
     const { result } = renderHook(() => hook());
     expect(result.current).toBe(expected);
   });

@@ -1,16 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useThemeEffect } from '@/hooks/useThemeEffect';
 import { usePreferencesStore } from '@/stores/preferencesStore';
-
-const mockMatchMedia = (matches: boolean) =>
-  vi.fn().mockImplementation((query: string) => ({
-    matches,
-    media: query,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  }));
+import { act, mockMatchMedia, renderHook } from '@/test-utils';
 
 describe('useThemeEffect', () => {
   beforeEach(() => {
