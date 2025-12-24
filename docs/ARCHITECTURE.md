@@ -171,6 +171,7 @@ import { render } from '@/test';           // src/test/index.ts
 
 ## Related Docs
 
+- [Component Guidelines](./COMPONENT_GUIDELINES.md) - Complete React + TypeScript component blueprint
 - [Coding Standards](./CODING_STANDARDS.md) - TypeScript, components, state patterns
 - [Testing](./TESTING.md) - Unit testing guidelines
 - [E2E Testing](./E2E_TESTING.md) - Playwright patterns
