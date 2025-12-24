@@ -2,24 +2,24 @@
 
 ## Tech Stack
 
-| Layer          | Technology                    |
-| -------------- | ----------------------------- |
-| Framework      | React 19 + TypeScript         |
-| Build          | Vite 7                        |
-| Routing        | React Router 7                |
-| Styling        | Tailwind CSS 4                |
-| State          | Zustand (local), TanStack Query (server) |
-| Forms          | React Hook Form + Zod         |
-| i18n           | Lingui                        |
-| Testing        | Vitest + Playwright           |
-| Error Tracking | Sentry                        |
+| Layer          | Technology                               |
+| -------------- | ---------------------------------------- |
+| Framework      | React 19 + TypeScript                    |
+| Build          | Vite 7                                   |
+| Routing        | React Router 7 (lazy-loaded pages)       |
+| Styling        | Tailwind CSS 4                           |
+| State          | Zustand (persisted) + TanStack Query (server) |
+| Forms          | React Hook Form + Zod                    |
+| i18n           | Lingui                                   |
+| Testing        | Vitest (unit) + Playwright (e2e)         |
+| Error Tracking | Sentry (lazy-loaded in production)       |
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── layout/     # Page structure (Header, Footer)
+│   ├── layout/     # Page structure (Header)
 │   ├── shared/     # Feature components (ThemeToggle, LanguageSwitcher)
 │   └── ui/         # Primitives (Button, Spinner, Skeleton)
 ├── contexts/       # React Context providers
@@ -33,10 +33,8 @@ src/
 ├── test/           # Test utilities and providers
 └── types/          # Shared TypeScript definitions
 
-tests/
-├── unit/           # Vitest unit tests (mirrors src/)
-└── e2e/            # Playwright end-to-end tests
-
+tests/unit/         # Vitest tests (mirrors src/ structure)
+e2e/                # Playwright end-to-end tests
 docs/               # Project documentation
 ```
 
@@ -89,38 +87,7 @@ Providers wrap the app in this order (outermost to innermost):
 | Shared UI state       | React Context          | `contexts/`        |
 | Component-local state | useState/useReducer    | Component file     |
 
-### Zustand Store Pattern
-
-```tsx
-// stores/exampleStore.ts
-export const useExampleStore = create<ExampleState>()(
-  devtools(
-    persist(
-      (set, get) => ({
-        value: initialValue,
-        setValue: (v) => set({ value: v }),
-      }),
-      { name: 'storage-key' }
-    )
-  )
-);
-```
-
-### Query Hook Pattern
-
-```tsx
-// hooks/useExampleQuery.ts
-async function fetchExample(): Promise<Example> {
-  return api.get<Example>('/example');
-}
-
-export function useExampleQuery() {
-  return useQuery({
-    queryKey: ['example'],
-    queryFn: fetchExample,
-  });
-}
-```
+See [Coding Standards](./CODING_STANDARDS.md#state-management) for implementation patterns.
 
 ## API Layer
 
@@ -177,34 +144,6 @@ export const APP_CONFIG = {
 };
 ```
 
-## Component Patterns
-
-### Barrel Exports
-
-Each directory has an `index.ts` for clean imports:
-
-```tsx
-// components/shared/index.ts
-export { ErrorBoundary } from './ErrorBoundary';
-export { ThemeToggle } from './ThemeToggle';
-
-// Usage
-import { ErrorBoundary, ThemeToggle } from '@/components/shared';
-```
-
-### Component Structure
-
-```tsx
-export interface ComponentProps {
-  title: string;
-  count?: number;
-}
-
-export function Component({ title, count = 0 }: ComponentProps) {
-  return <div>{title}: {count}</div>;
-}
-```
-
 ## Path Aliases
 
 Configured in `tsconfig.json`:
@@ -225,10 +164,10 @@ import { render } from '@/test';           // src/test/index.ts
 ## Key Conventions
 
 1. **Named exports** - Use named exports, not default (except pages for lazy loading)
-2. **Colocation** - Keep related files together (component + test + styles)
+2. **Barrel exports** - Each directory has `index.ts` for clean imports
 3. **Type inference** - Let TypeScript infer when obvious, explicit for APIs
 4. **Translations** - All user-facing text wrapped with `<Trans>` or `t()`
-5. **Testing** - Unit tests in `tests/unit/`, E2E in `tests/e2e/`
+5. **Test location** - Unit tests in `tests/unit/` mirroring `src/` structure
 
 ## Related Docs
 
