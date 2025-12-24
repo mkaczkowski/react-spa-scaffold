@@ -32,15 +32,11 @@ test.describe('Language Switcher', () => {
     await page.getByRole('button', { name: /change language/i }).click();
     await page.getByText('Español').click();
 
-    // Wait for dropdown to close (indicates language change completed)
-    await expect(page.getByText('Deutsch')).not.toBeVisible();
+    // Wait for language change to apply
+    await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();
 
-    // Reload and verify Spanish is still selected
+    // Reload and verify Spanish persisted
     await page.reload();
-    await page.getByRole('button', { name: /change language/i }).click();
-
-    // Verify welcome text is in Spanish (actual behavior test)
-    await page.keyboard.press('Escape');
     await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();
   });
 });
