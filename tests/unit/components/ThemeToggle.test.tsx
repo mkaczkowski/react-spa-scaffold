@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { usePreferencesStore } from '@/stores/preferencesStore';
-import { render } from '@/test-utils';
+import { render } from '@/test';
 
 // Reset store state before each test
 beforeEach(() => {

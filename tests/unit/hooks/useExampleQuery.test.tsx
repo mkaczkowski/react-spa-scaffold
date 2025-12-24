@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { useExampleQuery } from '@/hooks/useExampleQuery';
-import { createTestQueryClient, server } from '@/test-utils';
+import { createTestQueryClient, server } from '@/test';
 
 // Create a wrapper with QueryClient for hook testing
 function createWrapper() {

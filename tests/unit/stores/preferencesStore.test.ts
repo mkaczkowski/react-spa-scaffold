@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { initPreferencesSync, usePreferencesStore } from '@/stores/preferencesStore';
-import { act, mockMatchMedia } from '@/test-utils';
+import { act, mockMatchMedia } from '@/test';
 
 describe('preferencesStore', () => {
   beforeEach(() => {

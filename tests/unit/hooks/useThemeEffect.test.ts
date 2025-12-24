@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useThemeEffect } from '@/hooks/useThemeEffect';
 import { usePreferencesStore } from '@/stores/preferencesStore';
-import { act, mockMatchMedia, renderHook } from '@/test-utils';
+import { act, mockMatchMedia, renderHook } from '@/test';
 
 describe('useThemeEffect', () => {
   beforeEach(() => {

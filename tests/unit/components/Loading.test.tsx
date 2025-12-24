@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { InlineLoading, Loading, PageLoading } from '@/components/ui/loading';
 import { Skeleton, SkeletonAvatar, SkeletonCard, SkeletonText } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import { render } from '@/test-utils';
+import { render } from '@/test';
 
 describe('Spinner', () => {
   it.each([

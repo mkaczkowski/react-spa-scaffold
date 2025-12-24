@@ -17,7 +17,7 @@ i18n.loadAndActivate({ locale: 'en', messages: {} });
  * - gcTime: 0 - Prevents caching between tests
  * - staleTime: 0 - Data always considered stale in tests
  */
-function createTestQueryClient() {
+export function createTestQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -51,29 +51,4 @@ function customRender(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>
   return render(ui, { wrapper: AllProviders, ...options });
 }
 
-export * from '@testing-library/react';
 export { customRender as render };
-export { createTestQueryClient };
-
-// Re-export MSW utilities for test convenience
-export { server } from '@/mocks/node';
-export { http, HttpResponse, delay } from 'msw';
-
-// Re-export vi for test utilities that need it
-export { vi } from 'vitest';
-
-/**
- * Creates a mock for window.matchMedia.
- * Usage: window.matchMedia = mockMatchMedia(true) // matches
- */
-export const mockMatchMedia = (matches: boolean) =>
-  vi.fn().mockImplementation((query: string) => ({
-    matches,
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }));

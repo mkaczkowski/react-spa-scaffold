@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BREAKPOINTS, useIsDesktop, useIsMobile, useMediaQuery } from '@/hooks/useMediaQuery';
-import { act, mockMatchMedia, renderHook } from '@/test-utils';
+import { act, mockMatchMedia, renderHook } from '@/test';
 
 describe('useMediaQuery', () => {
   beforeEach(() => {

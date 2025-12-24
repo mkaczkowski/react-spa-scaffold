@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
-import { render } from '@/test-utils';
+import { render } from '@/test';
 
 describe('LanguageSwitcher', () => {
   it('renders the language button', () => {

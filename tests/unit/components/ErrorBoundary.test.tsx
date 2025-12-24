@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { render } from '@/test-utils';
+import { render } from '@/test';
 
 // Component that throws an error
 function ThrowingComponent({ shouldThrow = true }: { shouldThrow?: boolean }) {

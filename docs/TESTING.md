@@ -75,7 +75,7 @@ describe('useIsMobile', () => {
 ### Component Testing
 
 ```typescript
-import { render, screen } from '@/test-utils'; // Custom render with providers
+import { render, screen } from '@/test'; // Custom render with providers
 
 describe('Header', () => {
   it('renders navigation links', () => {
