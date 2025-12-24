@@ -1,28 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 
-interface ExampleData {
-  id: string;
-  title: string;
-  completed: boolean;
-}
+import { api } from '@/lib/api';
+import type { Todo } from '@/types/api';
 
-async function fetchExampleData(): Promise<ExampleData[]> {
-  // Replace with your actual API call
-  const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-  return response.json();
+async function fetchTodos(): Promise<Todo[]> {
+  return api.get<Todo[]>('/todos?_limit=5');
 }
 
 /**
  * Example TanStack Query hook demonstrating the pattern.
- * Replace with your actual data fetching logic.
+ * Uses the centralized API client and shared types.
  */
 export function useExampleQuery() {
   return useQuery({
     queryKey: ['example', 'todos'],
-    queryFn: fetchExampleData,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: fetchTodos,
+    // Uses default staleTime from QueryProvider (5 minutes)
   });
 }

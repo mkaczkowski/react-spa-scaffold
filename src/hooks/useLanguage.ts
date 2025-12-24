@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 
 import { dynamicActivate, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
-
-const LANGUAGE_STORAGE_KEY = 'app-language';
+import { setStorageItem } from '@/lib/storage';
+import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 export function useLanguage() {
   const { i18n } = useLingui();
@@ -12,7 +12,7 @@ export function useLanguage() {
 
   const changeLanguage = useCallback(async (locale: SupportedLocale) => {
     await dynamicActivate(locale);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, locale);
+    setStorageItem(STORAGE_KEYS.locale, locale);
   }, []);
 
   return {

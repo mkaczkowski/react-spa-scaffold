@@ -9,25 +9,65 @@ import { Toaster } from '@/components/ui/sonner';
 import { MobileProvider } from '@/contexts/mobileContext';
 import { QueryProvider } from '@/contexts/queryContext';
 import { i18n, initI18n } from '@/i18n';
+import { SENTRY_CONFIG } from '@/lib/config';
+import { initPreferencesSync } from '@/stores/preferencesStore';
 
 import App from './App';
 
-// Lazy load Sentry after initial render to avoid blocking web vitals
-function initSentry() {
-  if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
-    import('@sentry/react').then((Sentry) => {
+/**
+ * Lazy load Sentry after initial render to avoid blocking web vitals.
+ * Returns the Sentry module for use in global error handlers.
+ */
+async function initSentry() {
+  if (import.meta.env.PROD && SENTRY_CONFIG.dsn) {
+    try {
+      const Sentry = await import('@sentry/react');
       Sentry.init({
-        dsn: import.meta.env.VITE_SENTRY_DSN,
+        dsn: SENTRY_CONFIG.dsn,
         sendDefaultPii: true,
         integrations: [Sentry.browserTracingIntegration()],
-        tracesSampleRate: 0.1, // 10% of transactions
+        tracesSampleRate: SENTRY_CONFIG.tracesSampleRate,
       });
-    });
+      return Sentry;
+    } catch (error) {
+      console.error('Failed to initialize Sentry:', error);
+    }
   }
+  return null;
+}
+
+/**
+ * Setup global error handlers for uncaught errors and promise rejections.
+ * @param Sentry - The Sentry module or null if not available
+ */
+function setupGlobalErrorHandlers(Sentry: Awaited<ReturnType<typeof initSentry>>) {
+  // Handle uncaught errors
+  window.onerror = (message, source, lineno, colno, error) => {
+    console.error('Uncaught error:', { message, source, lineno, colno, error });
+
+    if (Sentry && error) {
+      Sentry.captureException(error);
+    }
+
+    // Return false to allow default browser handling
+    return false;
+  };
+
+  // Handle unhandled promise rejections
+  window.onunhandledrejection = (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+
+    if (Sentry) {
+      Sentry.captureException(event.reason);
+    }
+  };
 }
 
 // Initialize i18n before rendering
 initI18n().then(() => {
+  // Initialize multi-tab sync for preferences
+  const cleanupPreferencesSync = initPreferencesSync();
+
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryProvider>
@@ -46,9 +86,22 @@ initI18n().then(() => {
   );
 
   // Initialize Sentry after render, using idle callback for best web vitals
+  const initSentryAndHandlers = () => {
+    initSentry().then((Sentry) => {
+      setupGlobalErrorHandlers(Sentry);
+    });
+  };
+
   if ('requestIdleCallback' in window) {
-    requestIdleCallback(initSentry);
+    requestIdleCallback(initSentryAndHandlers);
   } else {
-    setTimeout(initSentry, 1);
+    setTimeout(initSentryAndHandlers, 1);
+  }
+
+  // Cleanup on HMR (development only)
+  if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+      cleanupPreferencesSync();
+    });
   }
 });

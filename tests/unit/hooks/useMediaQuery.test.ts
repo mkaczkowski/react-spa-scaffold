@@ -1,71 +1,57 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BREAKPOINTS, useMediaQuery } from '@/hooks/useMediaQuery';
+import { BREAKPOINTS, useIsDesktop, useIsMobile, useMediaQuery } from '@/hooks/useMediaQuery';
+import { mockMatchMedia } from '@/test';
 
 describe('useMediaQuery', () => {
-  const createMatchMedia = (matches: boolean) => {
-    return vi.fn().mockImplementation((query: string) => ({
-      matches,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-  };
-
   beforeEach(() => {
-    window.matchMedia = createMatchMedia(false);
+    window.matchMedia = mockMatchMedia(false);
   });
 
-  it('returns false when query does not match', () => {
-    window.matchMedia = createMatchMedia(false);
-
+  it.each([
+    { matches: false, expected: false },
+    { matches: true, expected: true },
+  ])('returns $expected when query matches=$matches', ({ matches, expected }) => {
+    window.matchMedia = mockMatchMedia(matches);
     const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-
-    expect(result.current).toBe(false);
-  });
-
-  it('returns true when query matches', () => {
-    window.matchMedia = createMatchMedia(true);
-
-    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-
-    expect(result.current).toBe(true);
+    expect(result.current).toBe(expected);
   });
 
   it('updates when media query changes', () => {
     let listener: ((e: MediaQueryListEvent) => void) | null = null;
-
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
-      addEventListener: vi.fn((_event: string, cb: (e: MediaQueryListEvent) => void) => {
+      addEventListener: vi.fn((_: string, cb: (e: MediaQueryListEvent) => void) => {
         listener = cb;
       }),
       removeEventListener: vi.fn(),
     }));
 
     const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-
     expect(result.current).toBe(false);
 
-    act(() => {
-      listener?.({ matches: true } as MediaQueryListEvent);
-    });
-
+    act(() => listener?.({ matches: true } as MediaQueryListEvent));
     expect(result.current).toBe(true);
   });
 });
 
 describe('BREAKPOINTS', () => {
   it('has correct values', () => {
-    expect(BREAKPOINTS.sm).toBe(640);
-    expect(BREAKPOINTS.md).toBe(768);
-    expect(BREAKPOINTS.lg).toBe(1024);
-    expect(BREAKPOINTS.xl).toBe(1280);
+    expect(BREAKPOINTS).toEqual({ sm: 640, md: 768, lg: 1024, xl: 1280 });
+  });
+});
+
+describe('useIsMobile / useIsDesktop', () => {
+  it.each([
+    { hook: useIsMobile, matches: false, expected: true, name: 'useIsMobile (mobile)' },
+    { hook: useIsMobile, matches: true, expected: false, name: 'useIsMobile (desktop)' },
+    { hook: useIsDesktop, matches: true, expected: true, name: 'useIsDesktop (desktop)' },
+    { hook: useIsDesktop, matches: false, expected: false, name: 'useIsDesktop (mobile)' },
+  ])('$name returns $expected', ({ hook, matches, expected }) => {
+    window.matchMedia = mockMatchMedia(matches);
+    const { result } = renderHook(() => hook());
+    expect(result.current).toBe(expected);
   });
 });

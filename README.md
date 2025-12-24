@@ -294,7 +294,7 @@ function Header() {
 
 ```typescript
 // In your test file
-import { http, HttpResponse, server } from '@/test-utils';
+import { http, HttpResponse, server } from '@/test';
 
 it('handles error state', () => {
   // Override handler for this specific test

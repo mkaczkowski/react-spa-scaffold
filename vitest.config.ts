@@ -1,7 +1,16 @@
 import path from 'path';
+
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  plugins: [
+    react({
+      babel: {
+        plugins: ['@lingui/babel-plugin-lingui-macro'],
+      },
+    }),
+  ],
   test: {
     globals: true,
     environment: 'jsdom',
@@ -14,10 +23,10 @@ export default defineConfig({
       reporter: ['text', 'json', 'html', 'lcov'],
       exclude: ['**/*.test.{ts,tsx}', '**/index.ts', 'src/types/**', 'src/components/ui/**'],
       thresholds: {
-        lines: 60,
-        functions: 60,
-        statements: 60,
-        branches: 50,
+        lines: 80,
+        functions: 80,
+        statements: 80,
+        branches: 80,
       },
     },
   },

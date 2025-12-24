@@ -1,34 +1,30 @@
-import { Trans } from '@lingui/react/macro';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
 import { Header } from '@/components/layout';
+import { PageLoading } from '@/components/ui/loading';
+import { SkipLink } from '@/components/ui/visually-hidden';
 import { useThemeEffect } from '@/hooks';
+import { ROUTES } from '@/lib/routes';
 
-function HomePage() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold">
-        <Trans>Welcome to My App</Trans>
-      </h1>
-      <p className="text-muted-foreground mt-2">
-        <Trans>
-          Get started by editing <code className="bg-muted rounded px-1">src/App.tsx</code>
-        </Trans>
-      </p>
-    </div>
-  );
-}
+// Lazy load pages for code splitting
+const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
+const NotFoundPage = lazy(() => import('@/pages/NotFound').then((m) => ({ default: m.NotFoundPage })));
 
 export default function App() {
   useThemeEffect();
 
   return (
     <div className="bg-background text-foreground min-h-screen">
+      <SkipLink />
       <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-        </Routes>
+      <main id="main">
+        <Suspense fallback={<PageLoading />}>
+          <Routes>
+            <Route path={ROUTES.HOME} element={<HomePage />} />
+            <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );
