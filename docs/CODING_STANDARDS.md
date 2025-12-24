@@ -66,3 +66,17 @@ export function useTodosQuery() {
   });
 }
 ```
+
+Context hooks throw if used outside their provider:
+
+```tsx
+const MyContext = createContext<MyValue | null>(null);
+
+export function useMyContext() {
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useMyContext must be used within MyProvider');
+  }
+  return context;
+}
+```
