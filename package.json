@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.2.0",
+    "shadcn": "^3.6.2",
     "@eslint/js": "^9.28.0",
     "@lingui/babel-plugin-lingui-macro": "^5.7.0",
     "@lingui/cli": "^5.7.0",
