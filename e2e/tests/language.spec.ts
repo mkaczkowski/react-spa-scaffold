@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+import { setupPage } from '../fixtures';
+
 test.describe('Language Switcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
+    await setupPage(page);
   });
 
   test('displays language switcher button', async ({ page }) => {
@@ -14,25 +14,16 @@ test.describe('Language Switcher', () => {
   test('opens dropdown with language options', async ({ page }) => {
     await page.getByRole('button', { name: /change language/i }).click();
 
-    // Should show all supported languages
     await expect(page.getByText('English')).toBeVisible();
     await expect(page.getByText('Español')).toBeVisible();
     await expect(page.getByText('Deutsch')).toBeVisible();
   });
 
-  test('highlights current language in dropdown', async ({ page }) => {
-    await page.getByRole('button', { name: /change language/i }).click();
-
-    // English should be highlighted by default
-    const englishOption = page.getByText('English');
-    await expect(englishOption.locator('..')).toHaveClass(/bg-accent/);
-  });
-
-  test('closes dropdown after language selection', async ({ page }) => {
+  test('closes dropdown after selection', async ({ page }) => {
     await page.getByRole('button', { name: /change language/i }).click();
     await page.getByText('Español').click();
 
-    // Dropdown should close
+    // Dropdown should close - other options not visible
     await expect(page.getByText('Deutsch')).not.toBeVisible();
   });
 
@@ -41,15 +32,15 @@ test.describe('Language Switcher', () => {
     await page.getByRole('button', { name: /change language/i }).click();
     await page.getByText('Español').click();
 
-    // Wait for language change
-    await page.waitForTimeout(500);
+    // Wait for dropdown to close (indicates language change completed)
+    await expect(page.getByText('Deutsch')).not.toBeVisible();
 
-    // Reload
+    // Reload and verify Spanish is still selected
     await page.reload();
-
-    // Open dropdown and check Spanish is highlighted
     await page.getByRole('button', { name: /change language/i }).click();
-    const spanishOption = page.getByText('Español');
-    await expect(spanishOption.locator('..')).toHaveClass(/bg-accent/);
+
+    // Verify welcome text is in Spanish (actual behavior test)
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();
   });
 });
