@@ -1,11 +1,6 @@
 import { STORAGE_KEYS } from '@/lib/storageKeys';
 
-import {
-  DEFAULT_LOCALE,
-  FALLBACK_LOCALES,
-  SUPPORTED_LOCALES,
-  type SupportedLocale,
-} from './config';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from './config';
 
 function isSupported(locale: string): locale is SupportedLocale {
   return SUPPORTED_LOCALES.includes(locale.toLowerCase() as SupportedLocale);
@@ -22,12 +17,7 @@ function findBestMatch(langTag: string): SupportedLocale | null {
   const baseLanguage = normalized.split('-')[0];
   if (isSupported(baseLanguage)) return baseLanguage as SupportedLocale;
 
-  const fallback = FALLBACK_LOCALES[baseLanguage];
-  if (fallback) return fallback;
-
-  const regionalFallback = SUPPORTED_LOCALES.find((locale) =>
-    locale.toLowerCase().startsWith(baseLanguage),
-  );
+  const regionalFallback = SUPPORTED_LOCALES.find((locale) => locale.toLowerCase().startsWith(baseLanguage));
   if (regionalFallback) return regionalFallback;
 
   return null;

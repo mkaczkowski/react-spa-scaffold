@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Language: es\n"
+
+#: src/App.tsx
+msgid "Welcome to My App"
+msgstr "Bienvenido a Mi App"
+
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx
+msgid "Switch to dark mode"
+msgstr "Cambiar a modo oscuro"
+
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx
+msgid "Switch to light mode"
+msgstr "Cambiar a modo claro"

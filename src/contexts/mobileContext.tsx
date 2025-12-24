@@ -1,6 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext } from 'react';
 
-import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
+import { BREAKPOINTS, useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface MobileContextValue {
   isMobile: boolean;
@@ -18,11 +18,7 @@ export function MobileProvider({ children }: { children: ReactNode }) {
   const isTablet = isAboveMd && !isAboveLg;
   const isDesktop = isAboveLg;
 
-  return (
-    <MobileContext.Provider value={{ isMobile, isTablet, isDesktop }}>
-      {children}
-    </MobileContext.Provider>
-  );
+  return <MobileContext.Provider value={{ isMobile, isTablet, isDesktop }}>{children}</MobileContext.Provider>;
 }
 
 export function useMobileContext(): MobileContextValue {

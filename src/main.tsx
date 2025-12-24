@@ -7,6 +7,7 @@ import './index.css';
 import { ErrorBoundary } from '@/components/shared';
 import { Toaster } from '@/components/ui/sonner';
 import { MobileProvider } from '@/contexts/mobileContext';
+import { QueryProvider } from '@/contexts/queryContext';
 import { i18n, initI18n } from '@/i18n';
 
 import App from './App';
@@ -29,16 +30,18 @@ function initSentry() {
 initI18n().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <I18nProvider i18n={i18n}>
-        <BrowserRouter>
-          <MobileProvider>
-            <ErrorBoundary>
-              <App />
-              <Toaster />
-            </ErrorBoundary>
-          </MobileProvider>
-        </BrowserRouter>
-      </I18nProvider>
+      <QueryProvider>
+        <I18nProvider i18n={i18n}>
+          <BrowserRouter>
+            <MobileProvider>
+              <ErrorBoundary>
+                <App />
+                <Toaster />
+              </ErrorBoundary>
+            </MobileProvider>
+          </BrowserRouter>
+        </I18nProvider>
+      </QueryProvider>
     </StrictMode>,
   );
 
