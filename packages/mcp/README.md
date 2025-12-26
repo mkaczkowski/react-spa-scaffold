@@ -481,6 +481,7 @@ webapp-base/                    # Monorepo root
         │   ├── features/
         │   │   ├── types.ts
         │   │   ├── registry.ts
+        │   │   ├── versions.ts
         │   │   └── index.ts
         │   ├── tools/
         │   │   ├── get-features.ts
@@ -493,9 +494,10 @@ webapp-base/                    # Monorepo root
         │   └── utils/
         │       ├── scaffold.ts
         │       ├── examples.ts
+        │       ├── paths.ts
         │       └── index.ts
         ├── scripts/
-        │   └── bundle-templates.sh
+        │   └── bundle-templates.js
         ├── package.json
         ├── tsconfig.json
         └── README.md

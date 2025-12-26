@@ -12,8 +12,10 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
-    "bundle": "bash scripts/bundle-templates.sh",
+    "bundle": "node scripts/bundle-templates.js",
     "prepublishOnly": "npm run bundle && npm run build"
   },
   "keywords": [
@@ -33,7 +35,8 @@
   "devDependencies": {
     "@types/node": "^22.15.0",
     "@webapp-base/tsconfig": "*",
-    "typescript": "~5.9.0"
+    "typescript": "~5.9.0",
+    "vitest": "^4.0.16"
   },
   "engines": {
     "node": ">=22.0.0"

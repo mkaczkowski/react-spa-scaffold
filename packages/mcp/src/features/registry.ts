@@ -3,6 +3,7 @@
  */
 
 import type { Feature, FeatureRegistry } from './types.js';
+import { CONFIG_VERSIONS } from './versions.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CORE FEATURE (Always included)
@@ -39,7 +40,7 @@ const core: Feature = {
     '@types/react': '^19.1.8',
     '@types/react-dom': '^19.1.6',
     '@vitejs/plugin-react': '^5.1.2',
-    '@webapp-base/tsconfig': '^1.0.0',
+    '@webapp-base/tsconfig': CONFIG_VERSIONS['@webapp-base/tsconfig'],
     tailwindcss: '^4.1.17',
     typescript: '~5.9.0',
     vite: '^7.0.0',
@@ -393,8 +394,8 @@ const devtools: Feature = {
   devDependencies: {
     '@commitlint/config-conventional': '^20.2.0',
     '@eslint/js': '^9.28.0',
-    '@webapp-base/eslint-config': '^1.0.0',
-    '@webapp-base/prettier-config': '^1.0.0',
+    '@webapp-base/eslint-config': CONFIG_VERSIONS['@webapp-base/eslint-config'],
+    '@webapp-base/prettier-config': CONFIG_VERSIONS['@webapp-base/prettier-config'],
     commitlint: '^20.2.0',
     eslint: '^9.28.0',
     'eslint-config-prettier': '^10.1.0',
