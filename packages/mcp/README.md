@@ -296,7 +296,6 @@ This ensures documentation stays in sync automatically.
 | `docs://testing`      | `TESTING.md` + `E2E_TESTING.md`                   | Unit and E2E testing guides             |
 | `docs://i18n`         | `INTERNATIONALIZATION.md`                         | LinguiJS setup and translation workflow |
 | `docs://api`          | `API_REFERENCE.md`                                | API client and data fetching patterns   |
-| `docs://workflow`     | `WORKFLOW.md`                                     | Development process and CI/CD           |
 | `docs://claude`       | `CLAUDE.md`                                       | AI assistant guidance                   |
 
 ### How Resources Stay in Sync

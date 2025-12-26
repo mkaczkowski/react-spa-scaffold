@@ -48,11 +48,6 @@ const DOCS_MAP: Record<
     name: 'API Reference',
     description: 'API client utilities, hooks, and data fetching patterns',
   },
-  'docs://workflow': {
-    files: ['docs/WORKFLOW.md'],
-    name: 'Development Workflow',
-    description: 'Development process, git workflow, and CI/CD pipeline',
-  },
   'docs://claude': {
     files: ['CLAUDE.md'],
     name: 'Claude AI Guidance',
