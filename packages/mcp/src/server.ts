@@ -27,6 +27,42 @@ import {
 import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
 import { VERSION } from './version.js';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Response Helpers
+// ═══════════════════════════════════════════════════════════════════════════
+
+function jsonResponse(data: unknown) {
+  return {
+    content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }],
+  };
+}
+
+function errorResponse(message: string) {
+  return {
+    content: [{ type: 'text' as const, text: message }],
+    isError: true,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Server Instructions
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SERVER_INSTRUCTIONS = `
+webapp-base MCP Server - Project Scaffolding Assistant
+
+Usage:
+1. Call get_features to see available feature modules
+2. Call get_scaffold with desired features to get project structure
+3. Call get_example to get code patterns for specific file types
+4. Read docs:// resources for conventions and best practices
+
+Tips:
+- Core feature is always included automatically
+- Features like 'ui' will auto-include dependencies ('state')
+- Check docs://conventions before generating code
+`.trim();
+
 /**
  * Create and configure the MCP server
  */
@@ -41,6 +77,7 @@ export function createServer(): Server {
         tools: {},
         resources: {},
       },
+      instructions: SERVER_INSTRUCTIONS,
     },
   );
 
@@ -59,78 +96,31 @@ export function createServer(): Server {
 
     try {
       switch (name) {
-        case 'get_features': {
-          const result = getFeatures();
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2),
-              },
-            ],
-          };
-        }
+        case 'get_features':
+          return jsonResponse(getFeatures());
 
         case 'get_scaffold': {
           const parsed = getScaffoldSchema.safeParse(args);
           if (!parsed.success) {
-            return {
-              content: [{ type: 'text', text: `Invalid input: ${parsed.error.message}` }],
-              isError: true,
-            };
+            return errorResponse(`Invalid input: ${parsed.error.message}`);
           }
-          const result = await getScaffold(parsed.data);
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2),
-              },
-            ],
-          };
+          return jsonResponse(await getScaffold(parsed.data));
         }
 
         case 'get_example': {
           const parsed = getExampleSchema.safeParse(args);
           if (!parsed.success) {
-            return {
-              content: [{ type: 'text', text: `Invalid input: ${parsed.error.message}` }],
-              isError: true,
-            };
+            return errorResponse(`Invalid input: ${parsed.error.message}`);
           }
-          const result = await getExample(parsed.data);
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2),
-              },
-            ],
-          };
+          return jsonResponse(await getExample(parsed.data));
         }
 
         default:
-          return {
-            content: [
-              {
-                type: 'text',
-                text: `Unknown tool: ${name}`,
-              },
-            ],
-            isError: true,
-          };
+          return errorResponse(`Unknown tool: ${name}`);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Error executing tool ${name}: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      const message = error instanceof Error ? error.message : String(error);
+      return errorResponse(`Error executing ${name}: ${message}`);
     }
   });
 
@@ -139,35 +129,23 @@ export function createServer(): Server {
   // ═══════════════════════════════════════════════════════════════════════
 
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
-    // Dynamically list all available documentation resources
-    return {
-      resources: getDocumentationResources(),
-    };
+    return { resources: getDocumentationResources() };
   });
 
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
 
-    // Check if this is a valid documentation URI
     if (!isValidDocumentationUri(uri)) {
       throw new Error(`Unknown resource: ${uri}`);
     }
 
-    // Read the actual documentation file(s) from the repository
     const content = await readDocumentation(uri);
-
     if (!content) {
       throw new Error(`Failed to read resource: ${uri}`);
     }
 
     return {
-      contents: [
-        {
-          uri,
-          mimeType: 'text/markdown',
-          text: content,
-        },
-      ],
+      contents: [{ uri, mimeType: 'text/markdown', text: content }],
     };
   });
 

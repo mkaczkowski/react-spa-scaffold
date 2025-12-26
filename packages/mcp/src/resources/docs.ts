@@ -3,11 +3,15 @@
  *
  * Reads actual documentation files from the webapp-base repository
  * to ensure MCP resources stay in sync with the real docs.
+ * Uses in-memory caching to avoid repeated disk reads.
  */
 
 import { readFile } from 'fs/promises';
 
 import { resolveTemplatePath } from '../utils/paths.js';
+
+// Simple in-memory cache for documentation content
+const cache = new Map<string, string>();
 
 /**
  * Documentation file mapping
@@ -68,12 +72,17 @@ export function getDocumentationResources() {
 }
 
 /**
- * Read documentation content for a resource URI
+ * Read documentation content for a resource URI (cached)
  */
 export async function readDocumentation(uri: string): Promise<string | null> {
   const doc = DOCS_MAP[uri];
   if (!doc) {
     return null;
+  }
+
+  // Return cached content if available
+  if (cache.has(uri)) {
+    return cache.get(uri)!;
   }
 
   const contents: string[] = [];
@@ -90,11 +99,14 @@ export async function readDocumentation(uri: string): Promise<string | null> {
   }
 
   // Join multiple files with a separator
-  if (contents.length > 1) {
-    return contents.join('\n\n---\n\n');
+  const result = contents.length > 1 ? contents.join('\n\n---\n\n') : contents[0] || null;
+
+  // Cache the result
+  if (result) {
+    cache.set(uri, result);
   }
 
-  return contents[0] || null;
+  return result;
 }
 
 /**

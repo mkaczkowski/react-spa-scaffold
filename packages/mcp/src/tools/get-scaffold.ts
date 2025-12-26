@@ -11,8 +11,16 @@ import { FEATURE_IDS, FEATURES } from '../features/index.js';
 import { computeScaffold, resolveFeatureDependencies, getFeatureExamples, type CodeExample } from '../utils/index.js';
 
 export const getScaffoldSchema = z.object({
-  features: z.array(z.string()).describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
-  projectName: z.string().optional().describe('Name for the new project (defaults to "my-app")'),
+  features: z
+    .array(z.string())
+    .max(15, 'Maximum 15 features allowed')
+    .describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
+  projectName: z
+    .string()
+    .max(50, 'Project name too long')
+    .regex(/^[a-z0-9-]*$/, 'Project name must be lowercase letters, numbers, and hyphens only')
+    .optional()
+    .describe('Name for the new project (defaults to "my-app")'),
   includeExamples: z.boolean().optional().describe('Include code examples for each feature pattern (default: false)'),
 });
 
