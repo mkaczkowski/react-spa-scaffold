@@ -4,27 +4,11 @@
  * Maps pattern types to actual files in the webapp-base repository.
  * When the MCP server runs, it reads these files to provide real,
  * working examples to AI agents.
- *
- * In monorepo mode:
- * - Development: Reads from monorepo root (webapp-base app files)
- * - npx/Published: Reads from bundled templates directory
  */
 
-import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Bundled templates (for npx distribution)
-const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
-
-// Monorepo root (webapp-base app lives at root alongside packages/)
-const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
-
-// Determine which root to use
-const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
+import { resolveTemplatePath } from './paths.js';
 
 export interface CodeExample {
   pattern: string;
@@ -372,7 +356,7 @@ export async function getCodeExample(pattern: string): Promise<CodeExample | nul
     return null;
   }
 
-  const fullPath = join(TEMPLATES_ROOT, mapping.file);
+  const fullPath = resolveTemplatePath(mapping.file);
 
   try {
     const code = await readFile(fullPath, 'utf-8');
@@ -384,7 +368,7 @@ export async function getCodeExample(pattern: string): Promise<CodeExample | nul
       code,
       keyPoints: mapping.keyPoints,
     };
-  } catch (error) {
+  } catch {
     // File might not exist if running outside webapp-base
     return {
       pattern,

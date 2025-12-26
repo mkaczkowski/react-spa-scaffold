@@ -1,3 +1,5 @@
+export { isNpxMode, TEMPLATES_ROOT, resolveTemplatePath } from './paths.js';
+
 export {
   resolveFeatureDependencies,
   mergeDependencies,

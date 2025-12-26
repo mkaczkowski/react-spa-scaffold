@@ -20,6 +20,8 @@ import {
   getScaffoldToolDefinition,
   getExample,
   getExampleToolDefinition,
+  type GetScaffoldInput,
+  type GetExampleInput,
 } from './tools/index.js';
 
 import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
@@ -69,7 +71,7 @@ export function createServer(): Server {
         }
 
         case 'get_scaffold': {
-          const result = await getScaffold(args as any);
+          const result = await getScaffold(args as GetScaffoldInput);
           return {
             content: [
               {
@@ -81,7 +83,7 @@ export function createServer(): Server {
         }
 
         case 'get_example': {
-          const result = await getExample(args as any);
+          const result = await getExample(args as GetExampleInput);
           return {
             content: [
               {

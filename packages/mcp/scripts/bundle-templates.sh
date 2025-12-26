@@ -24,6 +24,10 @@ cp -r "$WEBAPP_BASE_DIR/src" "$TEMPLATES_DIR/src"
 cp -r "$WEBAPP_BASE_DIR/tests" "$TEMPLATES_DIR/tests"
 cp "$WEBAPP_BASE_DIR/CLAUDE.md" "$TEMPLATES_DIR/"
 
+# Create marker file to indicate this is a bundled distribution
+# The MCP server checks for this file to distinguish npx mode from development
+touch "$TEMPLATES_DIR/.bundled"
+
 echo ""
 echo "Templates bundled to: $TEMPLATES_DIR"
 echo "Files included:"

@@ -3,27 +3,11 @@
  *
  * Reads actual documentation files from the webapp-base repository
  * to ensure MCP resources stay in sync with the real docs.
- *
- * In monorepo mode:
- * - Development: Reads from monorepo root (docs/ at root level)
- * - npx/Published: Reads from bundled templates directory
  */
 
-import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Bundled templates (for npx distribution)
-const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
-
-// Monorepo root (docs/ lives at root alongside packages/)
-const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
-
-// Determine which root to use
-const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
+import { resolveTemplatePath } from '../utils/paths.js';
 
 /**
  * Documentation file mapping
@@ -100,11 +84,11 @@ export async function readDocumentation(uri: string): Promise<string | null> {
   const contents: string[] = [];
 
   for (const file of doc.files) {
-    const fullPath = join(TEMPLATES_ROOT, file);
+    const fullPath = resolveTemplatePath(file);
     try {
       const content = await readFile(fullPath, 'utf-8');
       contents.push(content);
-    } catch (error) {
+    } catch {
       // File might not exist
       contents.push(`<!-- File not found: ${file} -->\n`);
     }

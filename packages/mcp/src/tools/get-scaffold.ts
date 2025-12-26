@@ -8,7 +8,7 @@
 
 import { z } from 'zod';
 import { FEATURE_IDS, FEATURES } from '../features/index.js';
-import { computeScaffold, resolveFeatureDependencies, getFeatureExamples } from '../utils/index.js';
+import { computeScaffold, resolveFeatureDependencies, getFeatureExamples, type CodeExample } from '../utils/index.js';
 
 export const getScaffoldSchema = z.object({
   features: z.array(z.string()).describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
@@ -22,7 +22,7 @@ export async function getScaffold(input: GetScaffoldInput) {
   const { features, projectName = 'my-app', includeExamples = false } = input;
 
   // Validate feature IDs
-  const invalidFeatures = features.filter((f) => !FEATURE_IDS.includes(f as any));
+  const invalidFeatures = features.filter((f) => !(f in FEATURES));
   if (invalidFeatures.length > 0) {
     return {
       error: `Invalid feature IDs: ${invalidFeatures.join(', ')}`,
@@ -49,7 +49,7 @@ export async function getScaffold(input: GetScaffoldInput) {
   });
 
   // Optionally include examples
-  let examples: Record<string, any> | undefined;
+  let examples: Record<string, CodeExample[]> | undefined;
   if (includeExamples) {
     examples = {};
     for (const id of resolvedFeatures) {

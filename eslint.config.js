@@ -6,7 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'node_modules', 'src/locales/*.mjs', 'packages/**/*'] },
+  { ignores: ['dist', 'coverage', 'node_modules', 'src/locales/*.mjs', 'packages/**/dist'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -119,6 +119,24 @@ export default tseslint.config(
     ],
     rules: {
       'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+  {
+    // MCP server package - Node.js code, not React
+    files: ['packages/**/*.ts'],
+    rules: {
+      // Disable React-specific rules (not a React app)
+      'react-hooks/rules-of-hooks': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-refresh/only-export-components': 'off',
+      // Disable i18n rules (server-side code)
+      'lingui/no-unlocalized-strings': 'off',
+      'lingui/t-call-in-function': 'off',
+      'lingui/no-single-variables-to-translate': 'off',
+      'lingui/no-expression-in-message': 'off',
+      'lingui/no-trans-inside-trans': 'off',
+      // Allow console for server logging
+      'no-console': 'off',
     },
   },
   eslintConfigPrettier,
