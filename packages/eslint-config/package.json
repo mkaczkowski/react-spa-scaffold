@@ -17,6 +17,17 @@
     "eslint-config",
     "webapp-base"
   ],
+  "author": "Mateusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "directory": "packages/eslint-config"
+  },
+  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/eslint-config#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+  },
   "peerDependencies": {
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",

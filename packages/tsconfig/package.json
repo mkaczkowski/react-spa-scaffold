@@ -17,6 +17,17 @@
     "typescript",
     "webapp-base"
   ],
+  "author": "Mateusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "directory": "packages/tsconfig"
+  },
+  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/tsconfig#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+  },
   "peerDependencies": {
     "typescript": "^5.0.0"
   }
