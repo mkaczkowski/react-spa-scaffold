@@ -1,0 +1,58 @@
+{
+  "name": "webapp-base-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for scaffolding projects based on webapp-base template",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "webapp-base-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
+    "bundle": "node scripts/bundle-templates.js",
+    "prepublishOnly": "npm run bundle && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "webapp-base",
+    "scaffolding",
+    "react",
+    "typescript"
+  ],
+  "author": "Mateusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@webapp-base/tsconfig": "*",
+    "typescript": "~5.9.0",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ]
+}
