@@ -1,5 +1,5 @@
 {
-  "name": "@anthropic/webapp-base-mcp",
+  "name": "webapp-base-mcp",
   "version": "1.0.0",
   "description": "MCP server for scaffolding projects based on webapp-base template",
   "type": "module",
@@ -12,7 +12,9 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js"
+    "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
+    "bundle": "bash scripts/bundle-templates.sh",
+    "prepublishOnly": "npm run bundle && npm run build"
   },
   "keywords": [
     "mcp",
@@ -25,7 +27,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.25.64"
   },
@@ -38,6 +39,7 @@
   },
   "files": [
     "dist",
+    "templates",
     "README.md"
   ]
 }

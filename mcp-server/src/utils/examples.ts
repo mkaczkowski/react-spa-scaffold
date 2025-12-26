@@ -4,16 +4,27 @@
  * Maps pattern types to actual files in the webapp-base repository.
  * When the MCP server runs, it reads these files to provide real,
  * working examples to AI agents.
+ *
+ * Supports two modes:
+ * 1. Development: Reads from local webapp-base repository
+ * 2. npx/Published: Reads from bundled templates directory
  */
 
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Path to webapp-base src (relative to mcp-server)
-const WEBAPP_BASE_ROOT = join(__dirname, '..', '..', '..');
+// Bundled templates (for npx distribution)
+const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
+
+// Local webapp-base root (for development)
+const LOCAL_WEBAPP_BASE = join(__dirname, '..', '..', '..');
+
+// Determine which root to use
+const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : LOCAL_WEBAPP_BASE;
 
 export interface CodeExample {
   pattern: string;
@@ -193,7 +204,7 @@ const PATTERN_MAP: Record<string, {
 
   // Test patterns
   'test-component': {
-    file: 'tests/unit/components/layout/Header.test.tsx',
+    file: 'tests/unit/components/Header.test.tsx',
     description: 'Component test with Testing Library',
     keyPoints: [
       'Import from vitest (describe, it, expect)',
@@ -358,7 +369,7 @@ export async function getCodeExample(pattern: string): Promise<CodeExample | nul
     return null;
   }
 
-  const fullPath = join(WEBAPP_BASE_ROOT, mapping.file);
+  const fullPath = join(TEMPLATES_ROOT, mapping.file);
 
   try {
     const code = await readFile(fullPath, 'utf-8');

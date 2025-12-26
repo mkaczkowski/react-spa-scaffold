@@ -3,16 +3,27 @@
  *
  * Reads actual documentation files from the webapp-base repository
  * to ensure MCP resources stay in sync with the real docs.
+ *
+ * Supports two modes:
+ * 1. Development: Reads from local webapp-base repository
+ * 2. npx/Published: Reads from bundled templates directory
  */
 
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Path to webapp-base root (relative to mcp-server/src/resources)
-const WEBAPP_BASE_ROOT = join(__dirname, '..', '..', '..');
+// Bundled templates (for npx distribution)
+const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
+
+// Local webapp-base root (for development)
+const LOCAL_WEBAPP_BASE = join(__dirname, '..', '..', '..');
+
+// Determine which root to use
+const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : LOCAL_WEBAPP_BASE;
 
 /**
  * Documentation file mapping
@@ -90,7 +101,7 @@ export async function readDocumentation(uri: string): Promise<string | null> {
   const contents: string[] = [];
 
   for (const file of doc.files) {
-    const fullPath = join(WEBAPP_BASE_ROOT, file);
+    const fullPath = join(TEMPLATES_ROOT, file);
     try {
       const content = await readFile(fullPath, 'utf-8');
       contents.push(content);

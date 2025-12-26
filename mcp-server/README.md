@@ -42,7 +42,11 @@ npm run inspect
 
 ## Configuration
 
-### Claude Desktop
+### Via npx (Recommended)
+
+After publishing to npm, configure clients to use npx:
+
+#### Claude Desktop
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -50,14 +54,14 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "webapp-base": {
-      "command": "node",
-      "args": ["/path/to/webapp-base/mcp-server/dist/index.js"]
+      "command": "npx",
+      "args": ["webapp-base-mcp"]
     }
   }
 }
 ```
 
-### VS Code (Copilot)
+#### VS Code (Copilot)
 
 Add to `.vscode/mcp.json`:
 
@@ -65,14 +69,14 @@ Add to `.vscode/mcp.json`:
 {
   "mcpServers": {
     "webapp-base": {
-      "command": "node",
-      "args": ["./mcp-server/dist/index.js"]
+      "command": "npx",
+      "args": ["webapp-base-mcp"]
     }
   }
 }
 ```
 
-### Claude Code
+#### Claude Code
 
 Add to project's `.claude/settings.json`:
 
@@ -80,8 +84,44 @@ Add to project's `.claude/settings.json`:
 {
   "mcpServers": {
     "webapp-base": {
+      "command": "npx",
+      "args": ["webapp-base-mcp"]
+    }
+  }
+}
+```
+
+### Via Local Path (Development)
+
+For local development without publishing:
+
+```bash
+cd mcp-server
+npm install
+npm run build
+npm link  # Makes webapp-base-mcp available globally
+```
+
+Then configure clients with:
+
+```json
+{
+  "mcpServers": {
+    "webapp-base": {
+      "command": "webapp-base-mcp"
+    }
+  }
+}
+```
+
+Or point directly to the built file:
+
+```json
+{
+  "mcpServers": {
+    "webapp-base": {
       "command": "node",
-      "args": ["./mcp-server/dist/index.js"]
+      "args": ["/absolute/path/to/webapp-base/mcp-server/dist/index.js"]
     }
   }
 }
@@ -452,15 +492,47 @@ npm run dev        # Watch mode
 npm start          # Run server
 npm run typecheck  # Type check only
 npm run inspect    # Test with MCP Inspector
+npm run bundle     # Bundle template files for npm distribution
 ```
+
+### Publishing to npm
+
+The package is configured for npm distribution:
+
+```bash
+# 1. Bundle templates (copies webapp-base files into templates/)
+npm run bundle
+
+# 2. Build TypeScript
+npm run build
+
+# 3. Publish (runs prepublishOnly automatically)
+npm publish
+
+# Or just run publish (prepublishOnly does bundle + build)
+npm publish
+```
+
+The `prepublishOnly` script automatically runs `bundle` and `build` before publishing.
 
 ### How Examples Work
 
-The `get_example` tool reads **actual code from the webapp-base repository**, not templates. This means:
+The server supports two modes:
 
-1. Examples are always in sync with the real codebase
-2. No template maintenance needed
-3. Patterns update automatically when code changes
+**Development mode** (running from webapp-base repo):
+- Reads files directly from `../` (parent directory)
+- Changes to webapp-base are reflected immediately
+
+**Published mode** (via npx):
+- Reads from bundled `templates/` directory
+- Templates are copied at publish time
+
+```typescript
+// Automatically detects which mode to use
+const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES)
+  ? BUNDLED_TEMPLATES   // npx mode
+  : LOCAL_WEBAPP_BASE;  // development mode
+```
 
 The server assumes it's running from within the webapp-base directory. File paths are resolved relative to the mcp-server location.
 
