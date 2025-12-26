@@ -23,10 +23,9 @@ import {
 } from './tools/index.js';
 
 import {
-  conventionsContent,
-  conventionsResourceDefinition,
-  architectureContent,
-  architectureResourceDefinition,
+  getDocumentationResources,
+  readDocumentation,
+  isValidDocumentationUri,
 } from './resources/index.js';
 
 /**
@@ -131,43 +130,36 @@ export function createServer(): Server {
   // ═══════════════════════════════════════════════════════════════════════
 
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    // Dynamically list all available documentation resources
     return {
-      resources: [
-        conventionsResourceDefinition,
-        architectureResourceDefinition,
-      ],
+      resources: getDocumentationResources(),
     };
   });
 
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
 
-    switch (uri) {
-      case 'docs://conventions':
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: 'text/markdown',
-              text: conventionsContent,
-            },
-          ],
-        };
-
-      case 'docs://architecture':
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: 'text/markdown',
-              text: architectureContent,
-            },
-          ],
-        };
-
-      default:
-        throw new Error(`Unknown resource: ${uri}`);
+    // Check if this is a valid documentation URI
+    if (!isValidDocumentationUri(uri)) {
+      throw new Error(`Unknown resource: ${uri}`);
     }
+
+    // Read the actual documentation file(s) from the repository
+    const content = await readDocumentation(uri);
+
+    if (!content) {
+      throw new Error(`Failed to read resource: ${uri}`);
+    }
+
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'text/markdown',
+          text: content,
+        },
+      ],
+    };
   });
 
   return server;

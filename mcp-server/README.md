@@ -228,28 +228,33 @@ const result = await client.callTool('get_example', {
 
 ## Resources
 
-### `docs://conventions`
+Resources are **read from actual files** in the webapp-base repository at runtime.
+This ensures documentation stays in sync automatically.
 
-Coding standards and naming conventions:
-- File organization
-- Export patterns
-- Import rules
-- TypeScript patterns
-- State management hierarchy
-- i18n requirements
-- Testing patterns
+| URI | Source Files | Description |
+|-----|--------------|-------------|
+| `docs://conventions` | `CODING_STANDARDS.md` + `COMPONENT_GUIDELINES.md` | Code patterns and naming conventions |
+| `docs://architecture` | `ARCHITECTURE.md` | Technology stack and data flow |
+| `docs://testing` | `TESTING.md` + `E2E_TESTING.md` | Unit and E2E testing guides |
+| `docs://i18n` | `INTERNATIONALIZATION.md` | LinguiJS setup and translation workflow |
+| `docs://api` | `API_REFERENCE.md` | API client and data fetching patterns |
+| `docs://workflow` | `WORKFLOW.md` | Development process and CI/CD |
+| `docs://claude` | `CLAUDE.md` | AI assistant guidance |
 
-### `docs://architecture`
+### How Resources Stay in Sync
 
-Architecture overview:
-- Technology stack
-- Data flow diagram
-- Component architecture
-- State management decision tree
-- Lazy loading strategy
-- Testing architecture
-- Error handling
-- Performance optimizations
+Unlike hardcoded content, resources read the actual markdown files from `docs/`:
+
+```typescript
+// When client requests docs://architecture
+const content = await readFile('docs/ARCHITECTURE.md', 'utf-8');
+return { contents: [{ uri, text: content }] };
+```
+
+**Benefits:**
+- Edit `docs/ARCHITECTURE.md` → MCP resource updates automatically
+- No duplicate content to maintain
+- Single source of truth
 
 ## Example AI Agent Workflow
 
@@ -371,45 +376,43 @@ If you just want to expose a new pattern without a full feature:
 
 ### Adding a New Resource
 
-1. Create resource file in `src/resources/`:
+Resources are defined in `src/resources/docs.ts` and read from actual files:
+
+1. Add entry to `DOCS_MAP` in `src/resources/docs.ts`:
 
 ```typescript
-// src/resources/my-resource.ts
-export const myResourceContent = `# My Resource
-...markdown content...
-`;
+const DOCS_MAP: Record<string, {...}> = {
+  // ... existing entries
 
-export const myResourceDefinition = {
-  uri: 'docs://my-resource',
-  name: 'My Resource',
-  description: 'Description of this resource',
-  mimeType: 'text/markdown',
+  'docs://my-topic': {
+    files: ['docs/MY_TOPIC.md'],           // Can list multiple files
+    name: 'My Topic',
+    description: 'Description shown to clients',
+  },
 };
 ```
 
-2. Export from `src/resources/index.ts`
+2. Create the actual documentation file in webapp-base:
 
-3. Add handler in `src/server.ts`:
-
-```typescript
-// In ListResourcesRequestSchema handler
-resources: [
-  // ... existing
-  myResourceDefinition,
-],
-
-// In ReadResourceRequestSchema handler
-case 'docs://my-resource':
-  return {
-    contents: [{
-      uri,
-      mimeType: 'text/markdown',
-      text: myResourceContent,
-    }],
-  };
+```bash
+# Create docs/MY_TOPIC.md with your content
 ```
 
-4. Rebuild
+3. Rebuild: `npm run build`
+
+**That's it!** The server reads the file at runtime, so updates to the markdown file are reflected immediately (no rebuild needed for content changes).
+
+#### Combining Multiple Files
+
+You can combine multiple docs into one resource:
+
+```typescript
+'docs://testing': {
+  files: ['docs/TESTING.md', 'docs/E2E_TESTING.md'],  // Concatenated with ---
+  name: 'Testing Guide',
+  description: 'Unit and E2E testing documentation',
+},
+```
 
 ## Development
 
@@ -430,8 +433,7 @@ mcp-server/
 │   │   ├── get-example.ts
 │   │   └── index.ts
 │   ├── resources/
-│   │   ├── conventions.ts
-│   │   ├── architecture.ts
+│   │   ├── docs.ts            # Dynamic documentation loading
 │   │   └── index.ts
 │   └── utils/
 │       ├── scaffold.ts    # Scaffold computation
