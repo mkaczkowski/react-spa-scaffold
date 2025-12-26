@@ -5,9 +5,9 @@
  * When the MCP server runs, it reads these files to provide real,
  * working examples to AI agents.
  *
- * Supports two modes:
- * 1. Development: Reads from local webapp-base repository
- * 2. npx/Published: Reads from bundled templates directory
+ * In monorepo mode:
+ * - Development: Reads from monorepo root (webapp-base app files)
+ * - npx/Published: Reads from bundled templates directory
  */
 
 import { existsSync } from 'fs';
@@ -20,11 +20,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Bundled templates (for npx distribution)
 const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
 
-// Local webapp-base root (for development)
-const LOCAL_WEBAPP_BASE = join(__dirname, '..', '..', '..');
+// Monorepo root (webapp-base app lives at root alongside packages/)
+const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
 
 // Determine which root to use
-const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : LOCAL_WEBAPP_BASE;
+const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
 
 export interface CodeExample {
   pattern: string;
@@ -37,11 +37,14 @@ export interface CodeExample {
 /**
  * Pattern to file mapping
  */
-const PATTERN_MAP: Record<string, {
-  file: string;
-  description: string;
-  keyPoints: string[];
-}> = {
+const PATTERN_MAP: Record<
+  string,
+  {
+    file: string;
+    description: string;
+    keyPoints: string[];
+  }
+> = {
   // Component patterns
   'component-ui': {
     file: 'src/components/ui/button.tsx',

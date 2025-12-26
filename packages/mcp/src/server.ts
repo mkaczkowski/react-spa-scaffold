@@ -22,11 +22,7 @@ import {
   getExampleToolDefinition,
 } from './tools/index.js';
 
-import {
-  getDocumentationResources,
-  readDocumentation,
-  isValidDocumentationUri,
-} from './resources/index.js';
+import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
 
 /**
  * Create and configure the MCP server
@@ -42,7 +38,7 @@ export function createServer(): Server {
         tools: {},
         resources: {},
       },
-    }
+    },
   );
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -51,11 +47,7 @@ export function createServer(): Server {
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [
-        getFeaturesToolDefinition,
-        getScaffoldToolDefinition,
-        getExampleToolDefinition,
-      ],
+      tools: [getFeaturesToolDefinition, getScaffoldToolDefinition, getExampleToolDefinition],
     };
   });
 

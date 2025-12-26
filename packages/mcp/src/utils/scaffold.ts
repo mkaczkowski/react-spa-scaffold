@@ -124,9 +124,7 @@ export function getConfigFiles(featureIds: string[]): string[] {
  * Generate setup commands based on selected features
  */
 export function getSetupCommands(featureIds: string[]): string[] {
-  const commands: string[] = [
-    'npm install',
-  ];
+  const commands: string[] = ['npm install'];
 
   if (featureIds.includes('devtools')) {
     commands.push('npm run prepare'); // Initialize husky
@@ -146,10 +144,7 @@ export function getSetupCommands(featureIds: string[]): string[] {
 /**
  * Compute complete scaffold for selected features
  */
-export function computeScaffold(
-  selectedFeatures: string[],
-  projectName: string = 'my-app'
-): ScaffoldResult {
+export function computeScaffold(selectedFeatures: string[], projectName: string = 'my-app'): ScaffoldResult {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 

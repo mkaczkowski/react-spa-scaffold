@@ -4,9 +4,9 @@
  * Reads actual documentation files from the webapp-base repository
  * to ensure MCP resources stay in sync with the real docs.
  *
- * Supports two modes:
- * 1. Development: Reads from local webapp-base repository
- * 2. npx/Published: Reads from bundled templates directory
+ * In monorepo mode:
+ * - Development: Reads from monorepo root (docs/ at root level)
+ * - npx/Published: Reads from bundled templates directory
  */
 
 import { existsSync } from 'fs';
@@ -19,11 +19,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Bundled templates (for npx distribution)
 const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
 
-// Local webapp-base root (for development)
-const LOCAL_WEBAPP_BASE = join(__dirname, '..', '..', '..');
+// Monorepo root (docs/ lives at root alongside packages/)
+const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
 
 // Determine which root to use
-const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : LOCAL_WEBAPP_BASE;
+const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES) ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
 
 /**
  * Documentation file mapping
@@ -42,8 +42,7 @@ const DOCS_MAP: Record<
   'docs://conventions': {
     files: ['docs/CODING_STANDARDS.md', 'docs/COMPONENT_GUIDELINES.md'],
     name: 'Coding Conventions',
-    description:
-      'Coding standards, naming conventions, and component patterns for webapp-base projects',
+    description: 'Coding standards, naming conventions, and component patterns for webapp-base projects',
   },
   'docs://architecture': {
     files: ['docs/ARCHITECTURE.md'],

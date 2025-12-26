@@ -8,24 +8,12 @@
 
 import { z } from 'zod';
 import { FEATURE_IDS, FEATURES } from '../features/index.js';
-import {
-  computeScaffold,
-  resolveFeatureDependencies,
-  getFeatureExamples,
-} from '../utils/index.js';
+import { computeScaffold, resolveFeatureDependencies, getFeatureExamples } from '../utils/index.js';
 
 export const getScaffoldSchema = z.object({
-  features: z
-    .array(z.string())
-    .describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
-  projectName: z
-    .string()
-    .optional()
-    .describe('Name for the new project (defaults to "my-app")'),
-  includeExamples: z
-    .boolean()
-    .optional()
-    .describe('Include code examples for each feature pattern (default: false)'),
+  features: z.array(z.string()).describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
+  projectName: z.string().optional().describe('Name for the new project (defaults to "my-app")'),
+  includeExamples: z.boolean().optional().describe('Include code examples for each feature pattern (default: false)'),
 });
 
 export type GetScaffoldInput = z.infer<typeof getScaffoldSchema>;

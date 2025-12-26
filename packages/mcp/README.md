@@ -6,37 +6,47 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that en
 
 This MCP server follows the principle: **MCP provides knowledge, AI provides execution**.
 
-| MCP Server Does | AI Agent Does |
-|-----------------|---------------|
+| MCP Server Does          | AI Agent Does            |
+| ------------------------ | ------------------------ |
 | Lists available features | Decides which to include |
-| Reports dependencies | Writes package.json |
-| Provides code patterns | Generates actual files |
-| Documents conventions | Follows the patterns |
-| Answers "what exists" | Handles "how to create" |
+| Reports dependencies     | Writes package.json      |
+| Provides code patterns   | Generates actual files   |
+| Documents conventions    | Follows the patterns     |
+| Answers "what exists"    | Handles "how to create"  |
 
 ## Quick Start
 
-### Installation
+### Installation (Monorepo)
+
+This package lives in the webapp-base monorepo at `packages/mcp/`.
 
 ```bash
-cd mcp-server
-npm install
+# From monorepo root
+npm install              # Installs all workspaces
+npm run mcp:build        # Build MCP server
+
+# Or from packages/mcp/
+cd packages/mcp
 npm run build
 ```
 
 ### Running the Server
 
 ```bash
-# Direct execution
-node dist/index.js
+# From monorepo root
+npm run mcp:start
 
-# Or via npm
+# Or from packages/mcp/
 npm start
 ```
 
 ### Testing with MCP Inspector
 
 ```bash
+# From monorepo root
+npm run mcp:inspect
+
+# Or from packages/mcp/
 npm run inspect
 ```
 
@@ -96,8 +106,7 @@ Add to project's `.claude/settings.json`:
 For local development without publishing:
 
 ```bash
-cd mcp-server
-npm install
+cd packages/mcp
 npm run build
 npm link  # Makes webapp-base-mcp available globally
 ```
@@ -121,7 +130,7 @@ Or point directly to the built file:
   "mcpServers": {
     "webapp-base": {
       "command": "node",
-      "args": ["/absolute/path/to/webapp-base/mcp-server/dist/index.js"]
+      "args": ["/absolute/path/to/webapp-base/packages/mcp/dist/index.js"]
     }
   }
 }
@@ -131,22 +140,23 @@ Or point directly to the built file:
 
 The server provides 10 feature modules that can be combined:
 
-| Feature | Description | Required |
-|---------|-------------|----------|
-| `core` | React 19 + TypeScript + Vite 7 + Tailwind CSS | ✓ Always |
-| `routing` | React Router 7 with lazy loading | Optional |
-| `ui` | Shadcn/UI + icons + theming + toasts | Optional |
-| `forms` | React Hook Form + Zod validation | Optional |
-| `state` | Zustand with persistence | Optional |
-| `data` | TanStack Query + API client | Optional |
-| `i18n` | LinguiJS internationalization | Optional |
-| `testing` | Vitest + Playwright + MSW | Optional |
-| `devtools` | ESLint + Prettier + Husky | Optional |
-| `ci` | GitHub Actions + Lighthouse | Optional |
+| Feature    | Description                                   | Required |
+| ---------- | --------------------------------------------- | -------- |
+| `core`     | React 19 + TypeScript + Vite 7 + Tailwind CSS | ✓ Always |
+| `routing`  | React Router 7 with lazy loading              | Optional |
+| `ui`       | Shadcn/UI + icons + theming + toasts          | Optional |
+| `forms`    | React Hook Form + Zod validation              | Optional |
+| `state`    | Zustand with persistence                      | Optional |
+| `data`     | TanStack Query + API client                   | Optional |
+| `i18n`     | LinguiJS internationalization                 | Optional |
+| `testing`  | Vitest + Playwright + MSW                     | Optional |
+| `devtools` | ESLint + Prettier + Husky                     | Optional |
+| `ci`       | GitHub Actions + Lighthouse                   | Optional |
 
 ### Feature Dependencies
 
 Some features require others:
+
 - `ui` → requires `state` (for theme persistence)
 - `ci` → requires `devtools` + `testing`
 
@@ -226,11 +236,13 @@ const result = await client.callTool('get_example', {
 #### Available Patterns
 
 **Components:**
+
 - `component-ui` - Shadcn/UI component with CVA variants
 - `component-shared` - Feature component with store integration
 - `component-layout` - Layout component for page structure
 
 **Hooks:**
+
 - `hook-state` - State hook with browser API
 - `hook-query` - TanStack Query data fetching
 - `hook-form` - React Hook Form + Zod
@@ -238,26 +250,32 @@ const result = await client.callTool('get_example', {
 - `use-language-hook` - Language/locale management
 
 **State:**
+
 - `zustand-store` - Store with persistence and devtools
 
 **Pages:**
+
 - `page-component` - Page with i18n
 - `lazy-page` - Lazy loading pattern
 
 **Context:**
+
 - `context-provider` - React Context with provider
 - `query-provider` - TanStack Query setup
 
 **API:**
+
 - `api-client` - Typed API client
 
 **Testing:**
+
 - `test-component` - Component test
 - `test-hook` - Hook test with renderHook
 - `test-store` - Zustand store test
 - `msw-handler` - MSW request handler
 
 **Other:**
+
 - `zod-schema` - Validation schema
 - `trans-component` - i18n Trans usage
 - `t-function` - i18n t() usage
@@ -271,15 +289,15 @@ const result = await client.callTool('get_example', {
 Resources are **read from actual files** in the webapp-base repository at runtime.
 This ensures documentation stays in sync automatically.
 
-| URI | Source Files | Description |
-|-----|--------------|-------------|
-| `docs://conventions` | `CODING_STANDARDS.md` + `COMPONENT_GUIDELINES.md` | Code patterns and naming conventions |
-| `docs://architecture` | `ARCHITECTURE.md` | Technology stack and data flow |
-| `docs://testing` | `TESTING.md` + `E2E_TESTING.md` | Unit and E2E testing guides |
-| `docs://i18n` | `INTERNATIONALIZATION.md` | LinguiJS setup and translation workflow |
-| `docs://api` | `API_REFERENCE.md` | API client and data fetching patterns |
-| `docs://workflow` | `WORKFLOW.md` | Development process and CI/CD |
-| `docs://claude` | `CLAUDE.md` | AI assistant guidance |
+| URI                   | Source Files                                      | Description                             |
+| --------------------- | ------------------------------------------------- | --------------------------------------- |
+| `docs://conventions`  | `CODING_STANDARDS.md` + `COMPONENT_GUIDELINES.md` | Code patterns and naming conventions    |
+| `docs://architecture` | `ARCHITECTURE.md`                                 | Technology stack and data flow          |
+| `docs://testing`      | `TESTING.md` + `E2E_TESTING.md`                   | Unit and E2E testing guides             |
+| `docs://i18n`         | `INTERNATIONALIZATION.md`                         | LinguiJS setup and translation workflow |
+| `docs://api`          | `API_REFERENCE.md`                                | API client and data fetching patterns   |
+| `docs://workflow`     | `WORKFLOW.md`                                     | Development process and CI/CD           |
+| `docs://claude`       | `CLAUDE.md`                                       | AI assistant guidance                   |
 
 ### How Resources Stay in Sync
 
@@ -292,6 +310,7 @@ return { contents: [{ uri, text: content }] };
 ```
 
 **Benefits:**
+
 - Edit `docs/ARCHITECTURE.md` → MCP resource updates automatically
 - No duplicate content to maintain
 - Single source of truth
@@ -350,30 +369,20 @@ const myFeature: Feature = {
   name: 'My Feature',
   description: 'Description shown to users',
   required: false,
-  includes: [
-    'Thing 1 this feature provides',
-    'Thing 2 this feature provides',
-  ],
+  includes: ['Thing 1 this feature provides', 'Thing 2 this feature provides'],
   dependencies: {
     'some-package': '^1.0.0',
   },
   devDependencies: {
     'some-dev-package': '^2.0.0',
   },
-  files: [
-    'src/lib/myFeature.ts',
-    'src/hooks/useMyFeature.ts',
-  ],
-  patterns: [
-    'my-feature-pattern',
-  ],
+  files: ['src/lib/myFeature.ts', 'src/hooks/useMyFeature.ts'],
+  patterns: ['my-feature-pattern'],
   scripts: {
     'my-script': 'some-command',
   },
   requiresFeatures: ['state'], // Optional dependencies
-  configFiles: [
-    'my-feature.config.js',
-  ],
+  configFiles: ['my-feature.config.js'],
 };
 ```
 
@@ -456,32 +465,40 @@ You can combine multiple docs into one resource:
 
 ## Development
 
-### Project Structure
+### Monorepo Structure
 
 ```
-mcp-server/
-├── src/
-│   ├── index.ts           # Entry point (STDIO transport)
-│   ├── server.ts          # MCP server setup
-│   ├── features/
-│   │   ├── types.ts       # Type definitions
-│   │   ├── registry.ts    # Feature definitions
-│   │   └── index.ts
-│   ├── tools/
-│   │   ├── get-features.ts
-│   │   ├── get-scaffold.ts
-│   │   ├── get-example.ts
-│   │   └── index.ts
-│   ├── resources/
-│   │   ├── docs.ts            # Dynamic documentation loading
-│   │   └── index.ts
-│   └── utils/
-│       ├── scaffold.ts    # Scaffold computation
-│       ├── examples.ts    # Pattern example loading
-│       └── index.ts
-├── package.json
-├── tsconfig.json
-└── README.md
+webapp-base/                    # Monorepo root
+├── package.json               # Workspaces config
+├── src/                       # Main webapp-base app
+├── docs/                      # Documentation (read by MCP)
+├── tests/                     # Test files (read by MCP)
+└── packages/
+    └── mcp/                   # This MCP server package
+        ├── src/
+        │   ├── index.ts       # Entry point (STDIO transport)
+        │   ├── server.ts      # MCP server setup
+        │   ├── features/
+        │   │   ├── types.ts
+        │   │   ├── registry.ts
+        │   │   └── index.ts
+        │   ├── tools/
+        │   │   ├── get-features.ts
+        │   │   ├── get-scaffold.ts
+        │   │   ├── get-example.ts
+        │   │   └── index.ts
+        │   ├── resources/
+        │   │   ├── docs.ts
+        │   │   └── index.ts
+        │   └── utils/
+        │       ├── scaffold.ts
+        │       ├── examples.ts
+        │       └── index.ts
+        ├── scripts/
+        │   └── bundle-templates.sh
+        ├── package.json
+        ├── tsconfig.json
+        └── README.md
 ```
 
 ### Scripts
@@ -519,31 +536,34 @@ The `prepublishOnly` script automatically runs `bundle` and `build` before publi
 
 The server supports two modes:
 
-**Development mode** (running from webapp-base repo):
-- Reads files directly from `../` (parent directory)
-- Changes to webapp-base are reflected immediately
+**Development mode** (running from monorepo):
+
+- Reads files directly from monorepo root (`../../..` from dist/)
+- Changes to webapp-base app are reflected immediately
+- No bundling needed during development
 
 **Published mode** (via npx):
+
 - Reads from bundled `templates/` directory
-- Templates are copied at publish time
+- Templates are copied at publish time via `npm run bundle`
 
 ```typescript
 // Automatically detects which mode to use
 const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES)
-  ? BUNDLED_TEMPLATES   // npx mode
-  : LOCAL_WEBAPP_BASE;  // development mode
+  ? BUNDLED_TEMPLATES // npx mode
+  : MONOREPO_ROOT; // development mode
 ```
 
-The server assumes it's running from within the webapp-base directory. File paths are resolved relative to the mcp-server location.
+The bundle script copies entire directories (`src/`, `docs/`, `tests/`) so no maintenance is needed when files are added or moved.
 
 ## Troubleshooting
 
 ### "File not found" in examples
 
-Ensure you're running the MCP server from within the webapp-base repository:
+Ensure you're running the MCP server from within the webapp-base monorepo:
 
 ```bash
-cd /path/to/webapp-base/mcp-server
+cd /path/to/webapp-base/packages/mcp
 npm start
 ```
 

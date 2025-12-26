@@ -8,9 +8,4 @@ export {
   computeScaffold,
 } from './scaffold.js';
 
-export {
-  getAvailablePatterns,
-  getCodeExample,
-  getFeatureExamples,
-  type CodeExample,
-} from './examples.js';
+export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples.js';

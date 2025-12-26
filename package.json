@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build",
@@ -18,7 +21,11 @@
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "i18n:extract": "lingui extract",
-    "prepare": "husky"
+    "prepare": "husky",
+    "mcp:build": "npm run build -w webapp-base-mcp",
+    "mcp:dev": "npm run dev -w webapp-base-mcp",
+    "mcp:start": "npm run start -w webapp-base-mcp",
+    "mcp:inspect": "npm run inspect -w webapp-base-mcp"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.5",

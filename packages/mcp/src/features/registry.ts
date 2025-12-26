@@ -27,11 +27,11 @@ const core: Feature = {
   ],
   dependencies: {
     '@fontsource-variable/inter': '^5.2.5',
-    'clsx': '^2.1.1',
-    'react': '^19.1.0',
+    clsx: '^2.1.1',
+    react: '^19.1.0',
     'react-dom': '^19.1.0',
     'tailwind-merge': '^3.3.0',
-    'zod': '^3.25.64',
+    zod: '^3.25.64',
   },
   devDependencies: {
     '@tailwindcss/vite': '^4.1.17',
@@ -39,9 +39,9 @@ const core: Feature = {
     '@types/react': '^19.1.8',
     '@types/react-dom': '^19.1.6',
     '@vitejs/plugin-react': '^5.1.2',
-    'tailwindcss': '^4.1.17',
-    'typescript': '~5.9.0',
-    'vite': '^7.0.0',
+    tailwindcss: '^4.1.17',
+    typescript: '~5.9.0',
+    vite: '^7.0.0',
   },
   files: [
     'src/main.tsx',
@@ -69,24 +69,14 @@ const core: Feature = {
     '.env.example',
     'public/favicon.svg',
   ],
-  patterns: [
-    'component-shared',
-    'hook-state',
-    'hook-effect',
-    'context-provider',
-  ],
+  patterns: ['component-shared', 'hook-state', 'hook-effect', 'context-provider'],
   scripts: {
-    'dev': 'vite',
-    'build': 'tsc -b && vite build',
-    'preview': 'vite preview',
-    'typecheck': 'tsc --noEmit',
+    dev: 'vite',
+    build: 'tsc -b && vite build',
+    preview: 'vite preview',
+    typecheck: 'tsc --noEmit',
   },
-  configFiles: [
-    'vite.config.ts',
-    'tsconfig.json',
-    'tsconfig.app.json',
-    'tsconfig.node.json',
-  ],
+  configFiles: ['vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json'],
   options: {
     errorTracking: {
       description: 'Sentry integration (lazy-loaded)',
@@ -123,11 +113,7 @@ const routing: Feature = {
     'src/components/ui/loading.tsx',
     'src/components/ui/visually-hidden.tsx',
   ],
-  patterns: [
-    'lazy-page',
-    'route-constants',
-    'page-component',
-  ],
+  patterns: ['lazy-page', 'route-constants', 'page-component'],
   scripts: {},
 };
 
@@ -159,11 +145,11 @@ const ui: Feature = {
     'class-variance-authority': '^0.7.1',
     'lucide-react': '^0.562.0',
     'radix-ui': '^1.4.3',
-    'sonner': '^2.0.7',
+    sonner: '^2.0.7',
     'tw-animate-css': '^1.2.9',
   },
   devDependencies: {
-    'shadcn': '^3.6.2',
+    shadcn: '^3.6.2',
   },
   files: [
     'src/components/ui/button.tsx',
@@ -180,12 +166,7 @@ const ui: Feature = {
     'src/hooks/useThemeEffect.ts',
     'components.json',
   ],
-  patterns: [
-    'component-ui',
-    'button-variants',
-    'forward-ref-component',
-    'theme-toggle',
-  ],
+  patterns: ['component-ui', 'button-variants', 'forward-ref-component', 'theme-toggle'],
   scripts: {},
   requiresFeatures: ['state'], // Theme toggle needs preferences store
 };
@@ -213,16 +194,8 @@ const forms: Feature = {
     // zod already in core
   },
   devDependencies: {},
-  files: [
-    'src/lib/validations.ts',
-    'src/hooks/useContactForm.ts',
-    'src/components/ui/form-error.tsx',
-  ],
-  patterns: [
-    'zod-schema',
-    'use-form-hook',
-    'form-error-component',
-  ],
+  files: ['src/lib/validations.ts', 'src/hooks/useContactForm.ts', 'src/components/ui/form-error.tsx'],
+  patterns: ['zod-schema', 'use-form-hook', 'form-error-component'],
   scripts: {},
 };
 
@@ -245,7 +218,7 @@ const state: Feature = {
     'Type-safe store selectors',
   ],
   dependencies: {
-    'zustand': '^5.0.9',
+    zustand: '^5.0.9',
   },
   devDependencies: {},
   files: [
@@ -255,12 +228,7 @@ const state: Feature = {
     'src/lib/storageKeys.ts',
     'src/types/preferences.ts',
   ],
-  patterns: [
-    'zustand-store',
-    'store-persistence',
-    'multi-tab-sync',
-    'storage-utility',
-  ],
+  patterns: ['zustand-store', 'store-persistence', 'multi-tab-sync', 'storage-utility'],
   scripts: {},
 };
 
@@ -285,17 +253,8 @@ const data: Feature = {
     '@tanstack/react-query': '^5.81.5',
   },
   devDependencies: {},
-  files: [
-    'src/lib/api.ts',
-    'src/contexts/queryContext.tsx',
-    'src/hooks/useExampleQuery.ts',
-    'src/types/api.ts',
-  ],
-  patterns: [
-    'query-provider',
-    'use-query-hook',
-    'api-client',
-  ],
+  files: ['src/lib/api.ts', 'src/contexts/queryContext.tsx', 'src/hooks/useExampleQuery.ts', 'src/types/api.ts'],
+  patterns: ['query-provider', 'use-query-hook', 'api-client'],
   scripts: {},
 };
 
@@ -343,12 +302,7 @@ const i18n: Feature = {
     'src/components/shared/LanguageSwitcher/index.ts',
     'lingui.config.js',
   ],
-  patterns: [
-    'trans-component',
-    't-function',
-    'language-switcher',
-    'use-language-hook',
-  ],
+  patterns: ['trans-component', 't-function', 'language-switcher', 'use-language-hook'],
   scripts: {
     'i18n:extract': 'lingui extract',
   },
@@ -382,9 +336,9 @@ const testing: Feature = {
     '@testing-library/react': '^16.3.0',
     '@testing-library/user-event': '^14.6.1',
     '@vitest/coverage-v8': '^4.0.16',
-    'jsdom': '^27.3.0',
-    'msw': '^2.12.4',
-    'vitest': '^4.0.16',
+    jsdom: '^27.3.0',
+    msw: '^2.12.4',
+    vitest: '^4.0.16',
   },
   files: [
     'src/test-setup.ts',
@@ -402,25 +356,15 @@ const testing: Feature = {
     'vitest.config.ts',
     'playwright.config.ts',
   ],
-  patterns: [
-    'test-component',
-    'test-hook',
-    'test-store',
-    'test-utility',
-    'msw-handler',
-    'test-fixture',
-  ],
+  patterns: ['test-component', 'test-hook', 'test-store', 'test-utility', 'msw-handler', 'test-fixture'],
   scripts: {
-    'test': 'vitest run',
+    test: 'vitest run',
     'test:watch': 'vitest',
     'test:coverage': 'vitest run --coverage',
-    'e2e': 'playwright test',
+    e2e: 'playwright test',
     'e2e:ui': 'playwright test --ui',
   },
-  configFiles: [
-    'vitest.config.ts',
-    'playwright.config.ts',
-  ],
+  configFiles: ['vitest.config.ts', 'playwright.config.ts'],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -446,14 +390,14 @@ const devtools: Feature = {
   devDependencies: {
     '@commitlint/config-conventional': '^20.2.0',
     '@eslint/js': '^9.28.0',
-    'commitlint': '^20.2.0',
-    'eslint': '^9.28.0',
+    commitlint: '^20.2.0',
+    eslint: '^9.28.0',
     'eslint-config-prettier': '^10.1.0',
     'eslint-plugin-react-hooks': '^5.2.0',
     'eslint-plugin-react-refresh': '^0.4.20',
-    'husky': '^9.1.7',
+    husky: '^9.1.7',
     'lint-staged': '^16.1.0',
-    'prettier': '^3.5.3',
+    prettier: '^3.5.3',
     'prettier-plugin-tailwindcss': '^0.7.2',
     'typescript-eslint': '^8.33.0',
   },
@@ -467,17 +411,13 @@ const devtools: Feature = {
   ],
   patterns: [],
   scripts: {
-    'lint': 'eslint .',
+    lint: 'eslint .',
     'lint:fix': 'eslint . --fix',
-    'format': 'prettier --write .',
+    format: 'prettier --write .',
     'format:check': 'prettier --check .',
-    'prepare': 'husky',
+    prepare: 'husky',
   },
-  configFiles: [
-    'eslint.config.js',
-    '.prettierrc',
-    'commitlint.config.js',
-  ],
+  configFiles: ['eslint.config.js', '.prettierrc', 'commitlint.config.js'],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -511,10 +451,7 @@ const ci: Feature = {
   ],
   patterns: [],
   scripts: {},
-  configFiles: [
-    'lighthouserc.json',
-    'lighthouse-budget.json',
-  ],
+  configFiles: ['lighthouserc.json', 'lighthouse-budget.json'],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -12,11 +12,7 @@ import { getCodeExample, getAvailablePatterns } from '../utils/index.js';
 const AVAILABLE_PATTERNS = getAvailablePatterns();
 
 export const getExampleSchema = z.object({
-  pattern: z
-    .string()
-    .describe(
-      `Pattern type to get example for. Available: ${AVAILABLE_PATTERNS.join(', ')}`
-    ),
+  pattern: z.string().describe(`Pattern type to get example for. Available: ${AVAILABLE_PATTERNS.join(', ')}`),
 });
 
 export type GetExampleInput = z.infer<typeof getExampleSchema>;
