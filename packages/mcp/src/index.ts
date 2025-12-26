@@ -16,23 +16,32 @@
  *   - get_example: Get real code examples for patterns
  *
  * Resources:
- *   - docs://conventions: Coding standards and patterns
- *   - docs://architecture: Technology stack and data flow
+ *   - docs://conventions, docs://architecture, docs://testing
+ *   - docs://i18n, docs://api, docs://claude
  */
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createServer } from './server.js';
+import { VERSION } from './version.js';
 
 async function main() {
   const server = createServer();
   const transport = new StdioServerTransport();
 
+  // Graceful shutdown handling
+  const shutdown = async () => {
+    console.error('Shutting down MCP server...');
+    await server.close();
+    process.exit(0);
+  };
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+
   await server.connect(transport);
 
   // Log to stderr (STDIO transport uses stdout for messages)
-  console.error('webapp-base MCP server running on STDIO');
-  console.error('Tools: get_features, get_scaffold, get_example');
-  console.error('Resources: docs://conventions, docs://architecture');
+  console.error(`webapp-base MCP server v${VERSION} running on STDIO`);
 }
 
 main().catch((error) => {

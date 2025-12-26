@@ -17,14 +17,15 @@ import {
   getFeatures,
   getFeaturesToolDefinition,
   getScaffold,
+  getScaffoldSchema,
   getScaffoldToolDefinition,
   getExample,
+  getExampleSchema,
   getExampleToolDefinition,
-  type GetScaffoldInput,
-  type GetExampleInput,
 } from './tools/index.js';
 
 import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
+import { VERSION } from './version.js';
 
 /**
  * Create and configure the MCP server
@@ -33,7 +34,7 @@ export function createServer(): Server {
   const server = new Server(
     {
       name: 'webapp-base-mcp',
-      version: '1.0.0',
+      version: VERSION,
     },
     {
       capabilities: {
@@ -71,7 +72,14 @@ export function createServer(): Server {
         }
 
         case 'get_scaffold': {
-          const result = await getScaffold(args as GetScaffoldInput);
+          const parsed = getScaffoldSchema.safeParse(args);
+          if (!parsed.success) {
+            return {
+              content: [{ type: 'text', text: `Invalid input: ${parsed.error.message}` }],
+              isError: true,
+            };
+          }
+          const result = await getScaffold(parsed.data);
           return {
             content: [
               {
@@ -83,7 +91,14 @@ export function createServer(): Server {
         }
 
         case 'get_example': {
-          const result = await getExample(args as GetExampleInput);
+          const parsed = getExampleSchema.safeParse(args);
+          if (!parsed.success) {
+            return {
+              content: [{ type: 'text', text: `Invalid input: ${parsed.error.message}` }],
+              isError: true,
+            };
+          }
+          const result = await getExample(parsed.data);
           return {
             content: [
               {
