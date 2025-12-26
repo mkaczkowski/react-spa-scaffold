@@ -4,8 +4,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { getFeatures } from '../src/tools/get-features.js';
-import { getScaffold } from '../src/tools/get-scaffold.js';
-import { getExample } from '../src/tools/get-example.js';
+import { getScaffold, getScaffoldSchema } from '../src/tools/get-scaffold.js';
+import { getExample, getExampleSchema } from '../src/tools/get-example.js';
 import { FEATURE_IDS } from '../src/features/index.js';
 
 describe('get_features tool', () => {
@@ -62,11 +62,13 @@ describe('get_scaffold tool', () => {
     expect(result.resolvedFeatures).toContain('core');
   });
 
-  it('returns error for invalid features', async () => {
-    const result = await getScaffold({ features: ['invalid-feature'] });
+  it('rejects invalid features via schema', () => {
+    const result = getScaffoldSchema.safeParse({ features: ['invalid-feature'] });
 
-    expect(result).toHaveProperty('error');
-    expect(result.error).toContain('Invalid feature IDs');
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.message).toContain('Invalid features');
+    }
   });
 
   it('auto-includes state when ui is selected', async () => {
@@ -134,12 +136,13 @@ describe('get_scaffold tool', () => {
 });
 
 describe('get_example tool', () => {
-  it('returns error for unknown pattern', async () => {
-    const result = await getExample({ pattern: 'unknown-pattern' });
+  it('rejects unknown pattern via schema', () => {
+    const result = getExampleSchema.safeParse({ pattern: 'unknown-pattern' });
 
-    expect(result).toHaveProperty('error');
-    expect(result.error).toContain('Unknown pattern');
-    expect(result).toHaveProperty('availablePatterns');
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.message).toContain('Invalid pattern');
+    }
   });
 
   it('returns code for valid pattern', async () => {

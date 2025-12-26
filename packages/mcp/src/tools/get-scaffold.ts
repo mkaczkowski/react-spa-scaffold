@@ -14,6 +14,12 @@ export const getScaffoldSchema = z.object({
   features: z
     .array(z.string())
     .max(15, 'Maximum 15 features allowed')
+    .refine(
+      (features) => features.every((f) => f in FEATURES),
+      (features) => ({
+        message: `Invalid features: ${features.filter((f) => !(f in FEATURES)).join(', ')}. Valid: ${FEATURE_IDS.join(', ')}`,
+      }),
+    )
     .describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
   projectName: z
     .string()
@@ -28,15 +34,6 @@ export type GetScaffoldInput = z.infer<typeof getScaffoldSchema>;
 
 export async function getScaffold(input: GetScaffoldInput) {
   const { features, projectName = 'my-app', includeExamples = false } = input;
-
-  // Validate feature IDs
-  const invalidFeatures = features.filter((f) => !(f in FEATURES));
-  if (invalidFeatures.length > 0) {
-    return {
-      error: `Invalid feature IDs: ${invalidFeatures.join(', ')}`,
-      validFeatures: FEATURE_IDS,
-    };
-  }
 
   // Resolve dependencies
   const resolvedFeatures = resolveFeatureDependencies(features);

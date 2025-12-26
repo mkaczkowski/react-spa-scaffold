@@ -6,10 +6,7 @@
  * and present options to users.
  */
 
-import { z } from 'zod';
 import { FEATURES, FEATURE_IDS } from '../features/index.js';
-
-export const getFeaturesSchema = z.object({});
 
 export interface FeatureSummary {
   id: string;

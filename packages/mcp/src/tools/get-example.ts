@@ -9,25 +9,18 @@
 import { z } from 'zod';
 import { getCodeExample, getAvailablePatterns } from '../utils/index.js';
 
-const AVAILABLE_PATTERNS = getAvailablePatterns();
+const AVAILABLE_PATTERNS = getAvailablePatterns() as [string, ...string[]];
 
 export const getExampleSchema = z.object({
-  pattern: z.string().describe(`Pattern type to get example for. Available: ${AVAILABLE_PATTERNS.join(', ')}`),
+  pattern: z.enum(AVAILABLE_PATTERNS, {
+    errorMap: () => ({ message: `Invalid pattern. Available: ${AVAILABLE_PATTERNS.join(', ')}` }),
+  }),
 });
 
 export type GetExampleInput = z.infer<typeof getExampleSchema>;
 
 export async function getExample(input: GetExampleInput) {
   const { pattern } = input;
-
-  // Check if pattern is valid
-  if (!AVAILABLE_PATTERNS.includes(pattern)) {
-    return {
-      error: `Unknown pattern: ${pattern}`,
-      availablePatterns: AVAILABLE_PATTERNS,
-      hint: 'Use one of the available patterns listed above',
-    };
-  }
 
   const example = await getCodeExample(pattern);
 
