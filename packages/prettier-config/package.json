@@ -1,0 +1,26 @@
+{
+  "name": "@webapp-base/prettier-config",
+  "version": "1.0.0",
+  "description": "Shared Prettier configuration for webapp-base projects",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./tailwind": "./tailwind.js"
+  },
+  "files": [
+    "*.js"
+  ],
+  "keywords": [
+    "prettier",
+    "prettier-config",
+    "webapp-base"
+  ],
+  "peerDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "prettier-plugin-tailwindcss": {
+      "optional": true
+    }
+  }
+}

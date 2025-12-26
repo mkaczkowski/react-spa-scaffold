@@ -1,0 +1,40 @@
+{
+  "name": "@webapp-base/eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint configuration for webapp-base projects",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./base": "./base.js",
+    "./react": "./index.js",
+    "./node": "./node.js"
+  },
+  "files": [
+    "*.js"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "webapp-base"
+  ],
+  "peerDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-lingui": "^0.11.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-lingui": {
+      "optional": true
+    },
+    "eslint-plugin-react-hooks": {
+      "optional": true
+    },
+    "eslint-plugin-react-refresh": {
+      "optional": true
+    }
+  }
+}
