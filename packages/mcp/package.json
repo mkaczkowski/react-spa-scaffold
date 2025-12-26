@@ -26,8 +26,17 @@
     "react",
     "typescript"
   ],
-  "author": "",
+  "author": "Mateusz Kaczkowski",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.25.64"
