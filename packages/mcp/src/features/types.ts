@@ -42,4 +42,5 @@ export interface ScaffoldResult {
   structure: string[];
   configFiles: Record<string, string>;
   setupCommands: string[];
+  claudeMd: string;
 }

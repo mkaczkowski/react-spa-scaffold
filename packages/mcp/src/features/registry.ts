@@ -70,7 +70,6 @@ const core: Feature = {
     "tsconfig.node.json",
     ".env.example",
     "public/favicon.svg",
-    "CLAUDE.md",
   ],
   patterns: [
     "component-shared",
