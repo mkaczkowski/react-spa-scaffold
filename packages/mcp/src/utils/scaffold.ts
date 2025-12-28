@@ -163,6 +163,217 @@ export function getSetupCommands(featureIds: string[]): string[] {
 }
 
 /**
+ * Generate CLAUDE.md content based on selected features
+ */
+export function generateClaudeMd(
+  featureIds: string[],
+  projectName: string,
+  scripts: Record<string, string>,
+): string {
+  const sections: string[] = [];
+
+  // Header
+  sections.push(`# CLAUDE.md
+
+AI assistant guidance for **${projectName}** - a React 19 + TypeScript + Vite 7 codebase.`);
+
+  // Commands section - based on actual scripts
+  const commandLines: string[] = [];
+  const scriptDescriptions: Record<string, string> = {
+    dev: "Dev server at localhost:5173",
+    build: "Production build (typecheck + bundle)",
+    preview: "Preview production build",
+    typecheck: "TypeScript only",
+    lint: "ESLint check",
+    "lint:fix": "ESLint auto-fix",
+    format: "Prettier format",
+    "format:check": "Prettier check",
+    test: "Vitest once",
+    "test:watch": "Vitest watch mode",
+    "test:coverage": "Coverage (80% threshold)",
+    e2e: "Playwright E2E",
+    "e2e:ui": "Playwright UI mode",
+    "i18n:extract": "Extract translations to .po",
+    prepare: "Initialize Husky hooks",
+  };
+
+  for (const script of Object.keys(scripts).sort()) {
+    const desc = scriptDescriptions[script] || "";
+    const padding = " ".repeat(Math.max(1, 20 - script.length));
+    commandLines.push(`npm run ${script}${padding}# ${desc}`);
+  }
+
+  sections.push(`
+## Commands
+
+\`\`\`bash
+${commandLines.join("\n")}
+\`\`\``);
+
+  // Project Structure - dynamic based on features
+  const structureParts: string[] = [
+    "src/",
+    "├── components/    # ui/ (primitives), layout/, shared/ (features)",
+  ];
+
+  if (featureIds.includes("data") || featureIds.includes("i18n")) {
+    structureParts.push("├── contexts/      # React Context providers");
+  }
+  structureParts.push("├── hooks/         # Custom hooks");
+  structureParts.push(
+    "├── lib/           # config, utils, format" +
+      (featureIds.includes("data") ? ", api" : "") +
+      (featureIds.includes("routing") ? ", routes" : "") +
+      (featureIds.includes("state") ? ", storage" : ""),
+  );
+
+  if (featureIds.includes("routing")) {
+    structureParts.push("├── pages/         # Lazy-loaded route components");
+  }
+  if (featureIds.includes("state")) {
+    structureParts.push("├── stores/        # Zustand stores");
+  }
+  if (featureIds.includes("i18n")) {
+    structureParts.push("├── i18n/          # LinguiJS config and catalogs");
+    structureParts.push("├── locales/       # Translation files (.po)");
+  }
+  structureParts.push("└── types/         # TypeScript definitions");
+
+  if (featureIds.includes("testing")) {
+    structureParts.push("");
+    structureParts.push("tests/unit/        # Vitest (mirrors src/)");
+    structureParts.push("e2e/               # Playwright tests");
+  }
+
+  sections.push(`
+## Project Structure
+
+\`\`\`
+${structureParts.join("\n")}
+\`\`\``);
+
+  // Code Patterns - always included
+  const stateHierarchy: string[] = [];
+  if (featureIds.includes("state")) stateHierarchy.push("Zustand (persisted)");
+  if (featureIds.includes("data"))
+    stateHierarchy.push("TanStack Query (server)");
+  stateHierarchy.push("Context (UI)", "useState (local)");
+
+  sections.push(`
+## Code Patterns
+
+**Imports**: Always use \`@/\` path alias
+
+**Components**: Named exports + \`Props\` interface. Pages use default exports for lazy loading.
+
+**TypeScript**: \`type\` for unions, \`interface\` for objects
+
+**State hierarchy**: ${stateHierarchy.join(" → ")}`);
+
+  // UI Components section - only if ui feature
+  if (featureIds.includes("ui")) {
+    sections.push(`
+## UI Components (Shadcn/UI)
+
+This project uses **Shadcn/UI** with radix-nova style. Components live in \`src/components/ui/\`.
+
+### Adding New Components
+
+\`\`\`bash
+npx shadcn@latest add button           # Single component
+npx shadcn@latest add dialog card input # Multiple components
+\`\`\`
+
+**Pattern**: Import directly (no barrel exports for UI):
+
+\`\`\`tsx
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+\`\`\``);
+  }
+
+  // MCP Servers section - always helpful
+  sections.push(`
+## MCP Servers (PREFER OVER WebSearch)
+
+Use MCP servers for documentation lookup. They provide **structured, version-accurate data** directly from source.
+
+### Context7 MCP (All Libraries)
+
+Use for **any npm package** documentation:
+
+\`\`\`
+resolve-library-id → get-library-docs
+\`\`\`
+
+**Examples**: react-hook-form, @tanstack/react-query, zustand, zod, date-fns`);
+
+  if (featureIds.includes("ui")) {
+    sections.push(`
+### Shadcn MCP (UI Components)
+
+| Need                | Tool                                             |
+| ------------------- | ------------------------------------------------ |
+| Find component      | \`mcp__shadcn__search_items_in_registries\`        |
+| View component code | \`mcp__shadcn__view_items_in_registries\`          |
+| Usage examples      | \`mcp__shadcn__get_item_examples_from_registries\` |`);
+  }
+
+  // Translations section - only if i18n feature
+  if (featureIds.includes("i18n")) {
+    sections.push(`
+## Translations (CRITICAL)
+
+All user-facing text MUST have translator comments. ESLint enforces this.
+
+\`\`\`tsx
+<Trans comment="Dashboard heading">Welcome back</Trans>
+t({ message: 'Close', comment: 'Close button' })
+\`\`\``);
+  }
+
+  // Testing section - only if testing feature
+  if (featureIds.includes("testing")) {
+    sections.push(`
+## Testing
+
+Tests in \`tests/unit/\` mirror \`src/\` structure. 80% coverage required.
+
+\`\`\`typescript
+import { describe, it, expect, vi } from 'vitest';
+import { screen, renderHook } from '@testing-library/react';
+import { render, mockMatchMedia, server } from '@/test';
+\`\`\`
+
+MSW handlers auto-reset after each test.`);
+  }
+
+  // Common Gotchas - filtered by features
+  const gotchas: string[] = [];
+  if (featureIds.includes("devtools")) {
+    gotchas.push("**Node.js >= 22.0.0** required (check `.nvmrc`)");
+    gotchas.push("**Conventional commits** enforced by commitlint");
+  }
+  gotchas.push(
+    "**Context hooks throw** outside provider (e.g., `useMobileContext()`)",
+  );
+  gotchas.push("**Barrel exports** in each directory via `index.ts`");
+  if (featureIds.includes("ui")) {
+    gotchas.push(
+      "**UI components** import directly: `@/components/ui/button` (no barrel)",
+    );
+  }
+
+  sections.push(`
+## Common Gotchas
+
+${gotchas.map((g, i) => `${i + 1}. ${g}`).join("\n")}
+`);
+
+  return sections.join("\n");
+}
+
+/**
  * Compute complete scaffold for selected features
  */
 export async function computeScaffold(
@@ -178,8 +389,8 @@ export async function computeScaffold(
   // Merge all scripts
   const scripts = mergeScripts(resolvedFeatures);
 
-  // Get file structure
-  const structure = computeFileStructure(resolvedFeatures);
+  // Get file structure (add CLAUDE.md which is generated, not from patterns)
+  const structure = [...computeFileStructure(resolvedFeatures), "CLAUDE.md"];
 
   // Get config files with actual content read from templates
   const configFiles: Record<string, string> = {};
@@ -191,6 +402,9 @@ export async function computeScaffold(
   // Get setup commands
   const setupCommands = getSetupCommands(resolvedFeatures);
 
+  // Generate CLAUDE.md content
+  const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
+
   return {
     packageJson: {
       name: projectName,
@@ -201,5 +415,6 @@ export async function computeScaffold(
     structure,
     configFiles,
     setupCommands,
+    claudeMd,
   };
 }

@@ -141,6 +141,53 @@ describe("get_scaffold tool", () => {
     expect(uiDetail?.wasAutoIncluded).toBe(false);
   });
 
+  it("includes CLAUDE.md in file structure", async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.fileStructure).toContain("CLAUDE.md");
+  });
+
+  it("returns claudeMd content", async () => {
+    const result = await getScaffold({
+      features: [],
+      projectName: "test-project",
+    });
+
+    expect(result.claudeMd).toBeDefined();
+    expect(typeof result.claudeMd).toBe("string");
+    expect(result.claudeMd).toContain("# CLAUDE.md");
+    expect(result.claudeMd).toContain("test-project");
+  });
+
+  it("claudeMd includes testing section when testing feature selected", async () => {
+    const result = await getScaffold({ features: ["testing"] });
+
+    expect(result.claudeMd).toContain("## Testing");
+    expect(result.claudeMd).toContain("Vitest");
+  });
+
+  it("claudeMd excludes testing section when testing feature not selected", async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.claudeMd).not.toContain("## Testing");
+  });
+
+  it("claudeMd includes UI section only when ui feature selected", async () => {
+    const withUi = await getScaffold({ features: ["ui"] });
+    const withoutUi = await getScaffold({ features: [] });
+
+    expect(withUi.claudeMd).toContain("## UI Components");
+    expect(withoutUi.claudeMd).not.toContain("## UI Components");
+  });
+
+  it("claudeMd includes i18n section only when i18n feature selected", async () => {
+    const withI18n = await getScaffold({ features: ["i18n"] });
+    const withoutI18n = await getScaffold({ features: [] });
+
+    expect(withI18n.claudeMd).toContain("## Translations");
+    expect(withoutI18n.claudeMd).not.toContain("## Translations");
+  });
+
   it("returns config files with content", async () => {
     const result = await getScaffold({ features: ["ui"] });
 

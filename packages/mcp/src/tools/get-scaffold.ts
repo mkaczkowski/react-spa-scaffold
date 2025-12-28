@@ -89,6 +89,7 @@ export async function getScaffold(input: GetScaffoldInput) {
     fileStructure: scaffold.structure,
     configFiles: scaffold.configFiles,
     setupCommands: scaffold.setupCommands,
+    claudeMd: scaffold.claudeMd,
     examples,
     instructions: generateInstructions(projectName, scaffold.setupCommands),
   };
@@ -109,12 +110,14 @@ function generateInstructions(
 
 3. Create the file structure as listed
 
-4. Run setup commands:
+4. Create CLAUDE.md using the provided claudeMd content
+
+5. Run setup commands:
    \`\`\`bash
    ${setupCommands.join("\n   ")}
    \`\`\`
 
-5. Start development:
+6. Start development:
    \`\`\`bash
    npm run dev
    \`\`\`
@@ -122,7 +125,8 @@ function generateInstructions(
 ## Notes
 - Core feature is always included
 - Auto-included features are dependencies of selected features
-- Use get_example tool to get code patterns for each file type`;
+- Use get_example tool to get code patterns for each file type
+- CLAUDE.md content is dynamically generated based on selected features`;
 }
 
 export const getScaffoldToolDefinition = {
