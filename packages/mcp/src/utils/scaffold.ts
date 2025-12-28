@@ -2,40 +2,11 @@
  * Scaffold computation utilities
  */
 
+import { readFile } from "fs/promises";
+
 import { FEATURES } from "../features/index.js";
 import type { ScaffoldResult } from "../features/types.js";
-
-/**
- * Config file templates with actual content
- * These are critical config files that need exact content for proper setup
- */
-const CONFIG_TEMPLATES: Record<string, string> = {
-  "components.json": JSON.stringify(
-    {
-      $schema: "https://ui.shadcn.com/schema.json",
-      style: "radix-nova",
-      rsc: false,
-      tsx: true,
-      tailwind: {
-        config: "",
-        css: "src/index.css",
-        baseColor: "zinc",
-        cssVariables: true,
-        prefix: "",
-      },
-      iconLibrary: "lucide",
-      aliases: {
-        components: "@/components",
-        utils: "@/lib/utils",
-        ui: "@/components/ui",
-        lib: "@/lib",
-        hooks: "@/hooks",
-      },
-    },
-    null,
-    2,
-  ),
-};
+import { resolveTemplatePath } from "./paths.js";
 
 /**
  * Resolve feature dependencies recursively
@@ -157,6 +128,20 @@ export function getConfigFiles(featureIds: string[]): string[] {
 }
 
 /**
+ * Read config file content from template
+ */
+async function readConfigFileContent(configPath: string): Promise<string> {
+  const fullPath = resolveTemplatePath(configPath);
+
+  try {
+    return await readFile(fullPath, "utf-8");
+  } catch {
+    // File might not exist if running outside webapp-base
+    return `// File not found: ${configPath}\n// Run MCP server from within webapp-base repository`;
+  }
+}
+
+/**
  * Generate setup commands based on selected features
  */
 export function getSetupCommands(featureIds: string[]): string[] {
@@ -180,10 +165,10 @@ export function getSetupCommands(featureIds: string[]): string[] {
 /**
  * Compute complete scaffold for selected features
  */
-export function computeScaffold(
+export async function computeScaffold(
   selectedFeatures: string[],
   projectName: string = "my-app",
-): ScaffoldResult {
+): Promise<ScaffoldResult> {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 
@@ -196,13 +181,11 @@ export function computeScaffold(
   // Get file structure
   const structure = computeFileStructure(resolvedFeatures);
 
-  // Get config files with actual content where available
+  // Get config files with actual content read from templates
   const configFiles: Record<string, string> = {};
-  for (const config of getConfigFiles(resolvedFeatures)) {
-    // Use actual template content if available, otherwise provide reference
-    configFiles[config] =
-      CONFIG_TEMPLATES[config] ??
-      `// See webapp-base repository for ${config} contents`;
+  const configPaths = getConfigFiles(resolvedFeatures);
+  for (const config of configPaths) {
+    configFiles[config] = await readConfigFileContent(config);
   }
 
   // Get setup commands
