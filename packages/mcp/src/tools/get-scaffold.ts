@@ -125,7 +125,7 @@ function generateInstructions(projectName: string, setupCommands: string[]): str
 
 export const getScaffoldToolDefinition = {
   name: 'get_scaffold',
-  description: `Get complete scaffold information for a new webapp-base project.
+  description: `Get complete scaffold information for a new react-spa-scaffold project.
 
 Given a list of features, returns:
 - Resolved dependencies (including auto-required features)

@@ -1,5 +1,5 @@
 /**
- * Feature Registry - Defines all available features for webapp-base scaffolding
+ * Feature Registry - Defines all available features for react-spa-scaffold scaffolding
  */
 
 import type { Feature, FeatureRegistry } from './types.js';
@@ -40,7 +40,7 @@ const core: Feature = {
     '@types/react': '^19.1.8',
     '@types/react-dom': '^19.1.6',
     '@vitejs/plugin-react': '^5.1.2',
-    '@webapp-base/tsconfig': CONFIG_VERSIONS['@webapp-base/tsconfig'],
+    '@react-spa-scaffold/tsconfig': CONFIG_VERSIONS['@react-spa-scaffold/tsconfig'],
     tailwindcss: '^4.1.17',
     typescript: '~5.9.0',
     vite: '^7.0.0',
@@ -393,11 +393,11 @@ const testing: Feature = {
 
 const devtools: Feature = {
   name: 'Developer Tooling',
-  description: 'ESLint + Prettier + Husky + Commitlint (using @webapp-base shared configs)',
+  description: 'ESLint + Prettier + Husky + Commitlint (using @react-spa-scaffold shared configs)',
   required: false,
   includes: [
-    '@webapp-base/eslint-config (React + TypeScript + LinguiJS)',
-    '@webapp-base/prettier-config (with Tailwind plugin)',
+    '@react-spa-scaffold/eslint-config (React + TypeScript + LinguiJS)',
+    '@react-spa-scaffold/prettier-config (with Tailwind plugin)',
     'ESLint with TypeScript and React Hooks plugins',
     'eslint-plugin-react-refresh for HMR',
     'Prettier with Tailwind CSS plugin',
@@ -412,8 +412,8 @@ const devtools: Feature = {
   devDependencies: {
     '@commitlint/config-conventional': '^20.2.0',
     '@eslint/js': '^9.28.0',
-    '@webapp-base/eslint-config': CONFIG_VERSIONS['@webapp-base/eslint-config'],
-    '@webapp-base/prettier-config': CONFIG_VERSIONS['@webapp-base/prettier-config'],
+    '@react-spa-scaffold/eslint-config': CONFIG_VERSIONS['@react-spa-scaffold/eslint-config'],
+    '@react-spa-scaffold/prettier-config': CONFIG_VERSIONS['@react-spa-scaffold/prettier-config'],
     commitlint: '^20.2.0',
     eslint: '^9.28.0',
     'eslint-config-prettier': '^10.1.0',

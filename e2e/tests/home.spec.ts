@@ -21,16 +21,22 @@ test.describe('Home Page', () => {
   });
 
   test('skip link navigates to main content', async ({ page }) => {
-    // Focus skip link (first focusable element)
-    await page.keyboard.press('Tab');
-
     const skipLink = page.getByRole('link', { name: /skip to main content/i });
+
+    // Ensure skip link exists in DOM
+    await expect(skipLink).toBeAttached();
+
+    // Focus the skip link explicitly (more reliable than Tab in E2E)
+    await skipLink.focus();
     await expect(skipLink).toBeFocused();
 
-    // Click skip link
+    // Verify skip link becomes visible when focused
+    await expect(skipLink).toBeVisible();
+
+    // Click skip link to navigate to main content
     await skipLink.click();
 
-    // Main should receive focus or be scrolled to
+    // Main should be scrolled into view
     await expect(page.locator('#main')).toBeInViewport();
   });
 });

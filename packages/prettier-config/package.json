@@ -1,8 +1,9 @@
 {
-  "name": "@webapp-base/prettier-config",
+  "name": "@react-spa-scaffold/prettier-config",
   "version": "1.0.0",
-  "description": "Shared Prettier configuration for webapp-base projects",
+  "description": "Shared Prettier configuration for react-spa-scaffold projects",
   "type": "module",
+  "main": "./index.js",
   "exports": {
     ".": "./index.js",
     "./tailwind": "./tailwind.js"
@@ -13,25 +14,30 @@
   "keywords": [
     "prettier",
     "prettier-config",
-    "webapp-base"
+    "react-spa-scaffold"
   ],
-  "author": "Mateusz Kaczkowski",
+  "author": "Mariusz Kaczkowski",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
     "directory": "packages/prettier-config"
   },
-  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/prettier-config#readme",
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/prettier-config#readme",
   "bugs": {
-    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
   },
   "peerDependencies": {
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.0"
   },
   "peerDependenciesMeta": {
     "prettier-plugin-tailwindcss": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

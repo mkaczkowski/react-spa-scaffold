@@ -19,7 +19,7 @@ const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
 // Marker file created by bundle script to indicate npx mode
 const BUNDLE_MARKER = join(BUNDLED_TEMPLATES, '.bundled');
 
-// Monorepo root (webapp-base app lives at root alongside packages/)
+// Monorepo root (react-spa-scaffold app lives at root alongside packages/)
 const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
 
 /**

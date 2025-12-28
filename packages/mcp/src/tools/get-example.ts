@@ -3,7 +3,7 @@
  *
  * Returns real code examples for specific pattern types.
  * AI agents use this to understand how to generate code
- * that matches webapp-base conventions.
+ * that matches react-spa-scaffold conventions.
  */
 
 import { z } from 'zod';
@@ -27,7 +27,7 @@ export async function getExample(input: GetExampleInput) {
   if (!example) {
     return {
       error: `Could not load example for pattern: ${pattern}`,
-      hint: 'Ensure MCP server is running from webapp-base directory',
+      hint: 'Ensure MCP server is running from react-spa-scaffold directory',
     };
   }
 
@@ -66,7 +66,7 @@ export const getExampleToolDefinition = {
   name: 'get_example',
   description: `Get real code example for a specific pattern type.
 
-Returns actual code from the webapp-base repository, not templates.
+Returns actual code from the react-spa-scaffold repository, not templates.
 Use this to understand exact patterns when generating new files.
 
 Available patterns:

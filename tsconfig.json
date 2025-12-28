@@ -1,5 +1,5 @@
 {
-  "extends": "@webapp-base/tsconfig/react",
+  "extends": "@react-spa-scaffold/tsconfig/react",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

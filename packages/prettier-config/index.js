@@ -1,14 +1,14 @@
 /**
  * Base Prettier configuration
  *
- * Standard formatting rules for webapp-base projects.
+ * Standard formatting rules for react-spa-scaffold projects.
  * Use tailwind.js if you need Tailwind CSS class sorting.
  *
  * Usage in package.json:
- *   "prettier": "@webapp-base/prettier-config"
+ *   "prettier": "@react-spa-scaffold/prettier-config"
  *
  * Or in prettier.config.js:
- *   export { default } from '@webapp-base/prettier-config';
+ *   export { default } from '@react-spa-scaffold/prettier-config';
  */
 
 /** @type {import('prettier').Config} */

@@ -1,10 +1,10 @@
 /**
- * ESLint configuration for webapp-base
+ * ESLint configuration for react-spa-scaffold
  *
- * Uses @webapp-base/eslint-config with local overrides for monorepo packages.
+ * Uses @react-spa-scaffold/eslint-config with local overrides for monorepo packages.
  */
 
-import config from '@webapp-base/eslint-config';
+import config from '@react-spa-scaffold/eslint-config';
 
 export default [
   // Main app uses React config

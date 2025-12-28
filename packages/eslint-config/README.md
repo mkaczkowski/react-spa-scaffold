@@ -1,11 +1,11 @@
-# @webapp-base/eslint-config
+# @react-spa-scaffold/eslint-config
 
-Shared ESLint configuration for webapp-base projects.
+Shared ESLint configuration for react-spa-scaffold projects.
 
 ## Installation
 
 ```bash
-npm install -D @webapp-base/eslint-config eslint typescript-eslint @eslint/js eslint-config-prettier
+npm install -D @react-spa-scaffold/eslint-config eslint typescript-eslint @eslint/js eslint-config-prettier
 ```
 
 For React projects, also install:
@@ -20,7 +20,7 @@ npm install -D eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plug
 
 ```javascript
 // eslint.config.js
-import config from '@webapp-base/eslint-config';
+import config from '@react-spa-scaffold/eslint-config';
 
 export default config;
 ```
@@ -29,7 +29,7 @@ export default config;
 
 ```javascript
 // eslint.config.js
-import config from '@webapp-base/eslint-config/node';
+import config from '@react-spa-scaffold/eslint-config/node';
 
 export default config;
 ```
@@ -38,7 +38,7 @@ export default config;
 
 ```javascript
 // eslint.config.js
-import config from '@webapp-base/eslint-config';
+import config from '@react-spa-scaffold/eslint-config';
 
 export default [
   ...config,
@@ -53,11 +53,11 @@ export default [
 
 ## Available Configs
 
-| Config          | Import                            | Description                          |
-| --------------- | --------------------------------- | ------------------------------------ |
-| React (default) | `@webapp-base/eslint-config`      | React + TypeScript + LinguiJS        |
-| Node.js         | `@webapp-base/eslint-config/node` | Node.js servers (no React/i18n)      |
-| Base            | `@webapp-base/eslint-config/base` | TypeScript only (for custom configs) |
+| Config          | Import                                   | Description                          |
+| --------------- | ---------------------------------------- | ------------------------------------ |
+| React (default) | `@react-spa-scaffold/eslint-config`      | React + TypeScript + LinguiJS        |
+| Node.js         | `@react-spa-scaffold/eslint-config/node` | Node.js servers (no React/i18n)      |
+| Base            | `@react-spa-scaffold/eslint-config/base` | TypeScript only (for custom configs) |
 
 ## What's Included
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * webapp-base MCP Server
+ * react-spa-scaffold MCP Server
  *
  * A Model Context Protocol server that provides tools and resources
- * for scaffolding new projects based on the webapp-base template.
+ * for scaffolding new projects based on the react-spa-scaffold template.
  *
  * Usage:
- *   npx webapp-base-mcp          # Run with STDIO transport
+ *   npx @react-spa-scaffold/mcp  # Run with STDIO transport
  *   node dist/index.js           # Direct execution
  *
  * Tools:
@@ -41,7 +41,7 @@ async function main() {
   await server.connect(transport);
 
   // Log to stderr (STDIO transport uses stdout for messages)
-  console.error(`webapp-base MCP server v${VERSION} running on STDIO`);
+  console.error(`react-spa-scaffold MCP server v${VERSION} running on STDIO`);
 }
 
 main().catch((error) => {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Bundle webapp-base template files into the MCP server package
+ * Bundle react-spa-scaffold template files into the MCP server package
  * Run this before publishing to npm
  *
  * Cross-platform Node.js replacement for bundle-templates.sh
@@ -17,7 +17,7 @@ const PACKAGES_DIR = join(WEBAPP_BASE_DIR, 'packages');
 const TEMPLATES_DIR = join(MCP_DIR, 'templates');
 const DIST_FEATURES_DIR = join(MCP_DIR, 'dist', 'features');
 
-console.log('Bundling webapp-base templates...');
+console.log('Bundling react-spa-scaffold templates...');
 console.log(`Source: ${WEBAPP_BASE_DIR}`);
 console.log(`Target: ${TEMPLATES_DIR}`);
 
@@ -76,9 +76,9 @@ function getPackageVersion(packageName) {
 }
 
 const versions = {
-  '@webapp-base/eslint-config': getPackageVersion('eslint-config'),
-  '@webapp-base/prettier-config': getPackageVersion('prettier-config'),
-  '@webapp-base/tsconfig': getPackageVersion('tsconfig'),
+  '@react-spa-scaffold/eslint-config': getPackageVersion('eslint-config'),
+  '@react-spa-scaffold/prettier-config': getPackageVersion('prettier-config'),
+  '@react-spa-scaffold/tsconfig': getPackageVersion('tsconfig'),
 };
 
 // Write to dist/features/ (where compiled versions.js expects it)

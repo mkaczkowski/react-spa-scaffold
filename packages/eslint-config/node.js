@@ -5,7 +5,7 @@
  * Used by MCP server and other backend packages.
  *
  * Usage:
- *   import config from '@webapp-base/eslint-config/node';
+ *   import config from '@react-spa-scaffold/eslint-config/node';
  *   export default config;
  */
 

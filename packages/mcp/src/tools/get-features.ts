@@ -35,7 +35,7 @@ export function getFeatures(): FeatureSummary[] {
 
 export const getFeaturesToolDefinition = {
   name: 'get_features',
-  description: `List all available feature modules for webapp-base project scaffolding.
+  description: `List all available feature modules for react-spa-scaffold project scaffolding.
 
 Returns a list of features that can be selected when creating a new project:
 - core: Always included (React 19 + TypeScript + Vite + Tailwind)

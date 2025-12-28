@@ -5,11 +5,11 @@
  * Includes React Hooks rules, React Refresh, and i18n enforcement.
  *
  * Usage:
- *   import config from '@webapp-base/eslint-config';
+ *   import config from '@react-spa-scaffold/eslint-config';
  *   export default config;
  *
  * Or with customization:
- *   import config from '@webapp-base/eslint-config';
+ *   import config from '@react-spa-scaffold/eslint-config';
  *   export default [...config, { rules: { 'no-console': 'off' } }];
  */
 

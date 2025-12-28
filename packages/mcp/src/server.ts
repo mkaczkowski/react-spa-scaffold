@@ -1,8 +1,8 @@
 /**
- * MCP Server for webapp-base scaffolding
+ * MCP Server for react-spa-scaffold scaffolding
  *
  * This server provides tools and resources for AI agents to scaffold
- * new projects based on the webapp-base template.
+ * new projects based on the react-spa-scaffold template.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -49,7 +49,7 @@ function errorResponse(message: string) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SERVER_INSTRUCTIONS = `
-webapp-base MCP Server - Project Scaffolding Assistant
+react-spa-scaffold MCP Server - Project Scaffolding Assistant
 
 Usage:
 1. Call get_features to see available feature modules
@@ -69,7 +69,7 @@ Tips:
 export function createServer(): Server {
   const server = new Server(
     {
-      name: 'webapp-base-mcp',
+      name: 'react-spa-scaffold-mcp',
       version: VERSION,
     },
     {

@@ -21,9 +21,9 @@ const VERSIONS_JSON = join(__dirname, 'versions.json');
 const PACKAGES_DIR = join(__dirname, '..', '..', '..', '..');
 
 interface ConfigVersions {
-  '@webapp-base/eslint-config': string;
-  '@webapp-base/prettier-config': string;
-  '@webapp-base/tsconfig': string;
+  '@react-spa-scaffold/eslint-config': string;
+  '@react-spa-scaffold/prettier-config': string;
+  '@react-spa-scaffold/tsconfig': string;
 }
 
 function readPackageVersion(packageName: string): string {
@@ -48,9 +48,9 @@ function loadVersions(): ConfigVersions {
 
   // In development, read from actual package.json files
   return {
-    '@webapp-base/eslint-config': readPackageVersion('eslint-config'),
-    '@webapp-base/prettier-config': readPackageVersion('prettier-config'),
-    '@webapp-base/tsconfig': readPackageVersion('tsconfig'),
+    '@react-spa-scaffold/eslint-config': readPackageVersion('eslint-config'),
+    '@react-spa-scaffold/prettier-config': readPackageVersion('prettier-config'),
+    '@react-spa-scaffold/tsconfig': readPackageVersion('tsconfig'),
   };
 }
 

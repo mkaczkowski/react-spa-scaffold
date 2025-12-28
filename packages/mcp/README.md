@@ -1,7 +1,7 @@
-# webapp-base MCP Server
+# react-spa-scaffold MCP Server
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that enables AI agents to scaffold new projects
-based on the webapp-base template. Instead of generating code directly, this server provides **knowledge and patterns**
+based on the react-spa-scaffold template. Instead of generating code directly, this server provides **knowledge and patterns**
 that AI agents use to create projects.
 
 ## Philosophy
@@ -20,7 +20,7 @@ This MCP server follows the principle: **MCP provides knowledge, AI provides exe
 
 ### Installation (Monorepo)
 
-This package lives in the webapp-base monorepo at `packages/mcp/`.
+This package lives in the react-spa-scaffold monorepo at `packages/mcp/`.
 
 ```bash
 # From monorepo root
@@ -65,9 +65,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "webapp-base": {
+    "react-spa-scaffold": {
       "command": "npx",
-      "args": ["webapp-base-mcp"]
+      "args": ["@react-spa-scaffold/mcp"]
     }
   }
 }
@@ -80,9 +80,9 @@ Add to `.vscode/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "webapp-base": {
+    "react-spa-scaffold": {
       "command": "npx",
-      "args": ["webapp-base-mcp"]
+      "args": ["@react-spa-scaffold/mcp"]
     }
   }
 }
@@ -95,9 +95,9 @@ Add to project's `.claude/settings.json`:
 ```json
 {
   "mcpServers": {
-    "webapp-base": {
+    "react-spa-scaffold": {
       "command": "npx",
-      "args": ["webapp-base-mcp"]
+      "args": ["@react-spa-scaffold/mcp"]
     }
   }
 }
@@ -110,7 +110,7 @@ For local development without publishing:
 ```bash
 cd packages/mcp
 npm run build
-npm link  # Makes webapp-base-mcp available globally
+npm link  # Makes react-spa-scaffold-mcp available globally
 ```
 
 Then configure clients with:
@@ -118,8 +118,8 @@ Then configure clients with:
 ```json
 {
   "mcpServers": {
-    "webapp-base": {
-      "command": "webapp-base-mcp"
+    "react-spa-scaffold": {
+      "command": "react-spa-scaffold-mcp"
     }
   }
 }
@@ -130,9 +130,9 @@ Or point directly to the built file:
 ```json
 {
   "mcpServers": {
-    "webapp-base": {
+    "react-spa-scaffold": {
       "command": "node",
-      "args": ["/absolute/path/to/webapp-base/packages/mcp/dist/index.js"]
+      "args": ["/absolute/path/to/react-spa-scaffold/packages/mcp/dist/index.js"]
     }
   }
 }
@@ -218,9 +218,9 @@ const result = await client.callTool('get_example', {
 {
   pattern: string;
   description: string;
-  filePath: string;              // Where this file lives in webapp-base
+  filePath: string;              // Where this file lives in react-spa-scaffold
   keyPoints: string[];           // Important things to note
-  code: string;                  // Actual code from webapp-base
+  code: string;                  // Actual code from react-spa-scaffold
   usage: string;                 // Hint for where to place generated files
 }
 ```
@@ -278,7 +278,7 @@ const result = await client.callTool('get_example', {
 
 ## Resources
 
-Resources are **read from actual files** in the webapp-base repository at runtime.
+Resources are **read from actual files** in the react-spa-scaffold repository at runtime.
 This ensures documentation stays in sync automatically.
 
 | URI                   | Source Files                                      | Description                             |
@@ -311,8 +311,8 @@ return { contents: [{ uri, text: content }] };
 Here's how an AI agent would use this MCP server to scaffold a new project:
 
 ```
-User: "Create a new React app called 'my-dashboard' with routing,
-       UI components, forms, and testing"
+User: "Scaffold a new React app called 'my-dashboard' with routing,
+       UI components, forms, and testing using react-spa-scaffold."
 
 AI Agent:
 
@@ -401,7 +401,7 @@ const PATTERN_MAP: Record<string, {...}> = {
 };
 ```
 
-4. **Create the actual files** in webapp-base's `src/` directory (the MCP server reads real code, not templates).
+4. **Create the actual files** in react-spa-scaffold's `src/` directory (the MCP server reads real code, not templates).
 
 5. **Rebuild**: `npm run build`
 
@@ -410,7 +410,7 @@ const PATTERN_MAP: Record<string, {...}> = {
 If you just want to expose a new pattern without a full feature:
 
 1. Add to `PATTERN_MAP` in `src/utils/examples.ts`
-2. Ensure the referenced file exists in webapp-base
+2. Ensure the referenced file exists in react-spa-scaffold
 3. Rebuild
 
 ### Adding a New Resource
@@ -431,7 +431,7 @@ const DOCS_MAP: Record<string, {...}> = {
 };
 ```
 
-2. Create the actual documentation file in webapp-base:
+2. Create the actual documentation file in react-spa-scaffold:
 
 ```bash
 # Create docs/MY_TOPIC.md with your content
@@ -459,9 +459,9 @@ You can combine multiple docs into one resource:
 ### Monorepo Structure
 
 ```
-webapp-base/                    # Monorepo root
+react-spa-scaffold/                    # Monorepo root
 ├── package.json               # Workspaces config
-├── src/                       # Main webapp-base app
+├── src/                       # Main react-spa-scaffold app
 ├── docs/                      # Documentation (read by MCP)
 ├── tests/                     # Test files (read by MCP)
 └── packages/
@@ -510,7 +510,7 @@ npm run bundle     # Bundle template files for npm distribution
 The package is configured for npm distribution:
 
 ```bash
-# 1. Bundle templates (copies webapp-base files into templates/)
+# 1. Bundle templates (copies react-spa-scaffold files into templates/)
 npm run bundle
 
 # 2. Build TypeScript
@@ -532,7 +532,7 @@ The server supports two modes:
 **Development mode** (running from monorepo):
 
 - Reads files directly from monorepo root (`../../..` from dist/)
-- Changes to webapp-base app are reflected immediately
+- Changes to react-spa-scaffold app are reflected immediately
 - No bundling needed during development
 
 **Published mode** (via npx):
@@ -554,10 +554,10 @@ or moved.
 
 ### "File not found" in examples
 
-Ensure you're running the MCP server from within the webapp-base monorepo:
+Ensure you're running the MCP server from within the react-spa-scaffold monorepo:
 
 ```bash
-cd /path/to/webapp-base/packages/mcp
+cd /path/to/react-spa-scaffold/packages/mcp
 npm start
 ```
 

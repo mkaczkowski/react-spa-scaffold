@@ -5,7 +5,7 @@
  * Requires: npm install -D prettier-plugin-tailwindcss
  *
  * Usage in prettier.config.js:
- *   export { default } from '@webapp-base/prettier-config/tailwind';
+ *   export { default } from '@react-spa-scaffold/prettier-config/tailwind';
  */
 
 /** @type {import('prettier').Config} */

@@ -1,8 +1,9 @@
 {
-  "name": "@webapp-base/eslint-config",
+  "name": "@react-spa-scaffold/eslint-config",
   "version": "1.0.0",
-  "description": "Shared ESLint configuration for webapp-base projects",
+  "description": "Shared ESLint configuration for react-spa-scaffold projects",
   "type": "module",
+  "main": "./index.js",
   "exports": {
     ".": "./index.js",
     "./base": "./base.js",
@@ -15,18 +16,18 @@
   "keywords": [
     "eslint",
     "eslint-config",
-    "webapp-base"
+    "react-spa-scaffold"
   ],
-  "author": "Mateusz Kaczkowski",
+  "author": "Mariusz Kaczkowski",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
     "directory": "packages/eslint-config"
   },
-  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/eslint-config#readme",
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/eslint-config#readme",
   "bugs": {
-    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
   },
   "peerDependencies": {
     "@eslint/js": "^9.0.0",
@@ -47,5 +48,9 @@
     "eslint-plugin-react-refresh": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

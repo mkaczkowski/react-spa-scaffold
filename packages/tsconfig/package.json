@@ -1,7 +1,7 @@
 {
-  "name": "@webapp-base/tsconfig",
+  "name": "@react-spa-scaffold/tsconfig",
   "version": "1.0.0",
-  "description": "Shared TypeScript configurations for webapp-base projects",
+  "description": "Shared TypeScript configurations for react-spa-scaffold projects",
   "type": "module",
   "exports": {
     "./base": "./base.json",
@@ -15,20 +15,24 @@
   "keywords": [
     "tsconfig",
     "typescript",
-    "webapp-base"
+    "react-spa-scaffold"
   ],
-  "author": "Mateusz Kaczkowski",
+  "author": "Mariusz Kaczkowski",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mkaczkowski/webapp-base.git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
     "directory": "packages/tsconfig"
   },
-  "homepage": "https://github.com/mkaczkowski/webapp-base/tree/main/packages/tsconfig#readme",
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/tsconfig#readme",
   "bugs": {
-    "url": "https://github.com/mkaczkowski/webapp-base/issues"
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "extends": "@webapp-base/tsconfig/node",
+  "extends": "@react-spa-scaffold/tsconfig/node",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

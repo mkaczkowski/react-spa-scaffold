@@ -53,7 +53,7 @@ async function readDoc(docPath: string): Promise<string> {
   try {
     return await readFile(fullPath, 'utf-8');
   } catch {
-    return `<!-- File not found: ${docPath} -->\n<!-- Run MCP server from within webapp-base repository -->`;
+    return `<!-- File not found: ${docPath} -->\n<!-- Run MCP server from within react-spa-scaffold repository -->`;
   }
 }
 

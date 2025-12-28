@@ -1,11 +1,11 @@
-# @webapp-base/tsconfig
+# @react-spa-scaffold/tsconfig
 
-Shared TypeScript configurations for webapp-base projects.
+Shared TypeScript configurations for react-spa-scaffold projects.
 
 ## Installation
 
 ```bash
-npm install -D @webapp-base/tsconfig typescript
+npm install -D @react-spa-scaffold/tsconfig typescript
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ npm install -D @webapp-base/tsconfig typescript
 
 ```json
 {
-  "extends": "@webapp-base/tsconfig/react",
+  "extends": "@react-spa-scaffold/tsconfig/react",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -29,7 +29,7 @@ npm install -D @webapp-base/tsconfig typescript
 
 ```json
 {
-  "extends": "@webapp-base/tsconfig/node",
+  "extends": "@react-spa-scaffold/tsconfig/node",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"
@@ -43,19 +43,19 @@ npm install -D @webapp-base/tsconfig typescript
 
 ```json
 {
-  "extends": "@webapp-base/tsconfig/vite",
+  "extends": "@react-spa-scaffold/tsconfig/vite",
   "include": ["vite.config.ts", "vitest.config.ts"]
 }
 ```
 
 ## Available Configs
 
-| Config  | Import                        | Description                           |
-| ------- | ----------------------------- | ------------------------------------- |
-| Base    | `@webapp-base/tsconfig/base`  | Shared foundation (not used directly) |
-| React   | `@webapp-base/tsconfig/react` | React apps with DOM types             |
-| Node.js | `@webapp-base/tsconfig/node`  | Node.js with NodeNext modules         |
-| Vite    | `@webapp-base/tsconfig/vite`  | Vite/Vitest config files              |
+| Config  | Import                               | Description                           |
+| ------- | ------------------------------------ | ------------------------------------- |
+| Base    | `@react-spa-scaffold/tsconfig/base`  | Shared foundation (not used directly) |
+| React   | `@react-spa-scaffold/tsconfig/react` | React apps with DOM types             |
+| Node.js | `@react-spa-scaffold/tsconfig/node`  | Node.js with NodeNext modules         |
+| Vite    | `@react-spa-scaffold/tsconfig/vite`  | Vite/Vitest config files              |
 
 ## Path Aliases
 
@@ -63,7 +63,7 @@ Path aliases like `@/*` must be configured per-project since they depend on your
 
 ```json
 {
-  "extends": "@webapp-base/tsconfig/react",
+  "extends": "@react-spa-scaffold/tsconfig/react",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

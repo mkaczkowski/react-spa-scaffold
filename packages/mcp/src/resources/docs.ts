@@ -1,7 +1,7 @@
 /**
  * Documentation resources
  *
- * Reads actual documentation files from the webapp-base repository
+ * Reads actual documentation files from the react-spa-scaffold repository
  * to ensure MCP resources stay in sync with the real docs.
  * Uses in-memory caching to avoid repeated disk reads.
  */
@@ -30,12 +30,12 @@ const DOCS_MAP: Record<
   'docs://conventions': {
     files: ['docs/CODING_STANDARDS.md', 'docs/COMPONENT_GUIDELINES.md'],
     name: 'Coding Conventions',
-    description: 'Coding standards, naming conventions, and component patterns for webapp-base projects',
+    description: 'Coding standards, naming conventions, and component patterns for react-spa-scaffold projects',
   },
   'docs://architecture': {
     files: ['docs/ARCHITECTURE.md'],
     name: 'Architecture Overview',
-    description: 'Technology stack, data flow, and architectural decisions for webapp-base',
+    description: 'Technology stack, data flow, and architectural decisions for react-spa-scaffold',
   },
   'docs://testing': {
     files: ['docs/TESTING.md', 'docs/E2E_TESTING.md'],

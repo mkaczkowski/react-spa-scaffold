@@ -123,8 +123,8 @@ async function readConfigFileContent(configPath: string): Promise<string> {
   try {
     return await readFile(fullPath, 'utf-8');
   } catch {
-    // File might not exist if running outside webapp-base
-    return `// File not found: ${configPath}\n// Run MCP server from within webapp-base repository`;
+    // File might not exist if running outside react-spa-scaffold
+    return `// File not found: ${configPath}\n// Run MCP server from within react-spa-scaffold repository`;
   }
 }
 

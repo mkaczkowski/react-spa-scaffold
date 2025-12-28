@@ -5,6 +5,8 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  release:
+    types: [published]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -127,3 +129,28 @@ jobs:
           name: lighthouse-report
           path: .lighthouseci/
           retention-days: 14
+
+  publish:
+    name: Publish to npm
+    needs: [build, test]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-deps
+      - name: Configure npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @react-spa-scaffold/tsconfig
+        run: npm publish -w @react-spa-scaffold/tsconfig --provenance --access public || echo "Package may already exist at this version"
+      - name: Publish @react-spa-scaffold/eslint-config
+        run: npm publish -w @react-spa-scaffold/eslint-config --provenance --access public || echo "Package may already exist at this version"
+      - name: Publish @react-spa-scaffold/prettier-config
+        run: npm publish -w @react-spa-scaffold/prettier-config --provenance --access public || echo "Package may already exist at this version"
+      - name: Publish @react-spa-scaffold/mcp
+        run: npm publish -w @react-spa-scaffold/mcp --provenance --access public || echo "Package may already exist at this version"

@@ -1,11 +1,11 @@
-# @webapp-base/prettier-config
+# @react-spa-scaffold/prettier-config
 
-Shared Prettier configuration for webapp-base projects.
+Shared Prettier configuration for react-spa-scaffold projects.
 
 ## Installation
 
 ```bash
-npm install -D @webapp-base/prettier-config prettier
+npm install -D @react-spa-scaffold/prettier-config prettier
 ```
 
 For Tailwind CSS class sorting:
@@ -20,7 +20,7 @@ npm install -D prettier-plugin-tailwindcss
 
 ```json
 {
-  "prettier": "@webapp-base/prettier-config"
+  "prettier": "@react-spa-scaffold/prettier-config"
 }
 ```
 
@@ -28,16 +28,16 @@ npm install -D prettier-plugin-tailwindcss
 
 ```javascript
 // Base config (no Tailwind)
-export { default } from '@webapp-base/prettier-config';
+export { default } from '@react-spa-scaffold/prettier-config';
 
 // With Tailwind class sorting
-export { default } from '@webapp-base/prettier-config/tailwind';
+export { default } from '@react-spa-scaffold/prettier-config/tailwind';
 ```
 
 ### With Customization
 
 ```javascript
-import config from '@webapp-base/prettier-config';
+import config from '@react-spa-scaffold/prettier-config';
 
 export default {
   ...config,
@@ -47,10 +47,10 @@ export default {
 
 ## Available Configs
 
-| Config   | Import                                  | Description              |
-| -------- | --------------------------------------- | ------------------------ |
-| Base     | `@webapp-base/prettier-config`          | Standard formatting      |
-| Tailwind | `@webapp-base/prettier-config/tailwind` | + Tailwind class sorting |
+| Config   | Import                                         | Description              |
+| -------- | ---------------------------------------------- | ------------------------ |
+| Base     | `@react-spa-scaffold/prettier-config`          | Standard formatting      |
+| Tailwind | `@react-spa-scaffold/prettier-config/tailwind` | + Tailwind class sorting |
 
 ## Configuration
 

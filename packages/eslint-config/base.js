@@ -1,7 +1,7 @@
 /**
  * Base ESLint configuration
  *
- * Shared TypeScript rules used by all webapp-base configurations.
+ * Shared TypeScript rules used by all react-spa-scaffold configurations.
  * This is the foundation that react and node configs extend.
  */
 

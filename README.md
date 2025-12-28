@@ -59,7 +59,6 @@ technologies and patterns that work well together.
 | **Commitlint**          | Conventional commits enable auto-changelogs and semantic versioning.           | Yes              |
 | **GitHub Actions**      | Free for public repos, generous limits for private. Native GitHub integration. | Adapt to your CI |
 | **Sentry**              | Best-in-class error tracking with source maps. Free tier is generous.          | Yes              |
-| **Lighthouse CI**       | Performance, accessibility, and SEO auditing in CI. Catches regressions.       | Yes              |
 
 ## Getting Started
 
@@ -67,7 +66,7 @@ technologies and patterns that work well together.
 
 - Node.js >= 22.0.0
 
-### Option 1: Clone and Customize
+### Clone and Customize
 
 ```bash
 git clone <repo-url> my-app
@@ -76,84 +75,6 @@ rm -rf .git && git init  # Start fresh
 npm install
 npm run dev
 ```
-
-### Option 2: Use as Reference
-
-Browse the code to understand how pieces fit together, then copy what you need.
-
-## Removing Optional Features
-
-<details>
-<summary><strong>Remove i18n (LinguiJS)</strong></summary>
-
-```bash
-npm uninstall @lingui/core @lingui/react @lingui/cli @lingui/vite-plugin @lingui/babel-plugin-lingui-macro
-rm -rf src/i18n src/locales lingui.config.js
-# Update: vite.config.ts, main.tsx, test-utils.tsx
-```
-
-</details>
-
-<details>
-<summary><strong>Remove TanStack Query</strong></summary>
-
-```bash
-npm uninstall @tanstack/react-query
-rm src/contexts/queryContext.tsx src/hooks/useExampleQuery.ts
-# Update: main.tsx, test-utils.tsx
-```
-
-</details>
-
-<details>
-<summary><strong>Remove React Hook Form + Zod</strong></summary>
-
-```bash
-npm uninstall react-hook-form @hookform/resolvers zod
-rm src/lib/validations.ts src/hooks/useContactForm.ts
-```
-
-</details>
-
-<details>
-<summary><strong>Remove Sentry</strong></summary>
-
-```bash
-npm uninstall @sentry/react @sentry/vite-plugin
-# Remove: initSentry() from main.tsx, Sentry from ErrorBoundary, SENTRY_* from CI
-```
-
-</details>
-
-<details>
-<summary><strong>Remove MSW</strong></summary>
-
-```bash
-npm uninstall msw
-rm -rf src/mocks
-# Remove: MSW imports from src/test-setup.ts and src/test-utils.tsx
-```
-
-</details>
-
-<details>
-<summary><strong>Remove Zustand</strong></summary>
-
-```bash
-npm uninstall zustand
-rm -rf src/stores
-# Replace with React Context or your preferred state solution
-```
-
-</details>
-
-<details>
-<summary><strong>Swap Component Library</strong></summary>
-
-shadcn/ui components in `src/components/ui/` can be replaced with MUI, Chakra, or any library. The wrapper pattern keeps
-feature code decoupled.
-
-</details>
 
 ## Project Structure
 

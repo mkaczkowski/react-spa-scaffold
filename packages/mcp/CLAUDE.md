@@ -1,6 +1,6 @@
 # packages/mcp
 
-MCP server for webapp-base scaffolding. See [README.md](README.md) for full documentation.
+MCP server for react-spa-scaffold scaffolding. See [README.md](README.md) for full documentation.
 
 ## Commands
 
@@ -48,8 +48,6 @@ export const getScaffoldSchema = z.object({
 const result = getScaffoldSchema.safeParse(args);
 if (!result.success) return errorResponse(result.error.message);
 ```
-
-**Response helpers**: Use `jsonResponse()` and `errorResponse()` from server.ts
 
 **Caching**: Resources use in-memory Map cache for file reads
 
