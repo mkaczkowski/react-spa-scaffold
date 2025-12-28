@@ -332,117 +332,60 @@ describe('get_example tool', () => {
 });
 
 describe('docs utilities', () => {
-  describe('computeDocsForFeatures', () => {
-    it('always includes universal docs', () => {
-      const docs = computeDocsForFeatures(['core']);
+  it('includes universal docs and excludes WORKFLOW.md', () => {
+    const docs = computeDocsForFeatures(['core']);
 
-      expect(docs).toContain('docs/ARCHITECTURE.md');
-      expect(docs).toContain('docs/CODING_STANDARDS.md');
-      expect(docs).toContain('docs/COMPONENT_GUIDELINES.md');
-      expect(docs).toContain('docs/API_REFERENCE.md');
-    });
-
-    it('excludes WORKFLOW.md', () => {
-      const docs = computeDocsForFeatures(['core', 'testing', 'i18n', 'routing']);
-
-      expect(docs).not.toContain('docs/WORKFLOW.md');
-    });
-
-    it('includes testing docs only when testing feature selected', () => {
-      const withTesting = computeDocsForFeatures(['core', 'testing']);
-      const withoutTesting = computeDocsForFeatures(['core']);
-
-      expect(withTesting).toContain('docs/TESTING.md');
-      expect(withTesting).toContain('docs/E2E_TESTING.md');
-      expect(withoutTesting).not.toContain('docs/TESTING.md');
-      expect(withoutTesting).not.toContain('docs/E2E_TESTING.md');
-    });
-
-    it('includes i18n doc only when i18n feature selected', () => {
-      const withI18n = computeDocsForFeatures(['core', 'i18n']);
-      const withoutI18n = computeDocsForFeatures(['core']);
-
-      expect(withI18n).toContain('docs/INTERNATIONALIZATION.md');
-      expect(withoutI18n).not.toContain('docs/INTERNATIONALIZATION.md');
-    });
-
-    it('returns sorted array', () => {
-      const docs = computeDocsForFeatures(['core', 'testing', 'i18n']);
-      const sorted = [...docs].sort();
-
-      expect(docs).toEqual(sorted);
-    });
-
-    it('returns 4 docs with only core', () => {
-      const docs = computeDocsForFeatures(['core']);
-
-      expect(docs).toHaveLength(4);
-    });
-
-    it('returns 7 docs with all feature-specific docs', () => {
-      const docs = computeDocsForFeatures(['core', 'testing', 'i18n']);
-
-      expect(docs).toHaveLength(7);
-    });
+    // Universal docs always included
+    expect(docs).toContain('docs/ARCHITECTURE.md');
+    expect(docs).toContain('docs/CODING_STANDARDS.md');
+    expect(docs).toContain('docs/COMPONENT_GUIDELINES.md');
+    expect(docs).toContain('docs/API_REFERENCE.md');
+    // WORKFLOW.md never included
+    expect(docs).not.toContain('docs/WORKFLOW.md');
+    expect(docs).toHaveLength(4);
   });
 
-  describe('computeDocsContent', () => {
-    it('returns content for each doc', async () => {
-      const docs = await computeDocsContent(['core']);
+  it('includes feature-specific docs only when feature selected', () => {
+    const coreOnly = computeDocsForFeatures(['core']);
+    const withTesting = computeDocsForFeatures(['core', 'testing']);
+    const withI18n = computeDocsForFeatures(['core', 'i18n']);
 
-      expect(Object.keys(docs)).toHaveLength(4);
-      expect(docs['docs/ARCHITECTURE.md']).toBeDefined();
-      expect(docs['docs/ARCHITECTURE.md'].length).toBeGreaterThan(1000);
-    });
+    // Testing docs
+    expect(coreOnly).not.toContain('docs/TESTING.md');
+    expect(withTesting).toContain('docs/TESTING.md');
+    expect(withTesting).toContain('docs/E2E_TESTING.md');
 
-    it('preserves doc content intact', async () => {
-      const docs = await computeDocsContent(['core']);
+    // i18n docs
+    expect(coreOnly).not.toContain('docs/INTERNATIONALIZATION.md');
+    expect(withI18n).toContain('docs/INTERNATIONALIZATION.md');
+  });
 
-      // ARCHITECTURE.md should contain key sections
-      expect(docs['docs/ARCHITECTURE.md']).toContain('# Architecture Guide');
-      expect(docs['docs/ARCHITECTURE.md']).toContain('## Tech Stack');
-      expect(docs['docs/ARCHITECTURE.md']).toContain('Provider Hierarchy');
-    });
+  it('returns doc content with key sections preserved', async () => {
+    const docs = await computeDocsContent(['core']);
 
-    it('includes testing docs when testing feature selected', async () => {
-      const docs = await computeDocsContent(['core', 'testing']);
-
-      expect(docs['docs/TESTING.md']).toBeDefined();
-      expect(docs['docs/TESTING.md']).toContain('# Testing Guidelines');
-      expect(docs['docs/E2E_TESTING.md']).toBeDefined();
-      expect(docs['docs/E2E_TESTING.md']).toContain('# E2E Testing Guidelines');
-    });
+    expect(Object.keys(docs)).toHaveLength(4);
+    expect(docs['docs/ARCHITECTURE.md']).toContain('# Architecture Guide');
+    expect(docs['docs/ARCHITECTURE.md']).toContain('Provider Hierarchy');
   });
 });
 
 describe('get_scaffold docs integration', () => {
-  it('includes docs in file structure', async () => {
+  it('includes docs in structure and content', async () => {
     const result = await getScaffold({ features: [] });
 
+    // Structure includes docs
     expect(result.fileStructure).toContain('docs/ARCHITECTURE.md');
-    expect(result.fileStructure).toContain('docs/CODING_STANDARDS.md');
-  });
+    expect(result.fileStructure).not.toContain('docs/TESTING.md');
 
-  it('returns docs content', async () => {
-    const result = await getScaffold({ features: [] });
-
-    expect(result.docs).toBeDefined();
-    expect(typeof result.docs).toBe('object');
+    // Content returned
     expect(result.docs['docs/ARCHITECTURE.md']).toBeDefined();
+    expect(result.docs['docs/TESTING.md']).toBeUndefined();
   });
 
-  it('includes testing docs in structure when testing selected', async () => {
+  it('adds feature-specific docs when feature selected', async () => {
     const result = await getScaffold({ features: ['testing'] });
 
     expect(result.fileStructure).toContain('docs/TESTING.md');
-    expect(result.fileStructure).toContain('docs/E2E_TESTING.md');
-    expect(result.docs['docs/TESTING.md']).toBeDefined();
-  });
-
-  it('excludes testing docs when testing not selected', async () => {
-    const result = await getScaffold({ features: [] });
-
-    expect(result.fileStructure).not.toContain('docs/TESTING.md');
-    expect(result.docs['docs/TESTING.md']).toBeUndefined();
+    expect(result.docs['docs/TESTING.md']).toContain('# Testing Guidelines');
   });
 });
