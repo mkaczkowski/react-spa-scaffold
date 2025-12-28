@@ -7,7 +7,6 @@ import type { ApiError } from '@/types/api';
 
 /**
  * API configuration.
- * Only included when data feature is enabled.
  */
 export const API_CONFIG = {
   baseUrl: import.meta.env.VITE_API_URL || 'https://jsonplaceholder.typicode.com',

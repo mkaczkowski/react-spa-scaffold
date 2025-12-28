@@ -473,7 +473,9 @@ export function generateEnvTs(featureIds: string[]): string {
   // Observability feature env vars
   if (featureIds.includes("observability")) {
     schemaFields.push("  VITE_SENTRY_DSN: z.string().url().optional(),");
+    schemaFields.push("  VITE_SENTRY_ENABLED: z.string().optional(),");
     envFields.push("    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,");
+    envFields.push("    VITE_SENTRY_ENABLED: import.meta.env.VITE_SENTRY_ENABLED,");
   }
 
   // Vite built-in env vars (always included)
@@ -529,6 +531,15 @@ export const env = validateEnv();
 }
 
 /**
+ * Read and parse the source package.json
+ */
+async function readSourcePackageJson(): Promise<Record<string, unknown>> {
+  const path = resolveTemplatePath("package.json");
+  const content = await readFile(path, "utf-8");
+  return JSON.parse(content);
+}
+
+/**
  * Compute complete scaffold for selected features
  */
 export async function computeScaffold(
@@ -537,6 +548,10 @@ export async function computeScaffold(
 ): Promise<ScaffoldResult> {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
+
+  // Read engines from source package.json
+  const sourcePackageJson = await readSourcePackageJson();
+  const engines = (sourcePackageJson.engines as Record<string, string>) || {};
 
   // Merge all dependencies
   const { dependencies, devDependencies } = mergeDependencies(resolvedFeatures);
@@ -572,7 +587,7 @@ export async function computeScaffold(
       dependencies,
       devDependencies,
       scripts,
-      engines: { node: ">=22.0.0" },
+      engines,
     },
     structure,
     configFiles,

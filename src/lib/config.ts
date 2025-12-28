@@ -1,7 +1,6 @@
 /**
  * Application configuration.
  * Centralized config for feature flags, etc.
- * Note: API_CONFIG is in api.ts (only included with data feature)
  */
 
 export const APP_CONFIG = {
