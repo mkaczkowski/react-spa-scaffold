@@ -38,9 +38,12 @@ export interface ScaffoldResult {
     dependencies: Record<string, string>;
     devDependencies: Record<string, string>;
     scripts: Record<string, string>;
+    engines: Record<string, string>;
   };
   structure: string[];
   configFiles: Record<string, string>;
   setupCommands: string[];
   claudeMd: string;
+  viteEnvDts: string;
+  envTs: string;
 }
