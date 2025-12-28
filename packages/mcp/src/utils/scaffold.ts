@@ -2,18 +2,52 @@
  * Scaffold computation utilities
  */
 
-import { FEATURES } from '../features/index.js';
-import type { ScaffoldResult } from '../features/types.js';
+import { FEATURES } from "../features/index.js";
+import type { ScaffoldResult } from "../features/types.js";
+
+/**
+ * Config file templates with actual content
+ * These are critical config files that need exact content for proper setup
+ */
+const CONFIG_TEMPLATES: Record<string, string> = {
+  "components.json": JSON.stringify(
+    {
+      $schema: "https://ui.shadcn.com/schema.json",
+      style: "radix-nova",
+      rsc: false,
+      tsx: true,
+      tailwind: {
+        config: "",
+        css: "src/index.css",
+        baseColor: "zinc",
+        cssVariables: true,
+        prefix: "",
+      },
+      iconLibrary: "lucide",
+      aliases: {
+        components: "@/components",
+        utils: "@/lib/utils",
+        ui: "@/components/ui",
+        lib: "@/lib",
+        hooks: "@/hooks",
+      },
+    },
+    null,
+    2,
+  ),
+};
 
 /**
  * Resolve feature dependencies recursively
  */
-export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
+export function resolveFeatureDependencies(
+  selectedFeatures: string[],
+): string[] {
   const resolved = new Set<string>();
   const toProcess = [...selectedFeatures];
 
   // Always include core
-  resolved.add('core');
+  resolved.add("core");
 
   while (toProcess.length > 0) {
     const featureId = toProcess.pop()!;
@@ -61,7 +95,9 @@ export function mergeDependencies(featureIds: string[]): {
 
   // Sort alphabetically
   const sortObject = (obj: Record<string, string>) =>
-    Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
+    Object.fromEntries(
+      Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+    );
 
   return {
     dependencies: sortObject(dependencies),
@@ -124,18 +160,18 @@ export function getConfigFiles(featureIds: string[]): string[] {
  * Generate setup commands based on selected features
  */
 export function getSetupCommands(featureIds: string[]): string[] {
-  const commands: string[] = ['npm install'];
+  const commands: string[] = ["npm install"];
 
-  if (featureIds.includes('devtools')) {
-    commands.push('npm run prepare'); // Initialize husky
+  if (featureIds.includes("devtools")) {
+    commands.push("npm run prepare"); // Initialize husky
   }
 
-  if (featureIds.includes('testing')) {
-    commands.push('npx playwright install chromium'); // Install Playwright browser
+  if (featureIds.includes("testing")) {
+    commands.push("npx playwright install chromium"); // Install Playwright browser
   }
 
-  if (featureIds.includes('i18n')) {
-    commands.push('npm run i18n:extract'); // Extract initial translations
+  if (featureIds.includes("i18n")) {
+    commands.push("npm run i18n:extract"); // Extract initial translations
   }
 
   return commands;
@@ -144,7 +180,10 @@ export function getSetupCommands(featureIds: string[]): string[] {
 /**
  * Compute complete scaffold for selected features
  */
-export function computeScaffold(selectedFeatures: string[], projectName: string = 'my-app'): ScaffoldResult {
+export function computeScaffold(
+  selectedFeatures: string[],
+  projectName: string = "my-app",
+): ScaffoldResult {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 
@@ -157,10 +196,13 @@ export function computeScaffold(selectedFeatures: string[], projectName: string 
   // Get file structure
   const structure = computeFileStructure(resolvedFeatures);
 
-  // Get config files
+  // Get config files with actual content where available
   const configFiles: Record<string, string> = {};
   for (const config of getConfigFiles(resolvedFeatures)) {
-    configFiles[config] = `// See webapp-base repository for ${config} contents`;
+    // Use actual template content if available, otherwise provide reference
+    configFiles[config] =
+      CONFIG_TEMPLATES[config] ??
+      `// See webapp-base repository for ${config} contents`;
   }
 
   // Get setup commands
