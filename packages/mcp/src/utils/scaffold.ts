@@ -2,18 +2,23 @@
  * Scaffold computation utilities
  */
 
-import { FEATURES } from '../features/index.js';
-import type { ScaffoldResult } from '../features/types.js';
+import { readFile } from "fs/promises";
+
+import { FEATURES } from "../features/index.js";
+import type { ScaffoldResult } from "../features/types.js";
+import { resolveTemplatePath } from "./paths.js";
 
 /**
  * Resolve feature dependencies recursively
  */
-export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
+export function resolveFeatureDependencies(
+  selectedFeatures: string[],
+): string[] {
   const resolved = new Set<string>();
   const toProcess = [...selectedFeatures];
 
   // Always include core
-  resolved.add('core');
+  resolved.add("core");
 
   while (toProcess.length > 0) {
     const featureId = toProcess.pop()!;
@@ -61,7 +66,9 @@ export function mergeDependencies(featureIds: string[]): {
 
   // Sort alphabetically
   const sortObject = (obj: Record<string, string>) =>
-    Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
+    Object.fromEntries(
+      Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+    );
 
   return {
     dependencies: sortObject(dependencies),
@@ -121,21 +128,35 @@ export function getConfigFiles(featureIds: string[]): string[] {
 }
 
 /**
+ * Read config file content from template
+ */
+async function readConfigFileContent(configPath: string): Promise<string> {
+  const fullPath = resolveTemplatePath(configPath);
+
+  try {
+    return await readFile(fullPath, "utf-8");
+  } catch {
+    // File might not exist if running outside webapp-base
+    return `// File not found: ${configPath}\n// Run MCP server from within webapp-base repository`;
+  }
+}
+
+/**
  * Generate setup commands based on selected features
  */
 export function getSetupCommands(featureIds: string[]): string[] {
-  const commands: string[] = ['npm install'];
+  const commands: string[] = ["npm install"];
 
-  if (featureIds.includes('devtools')) {
-    commands.push('npm run prepare'); // Initialize husky
+  if (featureIds.includes("devtools")) {
+    commands.push("npm run prepare"); // Initialize husky
   }
 
-  if (featureIds.includes('testing')) {
-    commands.push('npx playwright install chromium'); // Install Playwright browser
+  if (featureIds.includes("testing")) {
+    commands.push("npx playwright install chromium"); // Install Playwright browser
   }
 
-  if (featureIds.includes('i18n')) {
-    commands.push('npm run i18n:extract'); // Extract initial translations
+  if (featureIds.includes("i18n")) {
+    commands.push("npm run i18n:extract"); // Extract initial translations
   }
 
   return commands;
@@ -144,7 +165,10 @@ export function getSetupCommands(featureIds: string[]): string[] {
 /**
  * Compute complete scaffold for selected features
  */
-export function computeScaffold(selectedFeatures: string[], projectName: string = 'my-app'): ScaffoldResult {
+export async function computeScaffold(
+  selectedFeatures: string[],
+  projectName: string = "my-app",
+): Promise<ScaffoldResult> {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 
@@ -157,10 +181,11 @@ export function computeScaffold(selectedFeatures: string[], projectName: string 
   // Get file structure
   const structure = computeFileStructure(resolvedFeatures);
 
-  // Get config files
+  // Get config files with actual content read from templates
   const configFiles: Record<string, string> = {};
-  for (const config of getConfigFiles(resolvedFeatures)) {
-    configFiles[config] = `// See webapp-base repository for ${config} contents`;
+  const configPaths = getConfigFiles(resolvedFeatures);
+  for (const config of configPaths) {
+    configFiles[config] = await readConfigFileContent(config);
   }
 
   // Get setup commands

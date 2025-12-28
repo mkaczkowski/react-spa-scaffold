@@ -184,6 +184,7 @@ const ui: Feature = {
     "theme-toggle",
   ],
   scripts: {},
+  configFiles: ["components.json"],
   requiresFeatures: ["state"], // Theme toggle needs preferences store
 };
 
