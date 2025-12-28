@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
 import { Header } from '@/components/layout';
+import { SEO } from '@/components/shared';
 import { PageLoading } from '@/components/ui/loading';
 import { SkipLink } from '@/components/ui/visually-hidden';
 import { useThemeEffect } from '@/hooks';
@@ -16,6 +17,7 @@ export default function App() {
 
   return (
     <div className="bg-background text-foreground min-h-screen">
+      <SEO description="A modern React 19 application with TypeScript and Vite" />
       <SkipLink />
       <Header />
       <main id="main">

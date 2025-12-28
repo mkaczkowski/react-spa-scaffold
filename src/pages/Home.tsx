@@ -1,8 +1,11 @@
 import { Trans } from '@lingui/react/macro';
 
+import { SEO } from '@/components/shared';
+
 export function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO title="Home" description="Welcome to our modern React application" />
       <h1 className="text-3xl font-bold">
         <Trans comment="Main heading on the home page">Welcome to My App</Trans>
       </h1>

@@ -173,9 +173,10 @@ const PATTERN_MAP: Record<
   // Page patterns
   "page-component": {
     file: "src/pages/Home.tsx",
-    description: "Page component with i18n",
+    description: "Page component with i18n and SEO",
     keyPoints: [
       "Named export (PageNamePage convention)",
+      "SEO component for page-specific meta tags",
       "Trans component for all user text",
       "Container layout classes",
       "Minimal logic (pages are thin)",
@@ -183,12 +184,13 @@ const PATTERN_MAP: Record<
   },
   "lazy-page": {
     file: "src/App.tsx",
-    description: "Lazy loading pattern for pages",
+    description: "Lazy loading pattern for pages with default SEO",
     keyPoints: [
       "React.lazy() with dynamic import",
       "Transform named to default: .then(m => ({ default: m.PageName }))",
       "Suspense boundary with fallback",
       "Route constants from lib/routes.ts",
+      "Default SEO component for site-wide meta tags",
     ],
   },
 
