@@ -566,12 +566,18 @@ export async function computeScaffold(
   // Generate env.ts content
   const envTs = generateEnvTs(resolvedFeatures);
 
+  // Include engines when devtools feature is selected (requires Node 22+)
+  const engines = resolvedFeatures.includes("devtools")
+    ? { node: ">=22.0.0" }
+    : undefined;
+
   return {
     packageJson: {
       name: projectName,
       dependencies,
       devDependencies,
       scripts,
+      ...(engines && { engines }),
     },
     structure,
     configFiles,
