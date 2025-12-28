@@ -30,8 +30,8 @@ export class ErrorBoundary extends Component<Props, State> {
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
 
-    // Report to Sentry in production (if enabled)
-    if (import.meta.env.PROD && SENTRY_CONFIG.enabled) {
+    // Report to Sentry in production (if enabled and configured)
+    if (import.meta.env.PROD && SENTRY_CONFIG.enabled && SENTRY_CONFIG.dsn) {
       import("@sentry/react")
         .then((Sentry) => {
           Sentry.captureException(error, {
