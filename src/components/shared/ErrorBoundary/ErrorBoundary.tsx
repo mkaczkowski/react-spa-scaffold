@@ -1,4 +1,6 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from "react";
+
+import { SENTRY_CONFIG } from "@/lib/config";
 
 interface Props {
   children: ReactNode;
@@ -23,14 +25,14 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
 
-    // Report to Sentry in production
-    if (import.meta.env.PROD) {
-      import('@sentry/react')
+    // Report to Sentry in production (if enabled)
+    if (import.meta.env.PROD && SENTRY_CONFIG.enabled) {
+      import("@sentry/react")
         .then((Sentry) => {
           Sentry.captureException(error, {
             extra: { componentStack: errorInfo.componentStack },
@@ -59,13 +61,23 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-screen items-center justify-center p-4">
           <div className="text-center">
-            <h1 className="text-destructive text-2xl font-bold">Something went wrong</h1>
-            <p className="text-muted-foreground mt-2">We're sorry, but something unexpected happened.</p>
+            <h1 className="text-destructive text-2xl font-bold">
+              Something went wrong
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              We're sorry, but something unexpected happened.
+            </p>
             {import.meta.env.DEV && this.state.error && (
               <details className="bg-muted mt-4 rounded-md p-4 text-left">
-                <summary className="cursor-pointer font-medium">Error details</summary>
-                <pre className="mt-2 overflow-auto text-sm">{this.state.error.message}</pre>
-                <pre className="mt-1 overflow-auto text-xs opacity-75">{this.state.error.stack}</pre>
+                <summary className="cursor-pointer font-medium">
+                  Error details
+                </summary>
+                <pre className="mt-2 overflow-auto text-sm">
+                  {this.state.error.message}
+                </pre>
+                <pre className="mt-1 overflow-auto text-xs opacity-75">
+                  {this.state.error.stack}
+                </pre>
               </details>
             )}
             <div className="mt-6 flex justify-center gap-3">
