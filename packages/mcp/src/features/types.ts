@@ -43,4 +43,5 @@ export interface ScaffoldResult {
   configFiles: Record<string, string>;
   setupCommands: string[];
   claudeMd: string;
+  viteEnvDts: string;
 }

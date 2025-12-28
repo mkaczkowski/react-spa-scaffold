@@ -419,6 +419,39 @@ ${gotchas.map((g, i) => `${i + 1}. ${g}`).join("\n")}
 }
 
 /**
+ * Generate vite-env.d.ts content based on selected features
+ */
+export function generateViteEnvDts(featureIds: string[]): string {
+  const envVars: string[] = [];
+
+  // Core env vars (always included)
+  envVars.push("  readonly VITE_APP_NAME: string;");
+  envVars.push("  readonly VITE_APP_URL: string;");
+
+  // Data feature env vars
+  if (featureIds.includes("data")) {
+    envVars.push("  readonly VITE_API_URL: string;");
+  }
+
+  // Observability feature env vars
+  if (featureIds.includes("observability")) {
+    envVars.push("  readonly VITE_SENTRY_DSN: string;");
+    envVars.push("  readonly VITE_SENTRY_ENABLED: string;");
+  }
+
+  return `/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+${envVars.join("\n")}
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+`;
+}
+
+/**
  * Compute complete scaffold for selected features
  */
 export async function computeScaffold(
@@ -450,6 +483,9 @@ export async function computeScaffold(
   // Generate CLAUDE.md content
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
 
+  // Generate vite-env.d.ts content
+  const viteEnvDts = generateViteEnvDts(resolvedFeatures);
+
   return {
     packageJson: {
       name: projectName,
@@ -461,5 +497,6 @@ export async function computeScaffold(
     configFiles,
     setupCommands,
     claudeMd,
+    viteEnvDts,
   };
 }
