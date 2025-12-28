@@ -4,7 +4,7 @@
  */
 import { delay, http, HttpResponse } from 'msw';
 
-import { API_CONFIG } from '@/lib/config';
+import { API_CONFIG } from '@/lib/api';
 import type { Todo } from '@/types/api';
 
 import { mockTodos } from '../fixtures/todos';

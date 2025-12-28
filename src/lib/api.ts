@@ -5,7 +5,14 @@
 
 import type { ApiError } from '@/types/api';
 
-import { API_CONFIG } from './config';
+/**
+ * API configuration.
+ * Only included when data feature is enabled.
+ */
+export const API_CONFIG = {
+  baseUrl: import.meta.env.VITE_API_URL || 'https://jsonplaceholder.typicode.com',
+  timeout: 30000,
+} as const;
 
 /**
  * Custom API error class
