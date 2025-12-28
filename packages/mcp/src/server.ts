@@ -59,7 +59,7 @@ Usage:
 
 Tips:
 - Core feature is always included automatically
-- Features like 'ui' will auto-include dependencies ('state')
+- Features are independent - select only what you need
 - Check docs://conventions before generating code
 `.trim();
 

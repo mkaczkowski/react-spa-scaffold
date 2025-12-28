@@ -189,7 +189,6 @@ const ui: Feature = {
   patterns: ['component-ui', 'button-variants', 'forward-ref-component', 'theme-toggle'],
   scripts: {},
   configFiles: ['components.json'],
-  usesFeatures: ['state', 'mobile'], // Theme toggle uses preferences store and touch sizes
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -454,7 +453,6 @@ const ci: Feature = {
   name: 'CI/CD',
   description: 'GitHub Actions + Lighthouse + Dependabot',
   required: false,
-  usesFeatures: ['devtools', 'testing'],
   includes: [
     'GitHub Actions CI workflow',
     'Parallel jobs: lint, typecheck, security audit, build, unit tests, e2e tests',

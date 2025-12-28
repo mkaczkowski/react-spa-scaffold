@@ -16,7 +16,6 @@ export interface Feature {
   devDependencies?: Record<string, string>;
   files: string[];
   patterns: string[];
-  usesFeatures?: string[];
   options?: Record<string, FeatureOption>;
   scripts?: Record<string, string>;
   configFiles?: string[];

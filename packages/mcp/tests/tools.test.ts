@@ -34,25 +34,8 @@ describe('get_features tool', () => {
       expect(feature).toHaveProperty('description');
       expect(feature).toHaveProperty('required');
       expect(feature).toHaveProperty('includes');
-      expect(feature).toHaveProperty('usesFeatures');
       expect(Array.isArray(feature.includes)).toBe(true);
-      expect(Array.isArray(feature.usesFeatures)).toBe(true);
     }
-  });
-
-  it('ui feature uses state (informational, not auto-included)', () => {
-    const features = getFeatures();
-    const ui = features.find((f) => f.id === 'ui');
-
-    expect(ui?.usesFeatures).toContain('state');
-  });
-
-  it('ci feature uses devtools and testing (informational, not auto-included)', () => {
-    const features = getFeatures();
-    const ci = features.find((f) => f.id === 'ci');
-
-    expect(ci?.usesFeatures).toContain('devtools');
-    expect(ci?.usesFeatures).toContain('testing');
   });
 
   it('mobile feature exists and is not required', () => {
@@ -62,14 +45,6 @@ describe('get_features tool', () => {
     expect(mobile).toBeDefined();
     expect(mobile?.required).toBe(false);
     expect(mobile?.name).toBe('Mobile Support');
-  });
-
-  it('ui feature uses mobile and state (informational)', () => {
-    const features = getFeatures();
-    const ui = features.find((f) => f.id === 'ui');
-
-    expect(ui?.usesFeatures).toContain('mobile');
-    expect(ui?.usesFeatures).toContain('state');
   });
 });
 
@@ -91,10 +66,10 @@ describe('get_scaffold tool', () => {
     }
   });
 
-  it('does NOT auto-include usesFeatures (state, mobile) when ui is selected', async () => {
+  it('only includes explicitly selected features (plus core)', async () => {
     const result = await getScaffold({ features: ['ui'] });
 
-    // usesFeatures are informational only, not auto-included
+    // Features are independent - only selected features are included
     expect(result.resolvedFeatures).not.toContain('state');
     expect(result.resolvedFeatures).not.toContain('mobile');
     expect(result.resolvedFeatures).toContain('ui');

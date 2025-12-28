@@ -155,15 +155,6 @@ The server provides 10 feature modules that can be combined:
 | `devtools` | ESLint + Prettier + Husky                     | Optional |
 | `ci`       | GitHub Actions + Lighthouse                   | Optional |
 
-### Feature Relationships
-
-Some features use code from others (informational only, not auto-included):
-
-- `ui` → uses `state` (for theme persistence) and `mobile` (for touch-aware sizing)
-- `ci` → uses `devtools` + `testing`
-
-These relationships are informational. The scaffold output should be adapted based on your selected features.
-
 ## Tools
 
 ### `get_features`
@@ -181,7 +172,6 @@ const result = await client.callTool('get_features', {});
   description: string;
   required: boolean;
   includes: string[];      // What this feature provides
-  usesFeatures: string[];  // Features this uses (informational, not auto-included)
   options?: Record<string, { description: string; default: boolean }>;
 }
 ```
@@ -382,7 +372,6 @@ const myFeature: Feature = {
   scripts: {
     'my-script': 'some-command',
   },
-  usesFeatures: ['state'], // Features this uses (informational only)
   configFiles: ['my-feature.config.js'],
 };
 ```

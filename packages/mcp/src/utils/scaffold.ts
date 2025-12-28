@@ -10,11 +10,9 @@ import { computeDocsContent, computeDocsForFeatures } from './docs.js';
 import { resolveTemplatePath } from './paths.js';
 
 /**
- * Resolve selected features (always includes core, no auto-resolution of usesFeatures)
+ * Resolve selected features (always includes core)
  *
- * Note: usesFeatures is informational only - it indicates which features
- * a given feature uses code from, but does not auto-include them.
- * The scaffold output should be adapted based on selected features.
+ * Features are independent - only explicitly selected features are included.
  */
 export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
   const resolved = new Set<string>();
