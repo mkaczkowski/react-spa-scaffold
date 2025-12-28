@@ -372,8 +372,8 @@ export function computeScaffold(
   // Merge all scripts
   const scripts = mergeScripts(resolvedFeatures);
 
-  // Get file structure
-  const structure = computeFileStructure(resolvedFeatures);
+  // Get file structure (add CLAUDE.md which is generated, not from patterns)
+  const structure = [...computeFileStructure(resolvedFeatures), "CLAUDE.md"];
 
   // Get config files
   const configFiles: Record<string, string> = {};
