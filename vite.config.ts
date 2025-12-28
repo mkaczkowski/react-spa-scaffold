@@ -1,16 +1,16 @@
-import path from 'path';
+import path from "path";
 
-import { lingui } from '@lingui/vite-plugin';
-import { sentryVitePlugin } from '@sentry/vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { lingui } from "@lingui/vite-plugin";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     react({
       babel: {
-        plugins: ['@lingui/babel-plugin-lingui-macro'],
+        plugins: ["@lingui/babel-plugin-lingui-macro"],
       },
     }),
     lingui(),
@@ -22,7 +22,7 @@ export default defineConfig({
           project: process.env.SENTRY_PROJECT,
           authToken: process.env.SENTRY_AUTH_TOKEN,
           sourcemaps: {
-            filesToDeleteAfterUpload: ['./dist/**/*.map'],
+            filesToDeleteAfterUpload: ["./dist/**/*.map"],
           },
           telemetry: false,
         })
@@ -30,22 +30,25 @@ export default defineConfig({
   ].filter(Boolean),
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   css: {
     devSourcemap: true,
   },
   build: {
-    // Use 'hidden' sourcemaps when uploading to Sentry (not exposed publicly)
-    sourcemap: process.env.SENTRY_AUTH_TOKEN ? 'hidden' : true,
+    // Source maps: 'hidden' for Sentry (uploaded then deleted), false otherwise
+    // Set to true locally if needed for debugging: VITE_SOURCEMAP=true npm run build
+    sourcemap: process.env.SENTRY_AUTH_TOKEN
+      ? "hidden"
+      : process.env.VITE_SOURCEMAP === "true",
     chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router'],
-          i18n: ['@lingui/core', '@lingui/react'],
-          ui: ['@radix-ui/react-slot', 'class-variance-authority'],
+          vendor: ["react", "react-dom", "react-router"],
+          i18n: ["@lingui/core", "@lingui/react"],
+          ui: ["@radix-ui/react-slot", "class-variance-authority"],
         },
       },
     },

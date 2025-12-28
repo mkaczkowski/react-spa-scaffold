@@ -25,6 +25,7 @@ const core: Feature = {
     "Mobile/responsive context and hooks",
     "App configuration (src/lib/config.ts)",
     "Constants and type definitions",
+    "ErrorBoundary component with reset functionality",
   ],
   dependencies: {
     "@fontsource-variable/inter": "^5.2.5",
@@ -63,6 +64,9 @@ const core: Feature = {
     "src/hooks/index.ts",
     "src/components/shared/SEO/SEO.tsx",
     "src/components/shared/SEO/index.ts",
+    "src/components/shared/ErrorBoundary/ErrorBoundary.tsx",
+    "src/components/shared/ErrorBoundary/index.ts",
+    "src/components/shared/index.ts",
     "index.html",
     "vite.config.ts",
     "tsconfig.json",
@@ -76,6 +80,7 @@ const core: Feature = {
     "hook-state",
     "hook-effect",
     "context-provider",
+    "error-boundary",
   ],
   scripts: {
     dev: "vite",
@@ -89,12 +94,6 @@ const core: Feature = {
     "tsconfig.app.json",
     "tsconfig.node.json",
   ],
-  options: {
-    errorTracking: {
-      description: "Sentry integration (lazy-loaded)",
-      default: false,
-    },
-  },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -510,6 +509,43 @@ const ci: Feature = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// OBSERVABILITY FEATURE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const observability: Feature = {
+  name: "Observability",
+  description:
+    "Sentry error tracking with source maps (opt-out via VITE_SENTRY_ENABLED=false)",
+  required: false,
+  includes: [
+    "Sentry React SDK (@sentry/react)",
+    "Lazy-loaded Sentry initialization (non-blocking)",
+    "Browser tracing integration",
+    "Global error handlers (window.onerror, unhandledrejection)",
+    "ErrorBoundary integration with Sentry reporting",
+    "Source map upload via Vite plugin (CI/CD)",
+    "VITE_SENTRY_ENABLED flag for opt-out",
+    "SENTRY_CONFIG in lib/config.ts",
+  ],
+  dependencies: {
+    "@sentry/react": "^10.32.1",
+  },
+  devDependencies: {
+    "@sentry/vite-plugin": "^4.6.1",
+  },
+  files: [],
+  patterns: ["sentry-init", "error-tracking"],
+  scripts: {},
+  options: {
+    enabled: {
+      description:
+        "Enable/disable Sentry at runtime via VITE_SENTRY_ENABLED env var",
+      default: true,
+    },
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // FEATURE REGISTRY EXPORT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -524,6 +560,7 @@ export const FEATURES: FeatureRegistry = {
   testing,
   devtools,
   ci,
+  observability,
 };
 
 export const FEATURE_IDS = Object.keys(FEATURES) as (keyof typeof FEATURES)[];
