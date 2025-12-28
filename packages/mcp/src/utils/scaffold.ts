@@ -452,6 +452,83 @@ interface ImportMeta {
 }
 
 /**
+ * Generate env.ts content based on selected features
+ */
+export function generateEnvTs(featureIds: string[]): string {
+  const schemaFields: string[] = [];
+  const envFields: string[] = [];
+
+  // Core env vars (always included)
+  schemaFields.push("  VITE_APP_NAME: z.string().min(1).optional(),");
+  schemaFields.push("  VITE_APP_URL: z.string().url().optional(),");
+  envFields.push("    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,");
+  envFields.push("    VITE_APP_URL: import.meta.env.VITE_APP_URL,");
+
+  // Data feature env vars
+  if (featureIds.includes("data")) {
+    schemaFields.push("  VITE_API_URL: z.string().url().optional(),");
+    envFields.push("    VITE_API_URL: import.meta.env.VITE_API_URL,");
+  }
+
+  // Observability feature env vars
+  if (featureIds.includes("observability")) {
+    schemaFields.push("  VITE_SENTRY_DSN: z.string().url().optional(),");
+    envFields.push("    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,");
+  }
+
+  // Vite built-in env vars (always included)
+  schemaFields.push("  MODE: z.enum(['development', 'production', 'test']).default('development'),");
+  schemaFields.push("  DEV: z.boolean().default(false),");
+  schemaFields.push("  PROD: z.boolean().default(false),");
+  envFields.push("    MODE: import.meta.env.MODE,");
+  envFields.push("    DEV: import.meta.env.DEV,");
+  envFields.push("    PROD: import.meta.env.PROD,");
+
+  return `/**
+ * Environment variable validation using Zod.
+ * Validates at runtime to catch missing/invalid env vars early.
+ */
+
+import { z } from 'zod';
+
+const envSchema = z.object({
+${schemaFields.join("\n")}
+});
+
+export type Env = z.infer<typeof envSchema>;
+
+/**
+ * Validate environment variables and return typed env object.
+ * Throws if validation fails in production.
+ */
+export function validateEnv(): Env {
+  const env = {
+${envFields.join("\n")}
+  };
+
+  const result = envSchema.safeParse(env);
+
+  if (!result.success) {
+    const errors = result.error.format();
+    console.error('Environment validation failed:', errors);
+
+    if (import.meta.env.PROD) {
+      throw new Error('Invalid environment configuration');
+    }
+  }
+
+  return result.success ? result.data : (env as Env);
+}
+
+/**
+ * Validated environment variables.
+ * Access this instead of import.meta.env for type safety.
+ */
+export const env = validateEnv();
+`;
+}
+
+/**
  * Compute complete scaffold for selected features
  */
 export async function computeScaffold(
@@ -486,6 +563,9 @@ export async function computeScaffold(
   // Generate vite-env.d.ts content
   const viteEnvDts = generateViteEnvDts(resolvedFeatures);
 
+  // Generate env.ts content
+  const envTs = generateEnvTs(resolvedFeatures);
+
   return {
     packageJson: {
       name: projectName,
@@ -498,5 +578,6 @@ export async function computeScaffold(
     setupCommands,
     claudeMd,
     viteEnvDts,
+    envTs,
   };
 }

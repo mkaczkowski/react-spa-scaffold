@@ -91,6 +91,7 @@ export async function getScaffold(input: GetScaffoldInput) {
     setupCommands: scaffold.setupCommands,
     claudeMd: scaffold.claudeMd,
     viteEnvDts: scaffold.viteEnvDts,
+    envTs: scaffold.envTs,
     examples,
     instructions: generateInstructions(projectName, scaffold.setupCommands),
   };
@@ -113,14 +114,16 @@ function generateInstructions(
 
 4. Create src/vite-env.d.ts using the provided viteEnvDts content
 
-5. Create CLAUDE.md using the provided claudeMd content
+5. Create src/lib/env.ts using the provided envTs content
 
-6. Run setup commands:
+6. Create CLAUDE.md using the provided claudeMd content
+
+7. Run setup commands:
    \`\`\`bash
    ${setupCommands.join("\n   ")}
    \`\`\`
 
-7. Start development:
+8. Start development:
    \`\`\`bash
    npm run dev
    \`\`\`
@@ -130,7 +133,8 @@ function generateInstructions(
 - Auto-included features are dependencies of selected features
 - Use get_example tool to get code patterns for each file type
 - CLAUDE.md content is dynamically generated based on selected features
-- vite-env.d.ts content is dynamically generated based on selected features`;
+- vite-env.d.ts content is dynamically generated based on selected features
+- env.ts content is dynamically generated based on selected features`;
 }
 
 export const getScaffoldToolDefinition = {
