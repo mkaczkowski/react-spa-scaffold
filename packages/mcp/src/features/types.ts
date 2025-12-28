@@ -46,4 +46,5 @@ export interface ScaffoldResult {
   claudeMd: string;
   viteEnvDts: string;
   envTs: string;
+  docs: Record<string, string>;
 }

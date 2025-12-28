@@ -1,6 +1,8 @@
 # webapp-base MCP Server
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that enables AI agents to scaffold new projects based on the webapp-base template. Instead of generating code directly, this server provides **knowledge and patterns** that AI agents use to create projects.
+A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that enables AI agents to scaffold new projects
+based on the webapp-base template. Instead of generating code directly, this server provides **knowledge and patterns**
+that AI agents use to create projects.
 
 ## Philosophy
 
@@ -448,7 +450,8 @@ const DOCS_MAP: Record<string, {...}> = {
 
 3. Rebuild: `npm run build`
 
-**That's it!** The server reads the file at runtime, so updates to the markdown file are reflected immediately (no rebuild needed for content changes).
+**That's it!** The server reads the file at runtime, so updates to the markdown file are reflected immediately (no
+rebuild needed for content changes).
 
 #### Combining Multiple Files
 
@@ -555,7 +558,8 @@ const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES)
   : MONOREPO_ROOT; // development mode
 ```
 
-The bundle script copies entire directories (`src/`, `docs/`, `tests/`) so no maintenance is needed when files are added or moved.
+The bundle script copies entire directories (`src/`, `docs/`, `tests/`) so no maintenance is needed when files are added
+or moved.
 
 ## Troubleshooting
 
