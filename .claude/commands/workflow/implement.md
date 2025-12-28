@@ -40,7 +40,7 @@ IMPORTANT: During Phase 5 (Implementation), follow TDD strictly:
 Run quality checks before committing:
 
 ```
-/check
+/workflow/check
 ```
 
 This runs: tests → typecheck → lint → build
