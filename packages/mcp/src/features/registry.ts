@@ -22,7 +22,6 @@ const core: Feature = {
     "Format utilities - date, number, currency, bytes (src/lib/format.ts)",
     "cn() class merge utility (clsx + tailwind-merge)",
     "Basic SEO component (React 19 native head hoisting)",
-    "Mobile/responsive context and hooks",
     "App configuration (src/lib/config.ts)",
     "Constants and type definitions",
     "ErrorBoundary component with reset functionality",
@@ -58,9 +57,6 @@ const core: Feature = {
     "src/lib/utils.ts",
     "src/lib/index.ts",
     "src/types/index.ts",
-    "src/contexts/mobileContext.tsx",
-    "src/hooks/useMediaQuery.ts",
-    "src/hooks/useTouchSizes.ts",
     "src/hooks/index.ts",
     "src/components/shared/SEO/SEO.tsx",
     "src/components/shared/SEO/index.ts",
@@ -75,13 +71,7 @@ const core: Feature = {
     ".env.example",
     "public/favicon.svg",
   ],
-  patterns: [
-    "component-shared",
-    "hook-state",
-    "hook-effect",
-    "context-provider",
-    "error-boundary",
-  ],
+  patterns: ["component-shared", "hook-effect", "error-boundary"],
   scripts: {
     dev: "vite",
     build: "tsc -b && vite build",
@@ -94,6 +84,35 @@ const core: Feature = {
     "tsconfig.app.json",
     "tsconfig.node.json",
   ],
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MOBILE FEATURE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const mobile: Feature = {
+  name: "Mobile Support",
+  description:
+    "Responsive design utilities with viewport detection, breakpoints, and touch-aware sizing",
+  required: false,
+  includes: [
+    "MobileProvider context for viewport detection",
+    "useMobileContext hook (isMobile, isTablet, isDesktop, width)",
+    "useMediaQuery hook with BREAKPOINTS constants (sm, md, lg, xl)",
+    "useIsMobile and useIsDesktop convenience hooks",
+    "useTouchSizes hook for touch-aware component sizing",
+    "requestAnimationFrame-debounced resize handling",
+    "SSR-safe viewport detection with fallbacks",
+  ],
+  dependencies: {},
+  devDependencies: {},
+  files: [
+    "src/contexts/mobileContext.tsx",
+    "src/hooks/useMediaQuery.ts",
+    "src/hooks/useTouchSizes.ts",
+  ],
+  patterns: ["mobile-context", "use-media-query", "use-touch-sizes"],
+  scripts: {},
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -185,7 +204,7 @@ const ui: Feature = {
   ],
   scripts: {},
   configFiles: ["components.json"],
-  requiresFeatures: ["state"], // Theme toggle needs preferences store
+  requiresFeatures: ["state", "mobile"], // Theme toggle needs preferences store and touch sizes
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -551,6 +570,7 @@ const observability: Feature = {
 
 export const FEATURES: FeatureRegistry = {
   core,
+  mobile,
   routing,
   ui,
   forms,

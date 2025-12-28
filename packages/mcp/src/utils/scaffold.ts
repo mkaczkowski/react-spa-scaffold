@@ -216,7 +216,11 @@ ${commandLines.join("\n")}
     "├── components/    # ui/ (primitives), layout/, shared/ (features)",
   ];
 
-  if (featureIds.includes("data") || featureIds.includes("i18n")) {
+  if (
+    featureIds.includes("data") ||
+    featureIds.includes("i18n") ||
+    featureIds.includes("mobile")
+  ) {
     structureParts.push("├── contexts/      # React Context providers");
   }
   structureParts.push("├── hooks/         # Custom hooks");
@@ -292,6 +296,45 @@ import { cn } from '@/lib/utils';
 \`\`\``);
   }
 
+  // Mobile section - only if mobile feature
+  if (featureIds.includes("mobile")) {
+    sections.push(`
+## Mobile & Responsive Design
+
+This project includes mobile-first responsive utilities.
+
+### Viewport Detection
+
+\`\`\`tsx
+import { MobileProvider, useMobileContext } from '@/contexts/mobileContext';
+
+// Wrap app with MobileProvider
+<MobileProvider>{children}</MobileProvider>
+
+// Use in components
+const { isMobile, isTablet, isDesktop, width } = useMobileContext();
+\`\`\`
+
+### Breakpoints
+
+\`\`\`tsx
+import { BREAKPOINTS, useIsMobile, useIsDesktop } from '@/hooks/useMediaQuery';
+
+// BREAKPOINTS: sm (640), md (768), lg (1024), xl (1280)
+const isMobile = useIsMobile();   // width < 768px
+const isDesktop = useIsDesktop(); // width >= 1024px
+\`\`\`
+
+### Touch-Aware Sizing
+
+\`\`\`tsx
+import { useTouchSizes } from '@/hooks/useTouchSizes';
+
+const sizes = useTouchSizes();
+<Button size={sizes.button}>Click</Button>  // 'touch' on mobile, 'default' on desktop
+\`\`\``);
+  }
+
   // MCP Servers section - always helpful
   sections.push(`
 ## MCP Servers (PREFER OVER WebSearch)
@@ -354,9 +397,11 @@ MSW handlers auto-reset after each test.`);
     gotchas.push("**Node.js >= 22.0.0** required (check `.nvmrc`)");
     gotchas.push("**Conventional commits** enforced by commitlint");
   }
-  gotchas.push(
-    "**Context hooks throw** outside provider (e.g., `useMobileContext()`)",
-  );
+  if (featureIds.includes("mobile")) {
+    gotchas.push(
+      "**Context hooks throw** outside provider (e.g., `useMobileContext()`)",
+    );
+  }
   gotchas.push("**Barrel exports** in each directory via `index.ts`");
   if (featureIds.includes("ui")) {
     gotchas.push(
