@@ -8,74 +8,40 @@ import { readFile } from 'fs/promises';
 
 import { resolveTemplatePath } from './paths.js';
 
-// Document inclusion strategy
-type DocType = 'universal' | 'feature-specific';
-
-interface DocConfig {
-  type: DocType;
-  requiredFeatures?: string[]; // For feature-specific docs
-}
-
 /**
  * Documentation configuration
  *
- * Strategy: Keep docs intact to preserve coherent content.
- * - universal: Always included (reference material useful even without feature)
- * - feature-specific: Only when required feature is selected
+ * - If requiredFeatures is set: only included when one of those features is selected
+ * - If requiredFeatures is not set: always included (universal reference material)
  *
- * Conservative approach: No line-level filtering as it breaks
- * interconnected content (code examples, tables, diagrams).
+ * WORKFLOW.md is intentionally excluded - not relevant to scaffolded projects
  */
-const DOCS_CONFIG: Record<string, DocConfig> = {
-  // Universal - always included as reference material
-  'docs/ARCHITECTURE.md': {
-    type: 'universal',
-  },
-  'docs/CODING_STANDARDS.md': {
-    type: 'universal',
-  },
-  'docs/COMPONENT_GUIDELINES.md': {
-    type: 'universal',
-  },
-  'docs/API_REFERENCE.md': {
-    type: 'universal',
-  },
+const DOCS_CONFIG: Record<string, { requiredFeatures?: string[] }> = {
+  // Universal - always included
+  'docs/ARCHITECTURE.md': {},
+  'docs/CODING_STANDARDS.md': {},
+  'docs/COMPONENT_GUIDELINES.md': {},
+  'docs/API_REFERENCE.md': {},
 
-  // Feature-specific - only when feature is selected
-  'docs/TESTING.md': {
-    type: 'feature-specific',
-    requiredFeatures: ['testing'],
-  },
-  'docs/E2E_TESTING.md': {
-    type: 'feature-specific',
-    requiredFeatures: ['testing'],
-  },
-  'docs/INTERNATIONALIZATION.md': {
-    type: 'feature-specific',
-    requiredFeatures: ['i18n'],
-  },
-
-  // WORKFLOW.md is intentionally excluded - not relevant to scaffolded projects
+  // Feature-specific
+  'docs/TESTING.md': { requiredFeatures: ['testing'] },
+  'docs/E2E_TESTING.md': { requiredFeatures: ['testing'] },
+  'docs/INTERNATIONALIZATION.md': { requiredFeatures: ['i18n'] },
 };
 
 /**
  * Determine which docs to include based on selected features
  */
-export function computeDocsForFeatures(featureIds: string[]): string[] {
-  const docs: string[] = [];
+export function computeDocsForFeatures(featureIds: readonly string[]): string[] {
+  const featureSet = new Set(featureIds);
 
-  for (const [path, config] of Object.entries(DOCS_CONFIG)) {
-    if (config.type === 'universal') {
-      docs.push(path);
-    } else if (config.type === 'feature-specific') {
-      const hasRequiredFeature = config.requiredFeatures?.some((f) => featureIds.includes(f));
-      if (hasRequiredFeature) {
-        docs.push(path);
-      }
-    }
-  }
-
-  return docs.sort();
+  return Object.entries(DOCS_CONFIG)
+    .filter(([, config]) => {
+      if (!config.requiredFeatures) return true; // Universal
+      return config.requiredFeatures.some((f) => featureSet.has(f));
+    })
+    .map(([path]) => path)
+    .sort();
 }
 
 /**
@@ -94,7 +60,7 @@ async function readDoc(docPath: string): Promise<string> {
 /**
  * Read all docs for scaffolding based on selected features
  */
-export async function computeDocsContent(featureIds: string[]): Promise<Record<string, string>> {
+export async function computeDocsContent(featureIds: readonly string[]): Promise<Record<string, string>> {
   const docPaths = computeDocsForFeatures(featureIds);
   const docs: Record<string, string> = {};
 
