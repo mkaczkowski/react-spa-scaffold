@@ -2,23 +2,22 @@
  * Scaffold computation utilities
  */
 
-import { readFile } from "fs/promises";
+import { readFile } from 'fs/promises';
 
-import { FEATURES } from "../features/index.js";
-import type { ScaffoldResult } from "../features/types.js";
-import { resolveTemplatePath } from "./paths.js";
+import { FEATURES } from '../features/index.js';
+import type { ScaffoldResult } from '../features/types.js';
+import { computeDocsContent, computeDocsForFeatures } from './docs.js';
+import { resolveTemplatePath } from './paths.js';
 
 /**
  * Resolve feature dependencies recursively
  */
-export function resolveFeatureDependencies(
-  selectedFeatures: string[],
-): string[] {
+export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
   const resolved = new Set<string>();
   const toProcess = [...selectedFeatures];
 
   // Always include core
-  resolved.add("core");
+  resolved.add('core');
 
   while (toProcess.length > 0) {
     const featureId = toProcess.pop()!;
@@ -66,9 +65,7 @@ export function mergeDependencies(featureIds: string[]): {
 
   // Sort alphabetically
   const sortObject = (obj: Record<string, string>) =>
-    Object.fromEntries(
-      Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
-    );
+    Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
 
   return {
     dependencies: sortObject(dependencies),
@@ -134,7 +131,7 @@ async function readConfigFileContent(configPath: string): Promise<string> {
   const fullPath = resolveTemplatePath(configPath);
 
   try {
-    return await readFile(fullPath, "utf-8");
+    return await readFile(fullPath, 'utf-8');
   } catch {
     // File might not exist if running outside webapp-base
     return `// File not found: ${configPath}\n// Run MCP server from within webapp-base repository`;
@@ -145,18 +142,18 @@ async function readConfigFileContent(configPath: string): Promise<string> {
  * Generate setup commands based on selected features
  */
 export function getSetupCommands(featureIds: string[]): string[] {
-  const commands: string[] = ["npm install"];
+  const commands: string[] = ['npm install'];
 
-  if (featureIds.includes("devtools")) {
-    commands.push("npm run prepare"); // Initialize husky
+  if (featureIds.includes('devtools')) {
+    commands.push('npm run prepare'); // Initialize husky
   }
 
-  if (featureIds.includes("testing")) {
-    commands.push("npx playwright install chromium"); // Install Playwright browser
+  if (featureIds.includes('testing')) {
+    commands.push('npx playwright install chromium'); // Install Playwright browser
   }
 
-  if (featureIds.includes("i18n")) {
-    commands.push("npm run i18n:extract"); // Extract initial translations
+  if (featureIds.includes('i18n')) {
+    commands.push('npm run i18n:extract'); // Extract initial translations
   }
 
   return commands;
@@ -165,11 +162,7 @@ export function getSetupCommands(featureIds: string[]): string[] {
 /**
  * Generate CLAUDE.md content based on selected features
  */
-export function generateClaudeMd(
-  featureIds: string[],
-  projectName: string,
-  scripts: Record<string, string>,
-): string {
+export function generateClaudeMd(featureIds: string[], projectName: string, scripts: Record<string, string>): string {
   const sections: string[] = [];
 
   // Header
@@ -180,26 +173,26 @@ AI assistant guidance for **${projectName}** - a React 19 + TypeScript + Vite 7 
   // Commands section - based on actual scripts
   const commandLines: string[] = [];
   const scriptDescriptions: Record<string, string> = {
-    dev: "Dev server at localhost:5173",
-    build: "Production build (typecheck + bundle)",
-    preview: "Preview production build",
-    typecheck: "TypeScript only",
-    lint: "ESLint check",
-    "lint:fix": "ESLint auto-fix",
-    format: "Prettier format",
-    "format:check": "Prettier check",
-    test: "Vitest once",
-    "test:watch": "Vitest watch mode",
-    "test:coverage": "Coverage (80% threshold)",
-    e2e: "Playwright E2E",
-    "e2e:ui": "Playwright UI mode",
-    "i18n:extract": "Extract translations to .po",
-    prepare: "Initialize Husky hooks",
+    dev: 'Dev server at localhost:5173',
+    build: 'Production build (typecheck + bundle)',
+    preview: 'Preview production build',
+    typecheck: 'TypeScript only',
+    lint: 'ESLint check',
+    'lint:fix': 'ESLint auto-fix',
+    format: 'Prettier format',
+    'format:check': 'Prettier check',
+    test: 'Vitest once',
+    'test:watch': 'Vitest watch mode',
+    'test:coverage': 'Coverage (80% threshold)',
+    e2e: 'Playwright E2E',
+    'e2e:ui': 'Playwright UI mode',
+    'i18n:extract': 'Extract translations to .po',
+    prepare: 'Initialize Husky hooks',
   };
 
   for (const script of Object.keys(scripts).sort()) {
-    const desc = scriptDescriptions[script] || "";
-    const padding = " ".repeat(Math.max(1, 20 - script.length));
+    const desc = scriptDescriptions[script] || '';
+    const padding = ' '.repeat(Math.max(1, 20 - script.length));
     commandLines.push(`npm run ${script}${padding}# ${desc}`);
   }
 
@@ -207,61 +200,53 @@ AI assistant guidance for **${projectName}** - a React 19 + TypeScript + Vite 7 
 ## Commands
 
 \`\`\`bash
-${commandLines.join("\n")}
+${commandLines.join('\n')}
 \`\`\``);
 
   // Project Structure - dynamic based on features
-  const structureParts: string[] = [
-    "src/",
-    "├── components/    # ui/ (primitives), layout/, shared/ (features)",
-  ];
+  const structureParts: string[] = ['src/', '├── components/    # ui/ (primitives), layout/, shared/ (features)'];
 
-  if (
-    featureIds.includes("data") ||
-    featureIds.includes("i18n") ||
-    featureIds.includes("mobile")
-  ) {
-    structureParts.push("├── contexts/      # React Context providers");
+  if (featureIds.includes('data') || featureIds.includes('i18n') || featureIds.includes('mobile')) {
+    structureParts.push('├── contexts/      # React Context providers');
   }
-  structureParts.push("├── hooks/         # Custom hooks");
+  structureParts.push('├── hooks/         # Custom hooks');
   structureParts.push(
-    "├── lib/           # config, utils, format" +
-      (featureIds.includes("data") ? ", api" : "") +
-      (featureIds.includes("routing") ? ", routes" : "") +
-      (featureIds.includes("state") ? ", storage" : ""),
+    '├── lib/           # config, utils, format' +
+      (featureIds.includes('data') ? ', api' : '') +
+      (featureIds.includes('routing') ? ', routes' : '') +
+      (featureIds.includes('state') ? ', storage' : ''),
   );
 
-  if (featureIds.includes("routing")) {
-    structureParts.push("├── pages/         # Lazy-loaded route components");
+  if (featureIds.includes('routing')) {
+    structureParts.push('├── pages/         # Lazy-loaded route components');
   }
-  if (featureIds.includes("state")) {
-    structureParts.push("├── stores/        # Zustand stores");
+  if (featureIds.includes('state')) {
+    structureParts.push('├── stores/        # Zustand stores');
   }
-  if (featureIds.includes("i18n")) {
-    structureParts.push("├── i18n/          # LinguiJS config and catalogs");
-    structureParts.push("├── locales/       # Translation files (.po)");
+  if (featureIds.includes('i18n')) {
+    structureParts.push('├── i18n/          # LinguiJS config and catalogs');
+    structureParts.push('├── locales/       # Translation files (.po)');
   }
-  structureParts.push("└── types/         # TypeScript definitions");
+  structureParts.push('└── types/         # TypeScript definitions');
 
-  if (featureIds.includes("testing")) {
-    structureParts.push("");
-    structureParts.push("tests/unit/        # Vitest (mirrors src/)");
-    structureParts.push("e2e/               # Playwright tests");
+  if (featureIds.includes('testing')) {
+    structureParts.push('');
+    structureParts.push('tests/unit/        # Vitest (mirrors src/)');
+    structureParts.push('e2e/               # Playwright tests');
   }
 
   sections.push(`
 ## Project Structure
 
 \`\`\`
-${structureParts.join("\n")}
+${structureParts.join('\n')}
 \`\`\``);
 
   // Code Patterns - always included
   const stateHierarchy: string[] = [];
-  if (featureIds.includes("state")) stateHierarchy.push("Zustand (persisted)");
-  if (featureIds.includes("data"))
-    stateHierarchy.push("TanStack Query (server)");
-  stateHierarchy.push("Context (UI)", "useState (local)");
+  if (featureIds.includes('state')) stateHierarchy.push('Zustand (persisted)');
+  if (featureIds.includes('data')) stateHierarchy.push('TanStack Query (server)');
+  stateHierarchy.push('Context (UI)', 'useState (local)');
 
   sections.push(`
 ## Code Patterns
@@ -272,10 +257,10 @@ ${structureParts.join("\n")}
 
 **TypeScript**: \`type\` for unions, \`interface\` for objects
 
-**State hierarchy**: ${stateHierarchy.join(" → ")}`);
+**State hierarchy**: ${stateHierarchy.join(' → ')}`);
 
   // UI Components section - only if ui feature
-  if (featureIds.includes("ui")) {
+  if (featureIds.includes('ui')) {
     sections.push(`
 ## UI Components (Shadcn/UI)
 
@@ -297,7 +282,7 @@ import { cn } from '@/lib/utils';
   }
 
   // Mobile section - only if mobile feature
-  if (featureIds.includes("mobile")) {
+  if (featureIds.includes('mobile')) {
     sections.push(`
 ## Mobile & Responsive Design
 
@@ -351,7 +336,7 @@ resolve-library-id → get-library-docs
 
 **Examples**: react-hook-form, @tanstack/react-query, zustand, zod, date-fns`);
 
-  if (featureIds.includes("ui")) {
+  if (featureIds.includes('ui')) {
     sections.push(`
 ### Shadcn MCP (UI Components)
 
@@ -363,7 +348,7 @@ resolve-library-id → get-library-docs
   }
 
   // Translations section - only if i18n feature
-  if (featureIds.includes("i18n")) {
+  if (featureIds.includes('i18n')) {
     sections.push(`
 ## Translations (CRITICAL)
 
@@ -376,7 +361,7 @@ t({ message: 'Close', comment: 'Close button' })
   }
 
   // Testing section - only if testing feature
-  if (featureIds.includes("testing")) {
+  if (featureIds.includes('testing')) {
     sections.push(`
 ## Testing
 
@@ -393,29 +378,25 @@ MSW handlers auto-reset after each test.`);
 
   // Common Gotchas - filtered by features
   const gotchas: string[] = [];
-  if (featureIds.includes("devtools")) {
-    gotchas.push("**Node.js >= 22.0.0** required (check `.nvmrc`)");
-    gotchas.push("**Conventional commits** enforced by commitlint");
+  if (featureIds.includes('devtools')) {
+    gotchas.push('**Node.js >= 22.0.0** required (check `.nvmrc`)');
+    gotchas.push('**Conventional commits** enforced by commitlint');
   }
-  if (featureIds.includes("mobile")) {
-    gotchas.push(
-      "**Context hooks throw** outside provider (e.g., `useMobileContext()`)",
-    );
+  if (featureIds.includes('mobile')) {
+    gotchas.push('**Context hooks throw** outside provider (e.g., `useMobileContext()`)');
   }
-  gotchas.push("**Barrel exports** in each directory via `index.ts`");
-  if (featureIds.includes("ui")) {
-    gotchas.push(
-      "**UI components** import directly: `@/components/ui/button` (no barrel)",
-    );
+  gotchas.push('**Barrel exports** in each directory via `index.ts`');
+  if (featureIds.includes('ui')) {
+    gotchas.push('**UI components** import directly: `@/components/ui/button` (no barrel)');
   }
 
   sections.push(`
 ## Common Gotchas
 
-${gotchas.map((g, i) => `${i + 1}. ${g}`).join("\n")}
+${gotchas.map((g, i) => `${i + 1}. ${g}`).join('\n')}
 `);
 
-  return sections.join("\n");
+  return sections.join('\n');
 }
 
 /**
@@ -425,24 +406,24 @@ export function generateViteEnvDts(featureIds: string[]): string {
   const envVars: string[] = [];
 
   // Core env vars (always included)
-  envVars.push("  readonly VITE_APP_NAME: string;");
-  envVars.push("  readonly VITE_APP_URL: string;");
+  envVars.push('  readonly VITE_APP_NAME: string;');
+  envVars.push('  readonly VITE_APP_URL: string;');
 
   // Data feature env vars
-  if (featureIds.includes("data")) {
-    envVars.push("  readonly VITE_API_URL: string;");
+  if (featureIds.includes('data')) {
+    envVars.push('  readonly VITE_API_URL: string;');
   }
 
   // Observability feature env vars
-  if (featureIds.includes("observability")) {
-    envVars.push("  readonly VITE_SENTRY_DSN: string;");
-    envVars.push("  readonly VITE_SENTRY_ENABLED: string;");
+  if (featureIds.includes('observability')) {
+    envVars.push('  readonly VITE_SENTRY_DSN: string;');
+    envVars.push('  readonly VITE_SENTRY_ENABLED: string;');
   }
 
   return `/// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-${envVars.join("\n")}
+${envVars.join('\n')}
 }
 
 interface ImportMeta {
@@ -459,32 +440,32 @@ export function generateEnvTs(featureIds: string[]): string {
   const envFields: string[] = [];
 
   // Core env vars (always included)
-  schemaFields.push("  VITE_APP_NAME: z.string().min(1).optional(),");
-  schemaFields.push("  VITE_APP_URL: z.string().url().optional(),");
-  envFields.push("    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,");
-  envFields.push("    VITE_APP_URL: import.meta.env.VITE_APP_URL,");
+  schemaFields.push('  VITE_APP_NAME: z.string().min(1).optional(),');
+  schemaFields.push('  VITE_APP_URL: z.string().url().optional(),');
+  envFields.push('    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,');
+  envFields.push('    VITE_APP_URL: import.meta.env.VITE_APP_URL,');
 
   // Data feature env vars
-  if (featureIds.includes("data")) {
-    schemaFields.push("  VITE_API_URL: z.string().url().optional(),");
-    envFields.push("    VITE_API_URL: import.meta.env.VITE_API_URL,");
+  if (featureIds.includes('data')) {
+    schemaFields.push('  VITE_API_URL: z.string().url().optional(),');
+    envFields.push('    VITE_API_URL: import.meta.env.VITE_API_URL,');
   }
 
   // Observability feature env vars
-  if (featureIds.includes("observability")) {
-    schemaFields.push("  VITE_SENTRY_DSN: z.string().url().optional(),");
-    schemaFields.push("  VITE_SENTRY_ENABLED: z.string().optional(),");
-    envFields.push("    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,");
-    envFields.push("    VITE_SENTRY_ENABLED: import.meta.env.VITE_SENTRY_ENABLED,");
+  if (featureIds.includes('observability')) {
+    schemaFields.push('  VITE_SENTRY_DSN: z.string().url().optional(),');
+    schemaFields.push('  VITE_SENTRY_ENABLED: z.string().optional(),');
+    envFields.push('    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,');
+    envFields.push('    VITE_SENTRY_ENABLED: import.meta.env.VITE_SENTRY_ENABLED,');
   }
 
   // Vite built-in env vars (always included)
   schemaFields.push("  MODE: z.enum(['development', 'production', 'test']).default('development'),");
-  schemaFields.push("  DEV: z.boolean().default(false),");
-  schemaFields.push("  PROD: z.boolean().default(false),");
-  envFields.push("    MODE: import.meta.env.MODE,");
-  envFields.push("    DEV: import.meta.env.DEV,");
-  envFields.push("    PROD: import.meta.env.PROD,");
+  schemaFields.push('  DEV: z.boolean().default(false),');
+  schemaFields.push('  PROD: z.boolean().default(false),');
+  envFields.push('    MODE: import.meta.env.MODE,');
+  envFields.push('    DEV: import.meta.env.DEV,');
+  envFields.push('    PROD: import.meta.env.PROD,');
 
   return `/**
  * Environment variable validation using Zod.
@@ -494,7 +475,7 @@ export function generateEnvTs(featureIds: string[]): string {
 import { z } from 'zod';
 
 const envSchema = z.object({
-${schemaFields.join("\n")}
+${schemaFields.join('\n')}
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -505,7 +486,7 @@ export type Env = z.infer<typeof envSchema>;
  */
 export function validateEnv(): Env {
   const env = {
-${envFields.join("\n")}
+${envFields.join('\n')}
   };
 
   const result = envSchema.safeParse(env);
@@ -534,8 +515,8 @@ export const env = validateEnv();
  * Read and parse the source package.json
  */
 async function readSourcePackageJson(): Promise<Record<string, unknown>> {
-  const path = resolveTemplatePath("package.json");
-  const content = await readFile(path, "utf-8");
+  const path = resolveTemplatePath('package.json');
+  const content = await readFile(path, 'utf-8');
   return JSON.parse(content);
 }
 
@@ -544,7 +525,7 @@ async function readSourcePackageJson(): Promise<Record<string, unknown>> {
  */
 export async function computeScaffold(
   selectedFeatures: string[],
-  projectName: string = "my-app",
+  projectName: string = 'my-app',
 ): Promise<ScaffoldResult> {
   // Resolve all dependencies
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
@@ -560,7 +541,9 @@ export async function computeScaffold(
   const scripts = mergeScripts(resolvedFeatures);
 
   // Get file structure (add CLAUDE.md which is generated, not from patterns)
-  const structure = [...computeFileStructure(resolvedFeatures), "CLAUDE.md"];
+  // Also add docs based on selected features
+  const docPaths = computeDocsForFeatures(resolvedFeatures);
+  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docPaths];
 
   // Get config files with actual content read from templates
   const configFiles: Record<string, string> = {};
@@ -581,6 +564,9 @@ export async function computeScaffold(
   // Generate env.ts content
   const envTs = generateEnvTs(resolvedFeatures);
 
+  // Get docs with content filtered by features
+  const docs = await computeDocsContent(resolvedFeatures);
+
   return {
     packageJson: {
       name: projectName,
@@ -595,5 +581,6 @@ export async function computeScaffold(
     claudeMd,
     viteEnvDts,
     envTs,
+    docs,
   };
 }

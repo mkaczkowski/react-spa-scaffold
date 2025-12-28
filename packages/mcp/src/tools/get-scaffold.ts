@@ -6,49 +6,34 @@
  * and setup commands needed to create a new project.
  */
 
-import { z } from "zod";
-import { FEATURE_IDS, FEATURES } from "../features/index.js";
-import {
-  computeScaffold,
-  resolveFeatureDependencies,
-  getFeatureExamples,
-  type CodeExample,
-} from "../utils/index.js";
+import { z } from 'zod';
+import { FEATURE_IDS, FEATURES } from '../features/index.js';
+import { computeScaffold, resolveFeatureDependencies, getFeatureExamples, type CodeExample } from '../utils/index.js';
 
 export const getScaffoldSchema = z.object({
   features: z
     .array(z.string())
-    .max(15, "Maximum 15 features allowed")
+    .max(15, 'Maximum 15 features allowed')
     .refine(
       (features) => features.every((f) => f in FEATURES),
       (features) => ({
-        message: `Invalid features: ${features.filter((f) => !(f in FEATURES)).join(", ")}. Valid: ${FEATURE_IDS.join(", ")}`,
+        message: `Invalid features: ${features.filter((f) => !(f in FEATURES)).join(', ')}. Valid: ${FEATURE_IDS.join(', ')}`,
       }),
     )
-    .describe(
-      'List of feature IDs to include (e.g., ["routing", "ui", "forms"])',
-    ),
+    .describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
   projectName: z
     .string()
-    .max(50, "Project name too long")
-    .regex(
-      /^[a-z0-9-]*$/,
-      "Project name must be lowercase letters, numbers, and hyphens only",
-    )
+    .max(50, 'Project name too long')
+    .regex(/^[a-z0-9-]*$/, 'Project name must be lowercase letters, numbers, and hyphens only')
     .optional()
     .describe('Name for the new project (defaults to "my-app")'),
-  includeExamples: z
-    .boolean()
-    .optional()
-    .describe(
-      "Include code examples for each feature pattern (default: false)",
-    ),
+  includeExamples: z.boolean().optional().describe('Include code examples for each feature pattern (default: false)'),
 });
 
 export type GetScaffoldInput = z.infer<typeof getScaffoldSchema>;
 
 export async function getScaffold(input: GetScaffoldInput) {
-  const { features, projectName = "my-app", includeExamples = false } = input;
+  const { features, projectName = 'my-app', includeExamples = false } = input;
 
   // Resolve dependencies
   const resolvedFeatures = resolveFeatureDependencies(features);
@@ -92,15 +77,13 @@ export async function getScaffold(input: GetScaffoldInput) {
     claudeMd: scaffold.claudeMd,
     viteEnvDts: scaffold.viteEnvDts,
     envTs: scaffold.envTs,
+    docs: scaffold.docs,
     examples,
     instructions: generateInstructions(projectName, scaffold.setupCommands),
   };
 }
 
-function generateInstructions(
-  projectName: string,
-  setupCommands: string[],
-): string {
+function generateInstructions(projectName: string, setupCommands: string[]): string {
   return `## Setup Instructions
 
 1. Create project directory:
@@ -118,12 +101,14 @@ function generateInstructions(
 
 6. Create CLAUDE.md using the provided claudeMd content
 
-7. Run setup commands:
+7. Create docs/ directory with the provided docs content
+
+8. Run setup commands:
    \`\`\`bash
-   ${setupCommands.join("\n   ")}
+   ${setupCommands.join('\n   ')}
    \`\`\`
 
-8. Start development:
+9. Start development:
    \`\`\`bash
    npm run dev
    \`\`\`
@@ -134,11 +119,12 @@ function generateInstructions(
 - Use get_example tool to get code patterns for each file type
 - CLAUDE.md content is dynamically generated based on selected features
 - vite-env.d.ts content is dynamically generated based on selected features
-- env.ts content is dynamically generated based on selected features`;
+- env.ts content is dynamically generated based on selected features
+- docs/ content is filtered based on selected features`;
 }
 
 export const getScaffoldToolDefinition = {
-  name: "get_scaffold",
+  name: 'get_scaffold',
   description: `Get complete scaffold information for a new webapp-base project.
 
 Given a list of features, returns:
@@ -146,34 +132,36 @@ Given a list of features, returns:
 - Complete package.json (dependencies + devDependencies + scripts)
 - File structure to create
 - Config files needed
+- Documentation files (filtered by selected features)
 - Setup commands to run after creation
 
 The AI agent should use this information to:
 1. Create the project directory
 2. Write package.json
 3. Create all files using get_example for patterns
-4. Run setup commands
+4. Create docs/ with provided documentation
+5. Run setup commands
 
 Example usage:
 - features: ["routing", "ui", "forms", "testing"]
 - This will auto-include: core, state (ui requires it)`,
   inputSchema: {
-    type: "object" as const,
+    type: 'object' as const,
     properties: {
       features: {
-        type: "array" as const,
-        items: { type: "string" as const },
-        description: "List of feature IDs to include",
+        type: 'array' as const,
+        items: { type: 'string' as const },
+        description: 'List of feature IDs to include',
       },
       projectName: {
-        type: "string" as const,
-        description: "Name for the new project",
+        type: 'string' as const,
+        description: 'Name for the new project',
       },
       includeExamples: {
-        type: "boolean" as const,
-        description: "Include code examples for patterns",
+        type: 'boolean' as const,
+        description: 'Include code examples for patterns',
       },
     },
-    required: ["features"],
+    required: ['features'],
   },
 };

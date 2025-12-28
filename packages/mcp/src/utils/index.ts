@@ -11,3 +11,5 @@ export {
 } from './scaffold.js';
 
 export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples.js';
+
+export { computeDocsForFeatures, computeDocsContent } from './docs.js';
