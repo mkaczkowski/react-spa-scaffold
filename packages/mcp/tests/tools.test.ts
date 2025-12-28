@@ -237,6 +237,14 @@ describe("get_scaffold tool", () => {
     );
   });
 
+  it("claudeMd project structure shows contexts when mobile is selected", async () => {
+    const withMobile = await getScaffold({ features: ["mobile"] });
+    const withoutMobile = await getScaffold({ features: [] });
+
+    expect(withMobile.claudeMd).toContain("contexts/");
+    expect(withoutMobile.claudeMd).not.toContain("contexts/");
+  });
+
   it("returns config files with content", async () => {
     const result = await getScaffold({ features: ["ui"] });
 

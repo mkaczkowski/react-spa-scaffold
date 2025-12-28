@@ -216,7 +216,11 @@ ${commandLines.join("\n")}
     "├── components/    # ui/ (primitives), layout/, shared/ (features)",
   ];
 
-  if (featureIds.includes("data") || featureIds.includes("i18n")) {
+  if (
+    featureIds.includes("data") ||
+    featureIds.includes("i18n") ||
+    featureIds.includes("mobile")
+  ) {
     structureParts.push("├── contexts/      # React Context providers");
   }
   structureParts.push("├── hooks/         # Custom hooks");
