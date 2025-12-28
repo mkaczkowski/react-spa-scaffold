@@ -187,6 +187,20 @@ describe("get_scaffold tool", () => {
     expect(withI18n.claudeMd).toContain("## Translations");
     expect(withoutI18n.claudeMd).not.toContain("## Translations");
   });
+
+  it("returns config files with content", async () => {
+    const result = await getScaffold({ features: ["ui"] });
+
+    expect(typeof result.configFiles).toBe("object");
+    expect(result.configFiles).toHaveProperty("components.json");
+  });
+
+  it("includes radix-nova style in components.json", async () => {
+    const result = await getScaffold({ features: ["ui"] });
+
+    const componentsJson = JSON.parse(result.configFiles["components.json"]);
+    expect(componentsJson.style).toBe("radix-nova");
+  });
 });
 
 describe("get_example tool", () => {

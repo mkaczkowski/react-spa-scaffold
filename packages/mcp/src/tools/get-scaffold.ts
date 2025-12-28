@@ -54,7 +54,7 @@ export async function getScaffold(input: GetScaffoldInput) {
   const resolvedFeatures = resolveFeatureDependencies(features);
 
   // Get scaffold result
-  const scaffold = computeScaffold(features, projectName);
+  const scaffold = await computeScaffold(features, projectName);
 
   // Build feature details
   const featureDetails = resolvedFeatures.map((id) => {
@@ -87,7 +87,7 @@ export async function getScaffold(input: GetScaffoldInput) {
     featureDetails,
     packageJson: scaffold.packageJson,
     fileStructure: scaffold.structure,
-    configFiles: Object.keys(scaffold.configFiles),
+    configFiles: scaffold.configFiles,
     setupCommands: scaffold.setupCommands,
     claudeMd: scaffold.claudeMd,
     examples,
