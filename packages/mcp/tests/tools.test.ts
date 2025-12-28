@@ -55,6 +55,23 @@ describe("get_features tool", () => {
     expect(ci?.requiresFeatures).toContain("devtools");
     expect(ci?.requiresFeatures).toContain("testing");
   });
+
+  it("mobile feature exists and is not required", () => {
+    const features = getFeatures();
+    const mobile = features.find((f) => f.id === "mobile");
+
+    expect(mobile).toBeDefined();
+    expect(mobile?.required).toBe(false);
+    expect(mobile?.name).toBe("Mobile Support");
+  });
+
+  it("ui feature requires mobile and state", () => {
+    const features = getFeatures();
+    const ui = features.find((f) => f.id === "ui");
+
+    expect(ui?.requiresFeatures).toContain("mobile");
+    expect(ui?.requiresFeatures).toContain("state");
+  });
 });
 
 describe("get_scaffold tool", () => {
@@ -75,12 +92,31 @@ describe("get_scaffold tool", () => {
     }
   });
 
-  it("auto-includes state when ui is selected", async () => {
+  it("auto-includes state and mobile when ui is selected", async () => {
     const result = await getScaffold({ features: ["ui"] });
 
     expect(result.resolvedFeatures).toContain("state");
+    expect(result.resolvedFeatures).toContain("mobile");
     expect(result.resolvedFeatures).toContain("ui");
     expect(result.resolvedFeatures).toContain("core");
+  });
+
+  it("includes mobile files when mobile feature is selected", async () => {
+    const result = await getScaffold({ features: ["mobile"] });
+
+    expect(result.fileStructure).toContain("src/contexts/mobileContext.tsx");
+    expect(result.fileStructure).toContain("src/hooks/useMediaQuery.ts");
+    expect(result.fileStructure).toContain("src/hooks/useTouchSizes.ts");
+  });
+
+  it("does not include mobile files when only core is selected", async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.fileStructure).not.toContain(
+      "src/contexts/mobileContext.tsx",
+    );
+    expect(result.fileStructure).not.toContain("src/hooks/useMediaQuery.ts");
+    expect(result.fileStructure).not.toContain("src/hooks/useTouchSizes.ts");
   });
 
   it("returns valid package.json structure", async () => {
@@ -188,6 +224,19 @@ describe("get_scaffold tool", () => {
     expect(withoutI18n.claudeMd).not.toContain("## Translations");
   });
 
+  it("claudeMd includes mobile section only when mobile feature selected", async () => {
+    const withMobile = await getScaffold({ features: ["mobile"] });
+    const withoutMobile = await getScaffold({ features: [] });
+
+    expect(withMobile.claudeMd).toContain("## Mobile & Responsive Design");
+    expect(withMobile.claudeMd).toContain("MobileProvider");
+    expect(withMobile.claudeMd).toContain("useMobileContext");
+    expect(withMobile.claudeMd).toContain("useTouchSizes");
+    expect(withoutMobile.claudeMd).not.toContain(
+      "## Mobile & Responsive Design",
+    );
+  });
+
   it("returns config files with content", async () => {
     const result = await getScaffold({ features: ["ui"] });
 
@@ -250,5 +299,31 @@ describe("get_example tool", () => {
 
     expect(result).not.toHaveProperty("error");
     expect(result.code).toContain("describe");
+  });
+
+  it("works for mobile-context pattern", async () => {
+    const result = await getExample({ pattern: "mobile-context" });
+
+    expect(result).not.toHaveProperty("error");
+    expect(result.code).toContain("MobileProvider");
+    expect(result.code).toContain("useMobileContext");
+    expect(result.filePath).toBe("src/contexts/mobileContext.tsx");
+  });
+
+  it("works for use-media-query pattern", async () => {
+    const result = await getExample({ pattern: "use-media-query" });
+
+    expect(result).not.toHaveProperty("error");
+    expect(result.code).toContain("BREAKPOINTS");
+    expect(result.code).toContain("useMediaQuery");
+    expect(result.filePath).toBe("src/hooks/useMediaQuery.ts");
+  });
+
+  it("works for use-touch-sizes pattern", async () => {
+    const result = await getExample({ pattern: "use-touch-sizes" });
+
+    expect(result).not.toHaveProperty("error");
+    expect(result.code).toContain("useTouchSizes");
+    expect(result.filePath).toBe("src/hooks/useTouchSizes.ts");
   });
 });
