@@ -189,7 +189,7 @@ const ui: Feature = {
   patterns: ['component-ui', 'button-variants', 'forward-ref-component', 'theme-toggle'],
   scripts: {},
   configFiles: ['components.json'],
-  requiresFeatures: ['state', 'mobile'], // Theme toggle needs preferences store and touch sizes
+  usesFeatures: ['state', 'mobile'], // Theme toggle uses preferences store and touch sizes
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -254,11 +254,11 @@ const state: Feature = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DATA FETCHING FEATURE
+// API FEATURE
 // ═══════════════════════════════════════════════════════════════════════════
 
-const data: Feature = {
-  name: 'Data Fetching',
+const api: Feature = {
+  name: 'API',
   description: 'TanStack Query + typed API client',
   required: false,
   includes: [
@@ -454,7 +454,7 @@ const ci: Feature = {
   name: 'CI/CD',
   description: 'GitHub Actions + Lighthouse + Dependabot',
   required: false,
-  requiresFeatures: ['devtools', 'testing'],
+  usesFeatures: ['devtools', 'testing'],
   includes: [
     'GitHub Actions CI workflow',
     'Parallel jobs: lint, typecheck, security audit, build, unit tests, e2e tests',
@@ -526,7 +526,7 @@ export const FEATURES: FeatureRegistry = {
   ui,
   forms,
   state,
-  data,
+  api,
   i18n,
   testing,
   devtools,

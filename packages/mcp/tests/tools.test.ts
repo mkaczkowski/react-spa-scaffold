@@ -34,25 +34,25 @@ describe('get_features tool', () => {
       expect(feature).toHaveProperty('description');
       expect(feature).toHaveProperty('required');
       expect(feature).toHaveProperty('includes');
-      expect(feature).toHaveProperty('requiresFeatures');
+      expect(feature).toHaveProperty('usesFeatures');
       expect(Array.isArray(feature.includes)).toBe(true);
-      expect(Array.isArray(feature.requiresFeatures)).toBe(true);
+      expect(Array.isArray(feature.usesFeatures)).toBe(true);
     }
   });
 
-  it('ui feature requires state', () => {
+  it('ui feature uses state (informational, not auto-included)', () => {
     const features = getFeatures();
     const ui = features.find((f) => f.id === 'ui');
 
-    expect(ui?.requiresFeatures).toContain('state');
+    expect(ui?.usesFeatures).toContain('state');
   });
 
-  it('ci feature requires devtools and testing', () => {
+  it('ci feature uses devtools and testing (informational, not auto-included)', () => {
     const features = getFeatures();
     const ci = features.find((f) => f.id === 'ci');
 
-    expect(ci?.requiresFeatures).toContain('devtools');
-    expect(ci?.requiresFeatures).toContain('testing');
+    expect(ci?.usesFeatures).toContain('devtools');
+    expect(ci?.usesFeatures).toContain('testing');
   });
 
   it('mobile feature exists and is not required', () => {
@@ -64,12 +64,12 @@ describe('get_features tool', () => {
     expect(mobile?.name).toBe('Mobile Support');
   });
 
-  it('ui feature requires mobile and state', () => {
+  it('ui feature uses mobile and state (informational)', () => {
     const features = getFeatures();
     const ui = features.find((f) => f.id === 'ui');
 
-    expect(ui?.requiresFeatures).toContain('mobile');
-    expect(ui?.requiresFeatures).toContain('state');
+    expect(ui?.usesFeatures).toContain('mobile');
+    expect(ui?.usesFeatures).toContain('state');
   });
 });
 
@@ -91,11 +91,12 @@ describe('get_scaffold tool', () => {
     }
   });
 
-  it('auto-includes state and mobile when ui is selected', async () => {
+  it('does NOT auto-include usesFeatures (state, mobile) when ui is selected', async () => {
     const result = await getScaffold({ features: ['ui'] });
 
-    expect(result.resolvedFeatures).toContain('state');
-    expect(result.resolvedFeatures).toContain('mobile');
+    // usesFeatures are informational only, not auto-included
+    expect(result.resolvedFeatures).not.toContain('state');
+    expect(result.resolvedFeatures).not.toContain('mobile');
     expect(result.resolvedFeatures).toContain('ui');
     expect(result.resolvedFeatures).toContain('core');
   });
@@ -162,14 +163,15 @@ describe('get_scaffold tool', () => {
     expect(result.projectName).toBe('my-app');
   });
 
-  it('marks auto-included features correctly', async () => {
-    const result = await getScaffold({ features: ['ui'] });
+  it('marks explicitly selected features correctly (no auto-inclusion)', async () => {
+    const result = await getScaffold({ features: ['ui', 'state'] });
 
     const stateDetail = result.featureDetails.find((f) => f.id === 'state');
     const uiDetail = result.featureDetails.find((f) => f.id === 'ui');
 
-    expect(stateDetail?.wasAutoIncluded).toBe(true);
-    expect(stateDetail?.wasExplicitlySelected).toBe(false);
+    // Both are explicitly selected, none auto-included
+    expect(stateDetail?.wasExplicitlySelected).toBe(true);
+    expect(stateDetail?.wasAutoIncluded).toBe(false);
     expect(uiDetail?.wasExplicitlySelected).toBe(true);
     expect(uiDetail?.wasAutoIncluded).toBe(false);
   });

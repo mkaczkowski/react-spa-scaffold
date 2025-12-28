@@ -14,7 +14,7 @@ export interface FeatureSummary {
   description: string;
   required: boolean;
   includes: string[];
-  requiresFeatures: string[];
+  usesFeatures: string[];
   hasOptions: boolean;
   options?: Record<string, { description: string; default: boolean }>;
 }
@@ -28,7 +28,7 @@ export function getFeatures(): FeatureSummary[] {
       description: feature.description,
       required: feature.required,
       includes: feature.includes,
-      requiresFeatures: feature.requiresFeatures || [],
+      usesFeatures: feature.usesFeatures || [],
       hasOptions: !!feature.options,
       options: feature.options,
     };
@@ -45,7 +45,7 @@ Returns a list of features that can be selected when creating a new project:
 - ui: Shadcn/UI + icons + theming
 - forms: React Hook Form + Zod validation
 - state: Zustand state management
-- data: TanStack Query + API client
+- api: TanStack Query + API client
 - i18n: LinguiJS internationalization
 - testing: Vitest + Playwright + MSW
 - devtools: ESLint + Prettier + Husky

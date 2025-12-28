@@ -149,20 +149,20 @@ The server provides 10 feature modules that can be combined:
 | `ui`       | Shadcn/UI + icons + theming + toasts          | Optional |
 | `forms`    | React Hook Form + Zod validation              | Optional |
 | `state`    | Zustand with persistence                      | Optional |
-| `data`     | TanStack Query + API client                   | Optional |
+| `api`      | TanStack Query + API client                   | Optional |
 | `i18n`     | LinguiJS internationalization                 | Optional |
 | `testing`  | Vitest + Playwright + MSW                     | Optional |
 | `devtools` | ESLint + Prettier + Husky                     | Optional |
 | `ci`       | GitHub Actions + Lighthouse                   | Optional |
 
-### Feature Dependencies
+### Feature Relationships
 
-Some features require others:
+Some features use code from others (informational only, not auto-included):
 
-- `ui` → requires `state` (for theme persistence)
-- `ci` → requires `devtools` + `testing`
+- `ui` → uses `state` (for theme persistence) and `mobile` (for touch-aware sizing)
+- `ci` → uses `devtools` + `testing`
 
-Dependencies are automatically resolved when scaffolding.
+These relationships are informational. The scaffold output should be adapted based on your selected features.
 
 ## Tools
 
@@ -181,7 +181,7 @@ const result = await client.callTool('get_features', {});
   description: string;
   required: boolean;
   includes: string[];      // What this feature provides
-  requiresFeatures: string[];  // Dependencies
+  usesFeatures: string[];  // Features this uses (informational, not auto-included)
   options?: Record<string, { description: string; default: boolean }>;
 }
 ```
@@ -201,7 +201,7 @@ const result = await client.callTool('get_scaffold', {
 {
   projectName: string;
   selectedFeatures: string[];
-  resolvedFeatures: string[];    // Including auto-included dependencies
+  resolvedFeatures: string[];    // Selected features + core (always included)
   packageJson: {
     name: string;
     dependencies: Record<string, string>;
@@ -382,7 +382,7 @@ const myFeature: Feature = {
   scripts: {
     'my-script': 'some-command',
   },
-  requiresFeatures: ['state'], // Optional dependencies
+  usesFeatures: ['state'], // Features this uses (informational only)
   configFiles: ['my-feature.config.js'],
 };
 ```

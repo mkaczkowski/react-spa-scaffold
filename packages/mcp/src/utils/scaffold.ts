@@ -10,31 +10,23 @@ import { computeDocsContent, computeDocsForFeatures } from './docs.js';
 import { resolveTemplatePath } from './paths.js';
 
 /**
- * Resolve feature dependencies recursively
+ * Resolve selected features (always includes core, no auto-resolution of usesFeatures)
+ *
+ * Note: usesFeatures is informational only - it indicates which features
+ * a given feature uses code from, but does not auto-include them.
+ * The scaffold output should be adapted based on selected features.
  */
 export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
   const resolved = new Set<string>();
-  const toProcess = [...selectedFeatures];
 
   // Always include core
   resolved.add('core');
 
-  while (toProcess.length > 0) {
-    const featureId = toProcess.pop()!;
-    if (resolved.has(featureId)) continue;
-
+  // Add all selected features (no recursive dependency resolution)
+  for (const featureId of selectedFeatures) {
     const feature = FEATURES[featureId];
-    if (!feature) continue;
-
-    resolved.add(featureId);
-
-    // Add required dependencies
-    if (feature.requiresFeatures) {
-      for (const dep of feature.requiresFeatures) {
-        if (!resolved.has(dep)) {
-          toProcess.push(dep);
-        }
-      }
+    if (feature) {
+      resolved.add(featureId);
     }
   }
 
@@ -206,13 +198,13 @@ ${commandLines.join('\n')}
   // Project Structure - dynamic based on features
   const structureParts: string[] = ['src/', '├── components/    # ui/ (primitives), layout/, shared/ (features)'];
 
-  if (featureIds.includes('data') || featureIds.includes('i18n') || featureIds.includes('mobile')) {
+  if (featureIds.includes('api') || featureIds.includes('i18n') || featureIds.includes('mobile')) {
     structureParts.push('├── contexts/      # React Context providers');
   }
   structureParts.push('├── hooks/         # Custom hooks');
   structureParts.push(
     '├── lib/           # config, utils, format' +
-      (featureIds.includes('data') ? ', api' : '') +
+      (featureIds.includes('api') ? ', api' : '') +
       (featureIds.includes('routing') ? ', routes' : '') +
       (featureIds.includes('state') ? ', storage' : ''),
   );
@@ -245,7 +237,7 @@ ${structureParts.join('\n')}
   // Code Patterns - always included
   const stateHierarchy: string[] = [];
   if (featureIds.includes('state')) stateHierarchy.push('Zustand (persisted)');
-  if (featureIds.includes('data')) stateHierarchy.push('TanStack Query (server)');
+  if (featureIds.includes('api')) stateHierarchy.push('TanStack Query (server)');
   stateHierarchy.push('Context (UI)', 'useState (local)');
 
   sections.push(`
@@ -409,8 +401,8 @@ export function generateViteEnvDts(featureIds: string[]): string {
   envVars.push('  readonly VITE_APP_NAME: string;');
   envVars.push('  readonly VITE_APP_URL: string;');
 
-  // Data feature env vars
-  if (featureIds.includes('data')) {
+  // API feature env vars
+  if (featureIds.includes('api')) {
     envVars.push('  readonly VITE_API_URL: string;');
   }
 
@@ -445,8 +437,8 @@ export function generateEnvTs(featureIds: string[]): string {
   envFields.push('    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,');
   envFields.push('    VITE_APP_URL: import.meta.env.VITE_APP_URL,');
 
-  // Data feature env vars
-  if (featureIds.includes('data')) {
+  // API feature env vars
+  if (featureIds.includes('api')) {
     schemaFields.push('  VITE_API_URL: z.string().url().optional(),');
     envFields.push('    VITE_API_URL: import.meta.env.VITE_API_URL,');
   }
