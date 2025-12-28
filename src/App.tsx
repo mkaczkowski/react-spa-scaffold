@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
@@ -13,11 +14,17 @@ const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.Hom
 const NotFoundPage = lazy(() => import('@/pages/NotFound').then((m) => ({ default: m.NotFoundPage })));
 
 export default function App() {
+  const { t } = useLingui();
   useThemeEffect();
 
   return (
     <div className="bg-background text-foreground min-h-screen">
-      <SEO description="A modern React 19 application with TypeScript and Vite" />
+      <SEO
+        description={t({
+          message: 'A modern React 19 application with TypeScript and Vite',
+          comment: 'Default site-wide meta description for SEO',
+        })}
+      />
       <SkipLink />
       <Header />
       <main id="main">

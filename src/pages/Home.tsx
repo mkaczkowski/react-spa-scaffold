@@ -1,11 +1,19 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { SEO } from '@/components/shared';
 
 export function HomePage() {
+  const { t } = useLingui();
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <SEO title="Home" description="Welcome to our modern React application" />
+      <SEO
+        title={t({ message: 'Home', comment: 'Home page title for SEO' })}
+        description={t({
+          message: 'Welcome to our modern React application',
+          comment: 'Home page meta description for SEO',
+        })}
+      />
       <h1 className="text-3xl font-bold">
         <Trans comment="Main heading on the home page">Welcome to My App</Trans>
       </h1>
