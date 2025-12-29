@@ -144,7 +144,7 @@ const routing: Feature = {
 
 const ui: Feature = {
   name: 'UI Components',
-  description: 'Shadcn/UI + icons + animations + toasts + theming',
+  description: 'Shadcn/UI + icons + animations + toasts',
   required: false,
   includes: [
     'Shadcn/UI component system (radix-nova style)',
@@ -157,8 +157,6 @@ const ui: Feature = {
     'DropdownMenu component',
     'Loading, Skeleton, Spinner components',
     'VisuallyHidden and SkipLink (accessibility)',
-    'Theme toggle (light/dark/system)',
-    'useThemeEffect hook',
     'components.json for shadcn CLI',
   ],
   dependencies: {
@@ -180,14 +178,11 @@ const ui: Feature = {
     'src/components/ui/spinner.tsx',
     'src/components/ui/sonner.tsx',
     'src/components/ui/visually-hidden.tsx',
-    'src/components/shared/ThemeToggle/ThemeToggle.tsx',
-    'src/components/shared/ThemeToggle/index.ts',
     'src/components/layout/Header.tsx',
     'src/components/layout/index.ts',
-    'src/hooks/useThemeEffect.ts',
     'components.json',
   ],
-  patterns: ['component-ui', 'button-variants', 'forward-ref-component', 'theme-toggle'],
+  patterns: ['component-ui', 'button-variants', 'forward-ref-component'],
   scripts: {},
   configFiles: ['components.json'],
 };
@@ -515,6 +510,33 @@ const observability: Feature = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// THEMING FEATURE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const theming: Feature = {
+  name: 'Theming',
+  description: 'Light/dark/system theme toggle with CSS variables (requires state feature)',
+  required: false,
+  includes: [
+    'Light/dark/system theme modes',
+    'useThemeEffect hook (applies .dark class to document)',
+    'ThemeToggle component',
+    'System preference detection (prefers-color-scheme)',
+    'Zustand persistence via preferencesStore',
+    'Multi-tab sync via storage events',
+  ],
+  dependencies: {},
+  devDependencies: {},
+  files: [
+    'src/hooks/useThemeEffect.ts',
+    'src/components/shared/ThemeToggle/ThemeToggle.tsx',
+    'src/components/shared/ThemeToggle/index.ts',
+  ],
+  patterns: ['theme-toggle', 'hook-effect'],
+  scripts: {},
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // FEATURE REGISTRY EXPORT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -531,6 +553,7 @@ export const FEATURES: FeatureRegistry = {
   devtools,
   ci,
   observability,
+  theming,
 };
 
 /** All valid feature IDs */

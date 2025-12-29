@@ -59,7 +59,8 @@ Usage:
 
 Tips:
 - Core feature is always included automatically
-- Features are independent - select only what you need
+- Features are mostly independent - select only what you need
+- Theming feature automatically includes state (requires Zustand)
 - Check docs://conventions before generating code
 `.trim();
 

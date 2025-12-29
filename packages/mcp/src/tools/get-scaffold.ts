@@ -148,8 +148,8 @@ The AI agent should use this information to:
 5. Run setup commands
 
 Example usage:
-- features: ["routing", "ui", "forms", "testing"]
-- This will auto-include: core, state (ui requires it)`,
+- features: ["routing", "ui", "theming", "testing"]
+- This will auto-include: core, state (theming requires it for Zustand persistence)`,
   inputSchema: {
     type: 'object' as const,
     properties: {
