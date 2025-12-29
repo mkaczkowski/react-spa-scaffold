@@ -1,5 +1,11 @@
 # @react-spa-scaffold/mcp
 
+## 1.1.3
+
+### Patch Changes
+
+- [#16](https://github.com/mkaczkowski/react-spa-scaffold/pull/16) [`08a2a5c`](https://github.com/mkaczkowski/react-spa-scaffold/commit/08a2a5c3baef10ad88bec4492b93f1b0cba57535) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - fix: configure npm registry authentication for automated publishing
+
 ## 1.1.2
 
 ### Patch Changes
