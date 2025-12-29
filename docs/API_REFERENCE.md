@@ -9,7 +9,6 @@ Quick reference for what's available. For architectural decisions, see [Architec
 | `api.ts`         | HTTP client           | Any API calls - handles errors, timeouts, JSON. Includes API_CONFIG |
 | `config.ts`      | App configuration     | Access APP_CONFIG, SENTRY_CONFIG                                    |
 | `env.ts`         | Environment variables | Type-safe `env.VITE_*` access                                       |
-| `format.ts`      | Formatters            | Dates, numbers, currency, bytes - all locale-aware                  |
 | `routes.ts`      | Route constants       | Type-safe navigation, avoid magic strings                           |
 | `storage.ts`     | localStorage wrapper  | SSR-safe, typed storage with error handling                         |
 | `storageKeys.ts` | Storage key constants | Centralized key management                                          |

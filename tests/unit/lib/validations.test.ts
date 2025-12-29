@@ -1,32 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { contactFormSchema, registerFormSchema } from '@/lib/validations';
-
-describe('contactFormSchema', () => {
-  const validContact = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    message: 'This is a valid message that is long enough.',
-  };
-
-  it('accepts valid data', () => {
-    expect(contactFormSchema.safeParse(validContact).success).toBe(true);
-  });
-
-  it.each([
-    { field: 'name', value: 'J', errorContains: 'at least 2 characters' },
-    { field: 'email', value: 'not-an-email', errorContains: 'valid email' },
-    { field: 'message', value: 'Short', errorContains: 'at least 10 characters' },
-  ])('rejects invalid $field', ({ field, value, errorContains }) => {
-    const data = { ...validContact, [field]: value };
-    const result = contactFormSchema.safeParse(data);
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0].message).toContain(errorContains);
-    }
-  });
-});
+import { registerFormSchema } from '@/lib/validations';
 
 describe('registerFormSchema', () => {
   const validRegister = {
@@ -41,16 +15,31 @@ describe('registerFormSchema', () => {
   });
 
   it.each([
+    { field: 'username', value: 'ab', errorContains: 'at least 3 characters' },
     { field: 'username', value: 'john@doe', errorContains: 'letters, numbers, and underscores' },
-    { field: 'password', value: 'weakpass', errorContains: null },
-    { fields: { confirmPassword: 'DifferentPass123' }, errorContains: "don't match" },
-  ])('rejects invalid input', ({ field, fields, value, errorContains }) => {
-    const data = field ? { ...validRegister, [field]: value } : { ...validRegister, ...fields };
+    { field: 'email', value: 'not-an-email', errorContains: 'valid email' },
+    { field: 'password', value: 'short', errorContains: 'at least 8 characters' },
+    { field: 'password', value: 'alllowercase1', errorContains: 'uppercase letter' },
+    { field: 'password', value: 'ALLUPPERCASE1', errorContains: 'lowercase letter' },
+    { field: 'password', value: 'NoNumbersHere', errorContains: 'one number' },
+  ])('rejects invalid $field with value "$value"', ({ field, value, errorContains }) => {
+    const data = { ...validRegister, [field]: value };
     const result = registerFormSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    if (!result.success && errorContains) {
-      expect(result.error.issues[0].message).toContain(errorContains);
+    if (!result.success) {
+      const errorMessages = result.error.issues.map((i) => i.message).join(' ');
+      expect(errorMessages).toContain(errorContains);
+    }
+  });
+
+  it('rejects mismatched passwords', () => {
+    const data = { ...validRegister, confirmPassword: 'DifferentPass123' };
+    const result = registerFormSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain("don't match");
     }
   });
 });

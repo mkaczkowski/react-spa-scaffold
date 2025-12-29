@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { STORAGE_KEYS } from '@/lib/storageKeys';
 import { initPreferencesSync, usePreferencesStore } from '@/stores/preferencesStore';
 import { mockMatchMedia } from '@/test';
 
@@ -70,6 +71,86 @@ describe('preferencesStore', () => {
       cleanup();
 
       expect(removeSpy).toHaveBeenCalledWith('storage', expect.any(Function));
+    });
+
+    it('updates store when valid storage event is received', () => {
+      usePreferencesStore.setState({ theme: 'light' });
+      initPreferencesSync();
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEYS.preferences,
+        newValue: JSON.stringify({ state: { theme: 'dark' } }),
+      });
+
+      act(() => {
+        window.dispatchEvent(storageEvent);
+      });
+
+      expect(usePreferencesStore.getState().theme).toBe('dark');
+    });
+
+    it('ignores storage events for other keys', () => {
+      usePreferencesStore.setState({ theme: 'light' });
+      initPreferencesSync();
+
+      const storageEvent = new StorageEvent('storage', {
+        key: 'other-key',
+        newValue: JSON.stringify({ state: { theme: 'dark' } }),
+      });
+
+      act(() => {
+        window.dispatchEvent(storageEvent);
+      });
+
+      expect(usePreferencesStore.getState().theme).toBe('light');
+    });
+
+    it('ignores storage events with null newValue', () => {
+      usePreferencesStore.setState({ theme: 'light' });
+      initPreferencesSync();
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEYS.preferences,
+        newValue: null,
+      });
+
+      act(() => {
+        window.dispatchEvent(storageEvent);
+      });
+
+      expect(usePreferencesStore.getState().theme).toBe('light');
+    });
+
+    it('ignores storage events with invalid JSON', () => {
+      usePreferencesStore.setState({ theme: 'light' });
+      initPreferencesSync();
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEYS.preferences,
+        newValue: 'invalid-json',
+      });
+
+      act(() => {
+        window.dispatchEvent(storageEvent);
+      });
+
+      expect(usePreferencesStore.getState().theme).toBe('light');
+    });
+
+    it('ignores storage events without state property', () => {
+      usePreferencesStore.setState({ theme: 'light' });
+      initPreferencesSync();
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEYS.preferences,
+        newValue: JSON.stringify({ foo: 'bar' }),
+      });
+
+      act(() => {
+        window.dispatchEvent(storageEvent);
+      });
+
+      expect(usePreferencesStore.getState().theme).toBe('light');
     });
   });
 });

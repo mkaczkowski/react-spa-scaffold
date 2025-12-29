@@ -89,6 +89,10 @@ const config = tseslint.config(
             'ogImage',
             'canonical',
             'noIndex', // SEO component props
+            // HTML form attributes - technical identifiers
+            'htmlFor',
+            'autoComplete',
+            'aria-invalid',
           ],
           ignoreFunctions: [
             'console.*',
@@ -104,6 +108,8 @@ const config = tseslint.config(
             'getAttribute',
             'setAttribute',
             'classList.*',
+            // React Hook Form - field names are identifiers
+            'register',
           ],
         },
       ],

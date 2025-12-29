@@ -62,6 +62,32 @@ The `eslint-plugin-lingui` enforces translations:
 
 Excluded from checks: tests, mocks, UI primitives, config files.
 
+### Auto-Ignored Technical Identifiers
+
+The ESLint config automatically ignores strings that are technical identifiers:
+
+**Prop names** (values don't need translation):
+
+- HTML: `id`, `htmlFor`, `autoComplete`, `aria-invalid`
+- Styling: `className`, `styleName`
+- Components: `type`, `variant`, `size`, `role`, `name`
+- Routing: `href`, `to`, `path`
+- Data: `queryKey`, `data-testid`
+
+**Function arguments**:
+
+- `register('fieldName')` - React Hook Form field names
+- `console.*`, `Error()` - Debug/error messages
+
+```tsx
+// These are fine - no translation needed
+<Label htmlFor="email">
+<Input id="email" autoComplete="email" {...register('email')} />
+
+// This DOES need translation (user-facing placeholder)
+placeholder={t({ message: 'Enter email', comment: 'Email input hint' })}
+```
+
 ## Adding a New Locale
 
 Edit `lingui.config.js` and add the locale code to the `locales` array.

@@ -50,9 +50,18 @@ Add to your MCP client config:
 
 | Client         | Config Location                                                   |
 | -------------- | ----------------------------------------------------------------- |
+| Claude Code    | `.mcp.json` (project) or `~/.claude/settings.json` (global)       |
 | Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | VS Code        | `.vscode/mcp.json`                                                |
-| Claude Code    | `.claude/settings.json`                                           |
+
+**Quick Start (Claude Code):**
+
+```bash
+mkdir my-app && cd my-app
+echo '{"mcpServers":{"react-spa-scaffold":{"command":"npx","args":["-y","@react-spa-scaffold/mcp@latest"]}}}' > .mcp.json
+```
+
+Open in Claude Code and start scaffolding.
 
 <details>
 <summary>Local Development Setup</summary>
@@ -159,7 +168,7 @@ const result = await client.callTool('get_example', {
 | API        | `api-client`                                               |
 | Testing    | `test-component`, `test-hook`, `test-store`, `msw-handler` |
 | i18n       | `trans-component`, `t-function`, `use-language-hook`       |
-| Utilities  | `zod-schema`, `storage-utility`, `format-utility`          |
+| Utilities  | `zod-schema`, `storage-utility`                            |
 | Mobile     | `mobile-context`, `use-media-query`, `use-touch-sizes`     |
 | UI         | `seo-component`                                            |
 | Theming    | `theme-toggle`                                             |
@@ -215,7 +224,6 @@ const result = await client.callTool('get_example', {
 
 - `zod-schema` — Validation schema
 - `storage-utility` — localStorage utilities
-- `format-utility` — Formatting utilities
 
 **Mobile:**
 

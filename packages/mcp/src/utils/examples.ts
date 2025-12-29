@@ -88,13 +88,14 @@ const PATTERN_MAP: Record<
     ],
   },
   'hook-form': {
-    file: 'src/hooks/useContactForm.ts',
+    file: 'src/hooks/useRegisterForm.ts',
     description: 'React Hook Form + Zod validation hook',
     keyPoints: [
       'zodResolver for Zod integration',
-      'Type-safe with inferred ContactFormData',
-      'Returns form object + handlers',
+      'Type-safe with inferred RegisterFormData',
+      'Returns form object + handlers + reset',
       'Extracts commonly used state (isSubmitting, errors)',
+      'Uses schema with refine() for cross-field validation',
     ],
   },
   'hook-effect': {
@@ -278,10 +279,10 @@ const PATTERN_MAP: Record<
     description: 'Zod validation schemas with type inference',
     keyPoints: [
       'z.object() for form schemas',
-      'Chained validations (min, max, email)',
+      'Chained validations (min, max, email, regex)',
       'Custom error messages',
       'Type inference with z.infer<>',
-      'refine() for cross-field validation',
+      'refine() for cross-field validation (password confirmation)',
     ],
   },
 
@@ -329,17 +330,6 @@ const PATTERN_MAP: Record<
       'clearAppStorage for all prefixed keys',
     ],
   },
-  'format-utility': {
-    file: 'src/lib/format.ts',
-    description: 'Locale-aware formatting utilities',
-    keyPoints: [
-      'Intl.DateTimeFormat for dates',
-      'Intl.NumberFormat for numbers/currency',
-      'Intl.RelativeTimeFormat for relative time',
-      'formatBytes for file sizes',
-      'Accepts locale parameter',
-    ],
-  },
 
   // Form error patterns
   'form-error-component': {
@@ -353,6 +343,19 @@ const PATTERN_MAP: Record<
     ],
   },
 
+  // Form component patterns
+  'register-form': {
+    file: 'src/components/shared/RegisterForm/RegisterForm.tsx',
+    description: 'Complete form component with validation',
+    keyPoints: [
+      'Uses useRegisterForm custom hook',
+      'Inline error display with FieldErrorMessage',
+      'form.register() for input binding',
+      'Disabled submit during isSubmitting',
+      'Lingui Trans for i18n labels',
+      'Demonstrates cross-field validation UX',
+    ],
+  },
   // Theme patterns
   'theme-toggle': {
     file: 'src/components/shared/ThemeToggle/ThemeToggle.tsx',

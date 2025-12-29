@@ -79,7 +79,7 @@ Available patterns:
 - Tests: test-component, test-hook, test-store, msw-handler
 - Validation: zod-schema, form-error-component
 - i18n: trans-component, t-function, language-switcher
-- Utils: storage-utility, format-utility
+- Utils: storage-utility
 - Theme: theme-toggle
 - SEO: seo-component
 

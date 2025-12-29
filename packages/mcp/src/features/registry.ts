@@ -19,11 +19,10 @@ const core: Feature = {
     'Tailwind CSS v4 with Vite plugin',
     'Inter variable font (@fontsource-variable/inter)',
     'Environment validation with Zod (src/lib/env.ts)',
-    'Format utilities - date, number, currency, bytes (src/lib/format.ts)',
     'cn() class merge utility (clsx + tailwind-merge)',
     'Basic SEO component (React 19 native head hoisting)',
     'App configuration (src/lib/config.ts)',
-    'Constants and type definitions',
+    'Type definitions',
     'ErrorBoundary component with reset functionality',
   ],
   dependencies: {
@@ -51,9 +50,7 @@ const core: Feature = {
     'src/index.css',
     'src/vite-env.d.ts',
     'src/lib/config.ts',
-    'src/lib/constants.ts',
     'src/lib/env.ts',
-    'src/lib/format.ts',
     'src/lib/utils.ts',
     'src/lib/index.ts',
     'src/types/index.ts',
@@ -72,14 +69,21 @@ const core: Feature = {
     '.gitignore',
     'public/favicon.svg',
   ],
-  patterns: ['component-shared', 'hook-effect', 'error-boundary'],
+  patterns: ['component-shared', 'hook-effect', 'error-boundary', 'seo-component'],
   scripts: {
     dev: 'vite',
     build: 'tsc -b && vite build',
     preview: 'vite preview',
     typecheck: 'tsc --noEmit',
   },
-  configFiles: ['vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json', '.gitignore'],
+  configFiles: [
+    'vite.config.ts',
+    'tsconfig.json',
+    'tsconfig.app.json',
+    'tsconfig.node.json',
+    '.gitignore',
+    'src/index.css',
+  ],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -117,7 +121,7 @@ const routing: Feature = {
   includes: [
     'React Router 7',
     'Lazy-loaded pages with React.lazy()',
-    'Route constants with TypeScript types (src/lib/routes.ts)',
+    'Route constants with TypeScript types (generated based on features)',
     '404 Not Found page',
     'App.tsx with Suspense fallback',
     'PageLoading component for transitions',
@@ -127,7 +131,7 @@ const routing: Feature = {
   },
   devDependencies: {},
   files: [
-    'src/lib/routes.ts',
+    // routes.ts is generated dynamically (see routesTs in scaffold output)
     'src/pages/Home.tsx',
     'src/pages/NotFound.tsx',
     'src/pages/index.ts',
@@ -193,16 +197,15 @@ const ui: Feature = {
 
 const forms: Feature = {
   name: 'Form Handling',
-  description: 'React Hook Form + Zod validation + error components',
+  description: 'React Hook Form + Zod validation + working demo form',
   required: false,
   includes: [
-    'React Hook Form',
-    'Zod schema validation',
-    '@hookform/resolvers for Zod integration',
+    'React Hook Form with Zod validation',
+    '@hookform/resolvers for schema integration',
+    'RegisterForm component with validation demo (displayed on HomePage)',
     'Form error components (FieldErrorMessage, FormErrorSummary, RootFormError)',
-    'Example useContactForm hook',
-    'Example validation schemas (contact, register)',
-    'Type-safe form data inference',
+    'useRegisterForm custom hook pattern',
+    'Zod schema with refine() for cross-field validation',
   ],
   dependencies: {
     '@hookform/resolvers': '^5.0.1',
@@ -210,8 +213,17 @@ const forms: Feature = {
     // zod already in core
   },
   devDependencies: {},
-  files: ['src/lib/validations.ts', 'src/hooks/useContactForm.ts', 'src/components/ui/form-error.tsx'],
-  patterns: ['zod-schema', 'use-form-hook', 'form-error-component'],
+  files: [
+    'src/lib/validations.ts',
+    'src/hooks/useRegisterForm.ts',
+    'src/components/ui/form-error.tsx',
+    'src/components/ui/input.tsx',
+    'src/components/ui/label.tsx',
+    'src/components/ui/card.tsx',
+    'src/components/shared/RegisterForm/RegisterForm.tsx',
+    'src/components/shared/RegisterForm/index.ts',
+  ],
+  patterns: ['zod-schema', 'hook-form', 'form-error-component', 'register-form'],
   scripts: {},
 };
 
@@ -380,7 +392,7 @@ const testing: Feature = {
     e2e: 'playwright test',
     'e2e:ui': 'playwright test --ui',
   },
-  configFiles: ['vitest.config.ts', 'playwright.config.ts'],
+  configFiles: ['vitest.config.ts', 'playwright.config.ts', 'src/test-setup.ts'],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
