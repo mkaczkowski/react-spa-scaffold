@@ -33,8 +33,8 @@ test.describe('Home Page', () => {
     // Verify skip link becomes visible when focused
     await expect(skipLink).toBeVisible();
 
-    // Click skip link to navigate to main content
-    await skipLink.click();
+    // Activate skip link with keyboard (how real users interact with skip links)
+    await skipLink.press('Enter');
 
     // Main should be scrolled into view
     await expect(page.locator('#main')).toBeInViewport();
