@@ -10,7 +10,9 @@ import { useThemeEffect } from '@/hooks';
 import { ROUTES } from '@/lib/routes';
 
 // Lazy load pages for code splitting
+// eslint-disable-next-line lingui/no-unlocalized-strings
 const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
+// eslint-disable-next-line lingui/no-unlocalized-strings
 const NotFoundPage = lazy(() => import('@/pages/NotFound').then((m) => ({ default: m.NotFoundPage })));
 
 export default function App() {

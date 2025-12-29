@@ -13,6 +13,18 @@ export default [
   // Additional ignore for monorepo packages dist
   { ignores: ['packages/**/dist'] },
 
+  // UI components from shadcn and context/provider files - don't modify
+  {
+    files: [
+      '**/components/ui/**/*.{ts,tsx}',
+      '**/contexts/**/*.{ts,tsx}',
+      '**/test/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+
   // Packages use Node.js rules (override the React/i18n rules from main config)
   {
     files: ['packages/**/*.ts'],

@@ -1,80 +1,73 @@
-# Webapp Base
+# React Single-Page-Application (SPA) Scaffold
 
-An opinionated, production-ready starter template for React 19 + TypeScript + Vite 7 projects.
+![Node](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF)
+![MCP](https://img.shields.io/badge/MCP-enabled-8A2BE2)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## What Is This?
+A production-ready starter template for React 19 + TypeScript + Vite 7 projects.
 
-This is a **starting point** for building modern web applications. It comes pre-configured with carefully selected
-technologies and patterns that work well together.
+## AI-Powered Scaffolding (MCP Server)
 
-**This is not a framework** - it's a foundation you can build upon, modify, or strip down to fit your needs.
+This project includes an **MCP (Model Context Protocol) server** that enables AI assistants to scaffold new projects based on react-spa-scaffold patterns.
+
+**How it works:**
+
+1. You tell the AI what features you need (routing, forms, testing, etc.)
+2. The MCP server provides knowledge: dependencies, file structures, code patterns
+3. The AI generates your project following react-spa-scaffold conventions
+
+```json
+{
+  "mcpServers": {
+    "react-spa-scaffold": {
+      "command": "npx",
+      "args": ["@react-spa-scaffold/mcp"]
+    }
+  }
+}
+```
+
+**Example prompt:** _"Scaffold a new React app with routing, UI components, and forms using react-spa-scaffold."_
+
+See [packages/mcp/README.md](packages/mcp/README.md) for full MCP documentation.
 
 ## Philosophy
 
-- **Pick what you need** - Not every project needs i18n or E2E tests. Remove what doesn't apply.
-- **Customize freely** - All configurations are exposed and meant to be adjusted.
-- **Learn and adapt** - Use as reference, then make it your own.
+- **Pick what you need** — Not every project needs i18n or E2E tests. Skip what doesn't apply.
+- **Customize freely** — All configurations are exposed and meant to be adjusted.
+- **Learn and adapt** — Use as reference, then make it your own.
 
-## Technology Choices
+## Technology Stack
 
-### Core Stack
+### Core (Always Included)
 
-| Technology          | Why This One?                                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **React 19**        | Largest ecosystem, best hiring pool, concurrent features. Vue/Svelte are great but React's market share means more resources and libraries.  |
-| **TypeScript**      | Catches bugs at compile time, enables better IDE support. The upfront cost pays off in maintainability.                                      |
-| **Vite 7**          | 10-100x faster than Webpack in dev mode. Native ESM, instant HMR. The new standard for React projects.                                       |
-| **Tailwind CSS v4** | Utility-first scales better than CSS-in-JS for teams. No runtime cost, smaller bundles than styled-components. v4 brings native CSS nesting. |
+| Technology          | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| **React 19**        | UI framework with concurrent features    |
+| **TypeScript**      | Type safety and IDE support              |
+| **Vite 7**          | Build tool — 10-100x faster than Webpack |
+| **Tailwind CSS v4** | Utility-first CSS with native nesting    |
+| **Vitest**          | Fast unit testing (Jest-compatible API)  |
+| **ESLint**          | Code quality and bug detection           |
+| **Prettier**        | Consistent code formatting               |
 
-### UI Components
+### Optional (Remove What You Don't Need)
 
-| Technology    | Why This One?                                                                                                                                                           |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **shadcn/ui** | Copy-paste components you own (not a dependency). Built on accessible Radix primitives. Fully customizable, no vendor lock-in. Unlike MUI/Chakra, you control the code. |
-
-### State & Data
-
-| Technology          | Why This One?                                                                                                                      | Optional? |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| **Zustand**         | Simpler than Redux (no boilerplate), smaller than MobX (1KB). Works outside React components. Built-in devtools and persistence.   | Yes       |
-| **TanStack Query**  | Industry standard for server state. Automatic caching, background updates, optimistic mutations. Eliminates manual loading states. | Yes       |
-| **React Hook Form** | Best-in-class form handling. Minimal re-renders, native integration with Zod for validation.                                       | Yes       |
-| **Zod**             | TypeScript-first schema validation. Single source of truth for runtime validation and static types.                                | Yes       |
-| **LinguiJS**        | Smaller runtime than react-i18next. ICU message format. Compile-time extraction catches missing translations.                      | Yes       |
-
-### Quality & Testing
-
-| Technology            | Why This One?                                                                                                        | Optional?    |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------ |
-| **Vitest**            | Same API as Jest but 10x faster. Native ESM, works with Vite config. No separate setup needed.                       | No           |
-| **MSW**               | Industry standard API mocking. Network-level interception, works with any HTTP client. Per-test handler overrides.   | Yes          |
-| **Playwright**        | More reliable than Cypress, true cross-browser testing. Auto-wait eliminates flaky tests. Faster parallel execution. | Yes          |
-| **ESLint + Prettier** | Industry standard. ESLint for bugs, Prettier for formatting. Separate concerns, no conflicts.                        | Adjust rules |
-
-### DevOps & Monitoring
-
-| Technology              | Why This One?                                                                  | Optional?        |
-| ----------------------- | ------------------------------------------------------------------------------ | ---------------- |
-| **Husky + lint-staged** | Catches issues before commit, not in CI. Only checks changed files (fast).     | Adjust           |
-| **Commitlint**          | Conventional commits enable auto-changelogs and semantic versioning.           | Yes              |
-| **GitHub Actions**      | Free for public repos, generous limits for private. Native GitHub integration. | Adapt to your CI |
-| **Sentry**              | Best-in-class error tracking with source maps. Free tier is generous.          | Yes              |
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js >= 22.0.0
-
-### Clone and Customize
-
-```bash
-git clone <repo-url> my-app
-cd my-app
-rm -rf .git && git init  # Start fresh
-npm install
-npm run dev
-```
+| Feature          | Technologies          | Remove If...                   |
+| ---------------- | --------------------- | ------------------------------ |
+| UI Components    | Shadcn/UI + Radix     | Building custom design system  |
+| State Management | Zustand               | React state is sufficient      |
+| Server State     | TanStack Query        | Simple REST without caching    |
+| Forms            | React Hook Form + Zod | Few or simple forms            |
+| i18n             | LinguiJS              | Single language app            |
+| E2E Testing      | Playwright            | Unit tests cover enough        |
+| API Mocking      | MSW                   | No API integration tests       |
+| Error Tracking   | Sentry                | Using alternative monitoring   |
+| Git Hooks        | Husky + lint-staged   | CI handles all checks          |
+| Commit Linting   | Commitlint            | No changelog automation needed |
 
 ## Project Structure
 
@@ -86,12 +79,12 @@ src/
 │   └── shared/      # Reusable feature components
 ├── contexts/        # React Context providers
 ├── hooks/           # Custom React hooks
-├── i18n/            # Internationalization (optional)
+├── i18n/            # Internationalization config
 ├── lib/             # Utilities, API client, config
-├── locales/         # Translation files (optional)
-├── mocks/           # MSW handlers and fixtures (optional)
+├── locales/         # Translation files (.po)
+├── mocks/           # MSW handlers and fixtures
 ├── pages/           # Route page components
-├── stores/          # Zustand stores (optional)
+├── stores/          # Zustand stores
 ├── test/            # Test utilities and providers
 └── types/           # TypeScript types
 
@@ -99,23 +92,48 @@ tests/unit/          # Vitest tests (mirrors src/)
 e2e/                 # Playwright E2E tests
 ```
 
-See [CLAUDE.md](CLAUDE.md) for code patterns and developer workflow.
+## Quick Start
+
+```bash
+git clone <repo-url> my-app && cd my-app
+rm -rf .git && git init
+npm install && npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) — you're ready to build.
 
 ## Scripts
 
+### Development
+
+| Command         | Description               |
+| --------------- | ------------------------- |
+| `npm run dev`   | Start dev server at :5173 |
+| `npm run build` | Production build          |
+
+### Code Quality
+
+| Command             | Description              |
+| ------------------- | ------------------------ |
+| `npm run typecheck` | TypeScript type checking |
+| `npm run lint`      | ESLint check             |
+| `npm run lint:fix`  | ESLint with auto-fix     |
+| `npm run format`    | Prettier format all      |
+
+### Testing
+
 | Command                 | Description                   |
 | ----------------------- | ----------------------------- |
-| `npm run dev`           | Start dev server              |
-| `npm run build`         | Production build              |
-| `npm run typecheck`     | TypeScript type checking      |
-| `npm run lint`          | ESLint check                  |
-| `npm run lint:fix`      | ESLint with auto-fix          |
-| `npm run format`        | Prettier format all files     |
 | `npm run test`          | Run unit tests                |
 | `npm run test:watch`    | Unit tests in watch mode      |
 | `npm run test:coverage` | Tests with coverage (80% min) |
-| `npm run e2e`           | Run Playwright E2E tests      |
-| `npm run i18n:extract`  | Extract translation strings   |
+| `npm run e2e`           | Playwright E2E tests          |
+
+### i18n
+
+| Command                | Description                 |
+| ---------------------- | --------------------------- |
+| `npm run i18n:extract` | Extract translation strings |
 
 ## Adding Components
 
@@ -123,6 +141,19 @@ See [CLAUDE.md](CLAUDE.md) for code patterns and developer workflow.
 npx shadcn@latest add button card dialog
 ```
 
+## Documentation
+
+- [Architecture & Data Flow](docs/ARCHITECTURE.md)
+- [Coding Standards](docs/CODING_STANDARDS.md)
+- [Component Guidelines](docs/COMPONENT_GUIDELINES.md)
+- [Testing Guide](docs/TESTING.md)
+- [i18n Setup](docs/INTERNATIONALIZATION.md)
+- [Developer Workflow](CLAUDE.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
+
 ## License
 
-MIT - Use however you want.
+MIT — Use however you want.
