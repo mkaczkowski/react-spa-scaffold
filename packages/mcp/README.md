@@ -42,7 +42,7 @@ Add to your MCP client config:
   "mcpServers": {
     "react-spa-scaffold": {
       "command": "npx",
-      "args": ["@react-spa-scaffold/mcp"]
+      "args": ["-y", "@react-spa-scaffold/mcp@latest"]
     }
   }
 }

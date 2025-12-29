@@ -24,7 +24,7 @@ This project includes an **MCP (Model Context Protocol) server** that enables AI
   "mcpServers": {
     "react-spa-scaffold": {
       "command": "npx",
-      "args": ["@react-spa-scaffold/mcp"]
+      "args": ["-y", "@react-spa-scaffold/mcp@latest"]
     }
   }
 }

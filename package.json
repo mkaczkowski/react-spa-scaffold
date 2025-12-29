@@ -1,5 +1,6 @@
 {
   "name": "react-spa-scaffold",
+  "private": true,
   "description": "Production-ready React 19 + TypeScript + Vite 7 starter template",
   "license": "MIT",
   "repository": {
