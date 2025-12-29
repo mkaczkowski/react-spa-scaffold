@@ -287,6 +287,16 @@ const PATTERN_MAP: Record<
   },
 
   // i18n patterns
+  'i18n-index': {
+    file: 'src/i18n/index.ts',
+    description: 'i18n barrel export with initialization functions',
+    keyPoints: [
+      'Re-exports i18n instance from @lingui/core',
+      'initI18n() async function for app initialization',
+      'getLocale() returns current active locale',
+      'Re-exports config, detectLanguage, and dynamicActivate',
+    ],
+  },
   'trans-component': {
     file: 'src/components/layout/Header.tsx',
     description: 'Trans component usage for JSX text',
@@ -378,6 +388,31 @@ const PATTERN_MAP: Record<
       'Open Graph tags',
       'Twitter Card tags',
       'Conditional rendering for optional tags',
+    ],
+  },
+
+  // Entry point patterns
+  'main-entry': {
+    file: 'src/main.tsx',
+    description: 'Application entry point with Sentry initialization',
+    keyPoints: [
+      'Lazy Sentry initialization with requestIdleCallback for web vitals',
+      'Global error handlers (window.onerror, onunhandledrejection)',
+      'i18n initialization before render',
+      'Provider hierarchy: Query → I18n → Router → Mobile → ErrorBoundary',
+      'Multi-tab preferences sync with HMR cleanup',
+    ],
+  },
+
+  // Config patterns
+  'lib-config': {
+    file: 'src/lib/config.ts',
+    description: 'Centralized application configuration',
+    keyPoints: [
+      'APP_CONFIG for app name and URL',
+      'SENTRY_CONFIG with enabled flag, DSN, and tracesSampleRate',
+      'Environment variables with fallback defaults',
+      'as const for type inference',
     ],
   },
 };

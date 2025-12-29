@@ -46,8 +46,9 @@ Returns a list of features that can be selected when creating a new project:
 - api: TanStack Query + API client
 - i18n: LinguiJS internationalization
 - testing: Vitest + Playwright + MSW
+- performance: React Profiler + Lighthouse + Web Vitals
 - devtools: ESLint + Prettier + Husky
-- ci: GitHub Actions + Lighthouse
+- ci: GitHub Actions + Dependabot
 
 Use this to understand available options before scaffolding a project.`,
   inputSchema: {

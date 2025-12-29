@@ -14,7 +14,8 @@ npm run format           # Prettier format
 npm run test             # Vitest once
 npm run test:watch       # Vitest watch mode
 npm run test:coverage    # Coverage (80% threshold)
-npm run e2e              # Playwright E2E
+npm run e2e              # Playwright functional E2E tests
+npm run e2e:perf         # Performance regression tests
 npm run i18n:extract     # Extract translations to .po
 ```
 

@@ -71,10 +71,6 @@ const files = [
 
   // i18n feature
   'lingui.config.js',
-
-  // CI feature
-  'lighthouserc.json',
-  'lighthouse-budget.json',
 ];
 
 for (const file of files) {

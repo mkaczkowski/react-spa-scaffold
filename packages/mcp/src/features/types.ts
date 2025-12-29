@@ -12,8 +12,12 @@ export interface Feature {
   description: string;
   required: boolean;
   includes: string[];
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
+  /**
+   * Dependency package names - versions resolved from webapp-base package.json at runtime.
+   * This ensures scaffolded projects always get up-to-date dependency versions.
+   */
+  dependencyNames?: string[];
+  devDependencyNames?: string[];
   files: string[];
   patterns: string[];
   options?: Record<string, FeatureOption>;

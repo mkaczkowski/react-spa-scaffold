@@ -74,56 +74,55 @@ jobs:
           path: coverage/
           retention-days: 14
 
-  e2e:
-    name: E2E Tests
-    needs: [lint, typecheck]
+  test-e2e:
+    name: E2E Tests (${{ matrix.type }})
+    needs: [build]
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    continue-on-error: ${{ matrix.type == 'performance' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - type: functional
+            project: functional
+            command: npx playwright test --project=functional
+            report-name: playwright-report
+            upload-on: failure
+          - type: performance
+            project: performance
+            command: PERF_TEST=true npx playwright test --project=performance
+            report-name: performance-report
+            upload-on: always
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node-deps
+      - uses: actions/download-artifact@v6
+        with:
+          name: dist
+          path: dist/
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
       - name: Cache Playwright browsers
         uses: actions/cache@v5
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
-      - name: Install Playwright deps (cached)
+        run: npx playwright install --with-deps chromium
+      - name: Install Playwright deps (when cached)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
-      - run: npm run e2e
+      - name: Run ${{ matrix.type }} tests
+        run: ${{ matrix.command }}
+        env:
+          CI: true
       - uses: actions/upload-artifact@v6
-        if: failure()
+        if: ${{ matrix.upload-on == 'always' || failure() }}
         with:
-          name: playwright-report
+          name: ${{ matrix.report-name }}
           path: playwright-report/
-          retention-days: 7
-
-  lighthouse:
-    name: Lighthouse CI
-    needs: [build]
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node-deps
-      - uses: actions/download-artifact@v7
-        with:
-          name: dist
-          path: dist/
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v12
-        with:
-          configPath: ./lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-      - uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: lighthouse-report
-          path: .lighthouseci/
-          retention-days: 14
+          retention-days: ${{ matrix.type == 'performance' && 14 || 7 }}
