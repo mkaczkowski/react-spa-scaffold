@@ -45,5 +45,6 @@ export interface ScaffoldResult {
   claudeMd: string;
   viteEnvDts: string;
   envTs: string;
+  routesTs?: string; // Only when routing feature is selected
   docs: Record<string, string>;
 }

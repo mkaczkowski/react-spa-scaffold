@@ -113,14 +113,16 @@ Need general info?     → WebSearch (fallback only)
 
 ## Translations (CRITICAL)
 
-All user-facing text MUST have translator comments. ESLint enforces this.
+All user-facing text MUST be wrapped and include translator comments. ESLint enforces this.
 
 ```tsx
 <Trans comment="Dashboard heading">Welcome back</Trans>;
 t({ message: 'Close', comment: 'Close button' });
 ```
 
-See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).
+Technical identifiers (`id`, `htmlFor`, `autoComplete`, `register()`) are auto-ignored.
+
+See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md) for full details.
 
 ## Testing
 

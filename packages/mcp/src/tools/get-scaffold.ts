@@ -82,13 +82,16 @@ export async function getScaffold(input: GetScaffoldInput) {
     claudeMd: scaffold.claudeMd,
     viteEnvDts: scaffold.viteEnvDts,
     envTs: scaffold.envTs,
+    routesTs: scaffold.routesTs, // Only present when routing feature is selected
     docs: scaffold.docs,
     examples,
-    instructions: generateInstructions(projectName, scaffold.setupCommands),
+    instructions: generateInstructions(projectName, scaffold.setupCommands, resolvedFeatures),
   };
 }
 
-function generateInstructions(projectName: string, setupCommands: string[]): string {
+function generateInstructions(projectName: string, setupCommands: string[], features: string[]): string {
+  const hasRouting = features.includes('routing');
+
   return `## Setup Instructions
 
 1. Create project directory:
@@ -103,17 +106,17 @@ function generateInstructions(projectName: string, setupCommands: string[]): str
 4. Create src/vite-env.d.ts using the provided viteEnvDts content
 
 5. Create src/lib/env.ts using the provided envTs content
+${hasRouting ? '\n6. Create src/lib/routes.ts using the provided routesTs content\n' : ''}
+7. Create CLAUDE.md using the provided claudeMd content
 
-6. Create CLAUDE.md using the provided claudeMd content
+8. Create docs/ directory with the provided docs content
 
-7. Create docs/ directory with the provided docs content
-
-8. Run setup commands:
+9. Run setup commands:
    \`\`\`bash
    ${setupCommands.join('\n   ')}
    \`\`\`
 
-9. Start development:
+10. Start development:
    \`\`\`bash
    npm run dev
    \`\`\`
@@ -124,7 +127,7 @@ function generateInstructions(projectName: string, setupCommands: string[]): str
 - Use get_example tool to get code patterns for each file type
 - CLAUDE.md content is dynamically generated based on selected features
 - vite-env.d.ts content is dynamically generated based on selected features
-- env.ts content is dynamically generated based on selected features
+- env.ts content is dynamically generated based on selected features${hasRouting ? '\n- routes.ts content is dynamically generated based on selected features' : ''}
 - docs/ content is filtered based on selected features`;
 }
 
@@ -139,17 +142,26 @@ Given a list of features, returns:
 - Config files needed
 - Documentation files (filtered by selected features)
 - Setup commands to run after creation
+- Generated file contents (env.ts, routes.ts, etc.) based on selected features
 
 The AI agent should use this information to:
 1. Create the project directory
 2. Write package.json
-3. Create all files using get_example for patterns
-4. Create docs/ with provided documentation
-5. Run setup commands
+3. Create generated files (viteEnvDts, envTs, routesTs) using provided content
+4. Create all other files using get_example for patterns
+5. Create docs/ with provided documentation
+6. Run setup commands
+
+Feature dependencies (auto-included):
+- theming → state (for Zustand persistence)
+
+When forms feature is selected:
+- RegisterForm component is displayed on HomePage
+- No additional routing required
 
 Example usage:
 - features: ["routing", "ui", "theming", "testing"]
-- This will auto-include: core, state (theming requires it for Zustand persistence)`,
+- This will auto-include: core, state`,
   inputSchema: {
     type: 'object' as const,
     properties: {

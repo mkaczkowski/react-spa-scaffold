@@ -1,19 +1,12 @@
 import { z } from 'zod';
 
 /**
- * Example validation schema for a contact form.
- * Extend or replace with your own schemas.
- */
-export const contactFormSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-});
-
-export type ContactFormData = z.infer<typeof contactFormSchema>;
-
-/**
- * Example validation schema for user registration.
+ * Registration form validation schema.
+ * Demonstrates Zod validation patterns:
+ * - Basic validations: min, max, email, regex
+ * - Cross-field validation with refine() (password confirmation)
+ * - Custom error messages
+ * - Type inference with z.infer<>
  */
 export const registerFormSchema = z
   .object({

@@ -13,11 +13,22 @@ A production-ready starter template for React 19 + TypeScript + Vite 7 projects.
 
 This project includes an **MCP (Model Context Protocol) server** that enables AI assistants to scaffold new projects based on react-spa-scaffold patterns.
 
+**Quick Start (Claude Code):**
+
+```bash
+mkdir my-app && cd my-app
+echo '{"mcpServers":{"react-spa-scaffold":{"command":"npx","args":["-y","@react-spa-scaffold/mcp@latest"]}}}' > .mcp.json
+```
+
+Open in Claude Code and ask: _"Scaffold a React app with routing, forms, and testing."_
+
 **How it works:**
 
 1. You tell the AI what features you need (routing, forms, testing, etc.)
 2. The MCP server provides knowledge: dependencies, file structures, code patterns
 3. The AI generates your project following react-spa-scaffold conventions
+
+**MCP Configuration:**
 
 ```json
 {
@@ -29,8 +40,6 @@ This project includes an **MCP (Model Context Protocol) server** that enables AI
   }
 }
 ```
-
-**Example prompt:** _"Scaffold a new React app with routing, UI components, and forms using react-spa-scaffold."_
 
 See [packages/mcp/README.md](packages/mcp/README.md) for full MCP documentation.
 

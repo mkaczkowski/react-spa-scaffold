@@ -234,6 +234,8 @@ ${commandLines.join('\n')}
   sections.push(`
 ## Project Structure
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full structure and data flow.
+
 \`\`\`
 ${structureParts.join('\n')}
 \`\`\``);
@@ -253,7 +255,9 @@ ${structureParts.join('\n')}
 
 **TypeScript**: \`type\` for unions, \`interface\` for objects
 
-**State hierarchy**: ${stateHierarchy.join(' → ')}`);
+**State hierarchy**: ${stateHierarchy.join(' → ')}
+
+See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md).`);
 
   // UI Components section - only if ui feature
   if (featureIds.includes('ui')) {
@@ -346,17 +350,7 @@ The ThemeToggle component provides a UI for switching between light, dark, and s
   sections.push(`
 ## MCP Servers (PREFER OVER WebSearch)
 
-Use MCP servers for documentation lookup. They provide **structured, version-accurate data** directly from source.
-
-### Context7 MCP (All Libraries)
-
-Use for **any npm package** documentation:
-
-\`\`\`
-resolve-library-id → get-library-docs
-\`\`\`
-
-**Examples**: react-hook-form, @tanstack/react-query, zustand, zod, date-fns`);
+Use MCP servers for documentation lookup. They provide **structured, version-accurate data** directly from source.`);
 
   if (featureIds.includes('ui')) {
     sections.push(`
@@ -366,8 +360,28 @@ resolve-library-id → get-library-docs
 | ------------------- | ------------------------------------------------ |
 | Find component      | \`mcp__shadcn__search_items_in_registries\`        |
 | View component code | \`mcp__shadcn__view_items_in_registries\`          |
-| Usage examples      | \`mcp__shadcn__get_item_examples_from_registries\` |`);
+| Usage examples      | \`mcp__shadcn__get_item_examples_from_registries\` |
+| CLI add command     | \`mcp__shadcn__get_add_command_for_items\`         |`);
   }
+
+  sections.push(`
+### Context7 MCP (All Libraries)
+
+Use for **any npm package** documentation:
+
+\`\`\`
+resolve-library-id → get-library-docs
+\`\`\`
+
+**Examples**: react-hook-form, @tanstack/react-query, zustand, zod, date-fns
+
+### Decision Flow
+
+\`\`\`
+Need UI component?     → Shadcn MCP
+Need library docs?     → Context7 MCP (any npm package)
+Need general info?     → WebSearch (fallback only)
+\`\`\``);
 
   // Translations section - only if i18n feature
   if (featureIds.includes('i18n')) {
@@ -379,13 +393,17 @@ All user-facing text MUST have translator comments. ESLint enforces this.
 \`\`\`tsx
 <Trans comment="Dashboard heading">Welcome back</Trans>
 t({ message: 'Close', comment: 'Close button' })
-\`\`\``);
+\`\`\`
+
+See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).`);
   }
 
   // Testing section - only if testing feature
   if (featureIds.includes('testing')) {
     sections.push(`
 ## Testing
+
+See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
 
 Tests in \`tests/unit/\` mirror \`src/\` structure. 80% coverage required.
 
@@ -534,6 +552,34 @@ export const env = validateEnv();
 }
 
 /**
+ * Generate routes.ts content based on selected features
+ */
+export function generateRoutesTs(_featureIds: string[]): string {
+  const routes: string[] = [];
+
+  // Core routes (always included when routing feature is selected)
+  routes.push("  HOME: '/',");
+
+  // Not found route (always last)
+  routes.push("  NOT_FOUND: '*',");
+
+  // Note: Additional routes can be added here based on features
+  // For now, all demo content displays on HomePage directly
+
+  return `/**
+ * Typed route constants.
+ * Use these instead of hardcoded strings for type-safe navigation.
+ */
+
+export const ROUTES = {
+${routes.join('\n')}
+} as const;
+
+export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
+`;
+}
+
+/**
  * Read and parse the source package.json
  */
 async function readSourcePackageJson(): Promise<Record<string, unknown>> {
@@ -586,6 +632,9 @@ export async function computeScaffold(
   // Generate env.ts content
   const envTs = generateEnvTs(resolvedFeatures);
 
+  // Generate routes.ts content (only if routing feature is selected)
+  const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs(resolvedFeatures) : undefined;
+
   // Get docs with content filtered by features
   const docs = await computeDocsContent(resolvedFeatures);
 
@@ -603,6 +652,7 @@ export async function computeScaffold(
     claudeMd,
     viteEnvDts,
     envTs,
+    routesTs,
     docs,
   };
 }
