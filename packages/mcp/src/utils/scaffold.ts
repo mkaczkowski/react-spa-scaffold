@@ -12,7 +12,8 @@ import { resolveTemplatePath } from './paths.js';
 /**
  * Resolve selected features (always includes core)
  *
- * Features are independent - only explicitly selected features are included.
+ * Features are mostly independent, with one exception:
+ * - theming requires state feature (for Zustand persistence)
  */
 export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
   const resolved = new Set<string>();
@@ -26,6 +27,11 @@ export function resolveFeatureDependencies(selectedFeatures: string[]): string[]
     if (feature) {
       resolved.add(featureId);
     }
+  }
+
+  // Theming requires state feature for Zustand persistence
+  if (resolved.has('theming') && !resolved.has('state')) {
+    resolved.add('state');
   }
 
   return Array.from(resolved);
@@ -308,6 +314,32 @@ import { useTouchSizes } from '@/hooks/useTouchSizes';
 const sizes = useTouchSizes();
 <Button size={sizes.button}>Click</Button>  // 'touch' on mobile, 'default' on desktop
 \`\`\``);
+  }
+
+  // Theming section - only if theming feature
+  if (featureIds.includes('theming')) {
+    sections.push(`
+## Theming
+
+Light/dark/system theme support with Zustand persistence.
+
+### Usage
+
+\`\`\`tsx
+import { usePreferencesStore } from '@/stores/preferencesStore';
+
+// Get current theme
+const theme = usePreferencesStore((s) => s.theme);
+
+// Toggle theme
+const toggleTheme = usePreferencesStore((s) => s.toggleTheme);
+
+// Get resolved theme (actual light/dark value when 'system')
+const getResolvedTheme = usePreferencesStore((s) => s.getResolvedTheme);
+\`\`\`
+
+The \`useThemeEffect\` hook automatically applies the \`.dark\` class to the document.
+The ThemeToggle component provides a UI for switching between light, dark, and system themes.`);
   }
 
   // MCP Servers section - always helpful

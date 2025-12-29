@@ -46,6 +46,15 @@ describe('get_features tool', () => {
     expect(mobile?.required).toBe(false);
     expect(mobile?.name).toBe('Mobile Support');
   });
+
+  it('theming feature exists and is not required', () => {
+    const features = getFeatures();
+    const theming = features.find((f) => f.id === 'theming');
+
+    expect(theming).toBeDefined();
+    expect(theming?.required).toBe(false);
+    expect(theming?.name).toBe('Theming');
+  });
 });
 
 describe('get_scaffold tool', () => {
@@ -74,6 +83,50 @@ describe('get_scaffold tool', () => {
     expect(result.resolvedFeatures).not.toContain('mobile');
     expect(result.resolvedFeatures).toContain('ui');
     expect(result.resolvedFeatures).toContain('core');
+  });
+
+  it('theming feature auto-includes state feature', async () => {
+    const result = await getScaffold({ features: ['theming'] });
+
+    // Theming requires state for Zustand persistence
+    expect(result.resolvedFeatures).toContain('theming');
+    expect(result.resolvedFeatures).toContain('state');
+    expect(result.resolvedFeatures).toContain('core');
+  });
+
+  it('marks auto-included state as wasAutoIncluded when theming selected', async () => {
+    const result = await getScaffold({ features: ['theming'] });
+
+    const themingDetail = result.featureDetails.find((f) => f.id === 'theming');
+    const stateDetail = result.featureDetails.find((f) => f.id === 'state');
+    const coreDetail = result.featureDetails.find((f) => f.id === 'core');
+
+    // Theming was explicitly selected
+    expect(themingDetail?.wasExplicitlySelected).toBe(true);
+    expect(themingDetail?.wasAutoIncluded).toBe(false);
+
+    // State was auto-included (dependency of theming)
+    expect(stateDetail?.wasExplicitlySelected).toBe(false);
+    expect(stateDetail?.wasAutoIncluded).toBe(true);
+
+    // Core is always auto-included
+    expect(coreDetail?.wasExplicitlySelected).toBe(false);
+    expect(coreDetail?.wasAutoIncluded).toBe(true);
+  });
+
+  it('includes theming files when theming feature is selected', async () => {
+    const result = await getScaffold({ features: ['theming'] });
+
+    expect(result.fileStructure).toContain('src/hooks/useThemeEffect.ts');
+    expect(result.fileStructure).toContain('src/components/shared/ThemeToggle/ThemeToggle.tsx');
+    expect(result.fileStructure).toContain('src/components/shared/ThemeToggle/index.ts');
+  });
+
+  it('does not include theming files when only ui is selected', async () => {
+    const result = await getScaffold({ features: ['ui'] });
+
+    expect(result.fileStructure).not.toContain('src/hooks/useThemeEffect.ts');
+    expect(result.fileStructure).not.toContain('src/components/shared/ThemeToggle/ThemeToggle.tsx');
   });
 
   it('includes mobile files when mobile feature is selected', async () => {
@@ -207,6 +260,16 @@ describe('get_scaffold tool', () => {
     expect(withMobile.claudeMd).toContain('useMobileContext');
     expect(withMobile.claudeMd).toContain('useTouchSizes');
     expect(withoutMobile.claudeMd).not.toContain('## Mobile & Responsive Design');
+  });
+
+  it('claudeMd includes theming section only when theming feature selected', async () => {
+    const withTheming = await getScaffold({ features: ['theming'] });
+    const withoutTheming = await getScaffold({ features: [] });
+
+    expect(withTheming.claudeMd).toContain('## Theming');
+    expect(withTheming.claudeMd).toContain('usePreferencesStore');
+    expect(withTheming.claudeMd).toContain('useThemeEffect');
+    expect(withoutTheming.claudeMd).not.toContain('## Theming');
   });
 
   it('claudeMd project structure shows contexts when mobile is selected', async () => {

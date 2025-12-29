@@ -94,20 +94,23 @@ Or point directly to the built file:
 
 ## Available Features
 
-10 feature modules that can be combined:
+13 feature modules that can be combined:
 
-| Feature    | Description                                   | Required |
-| ---------- | --------------------------------------------- | -------- |
-| `core`     | React 19 + TypeScript + Vite 7 + Tailwind CSS | Always   |
-| `routing`  | React Router 7 with lazy loading              | Optional |
-| `ui`       | Shadcn/UI + icons + theming + toasts          | Optional |
-| `forms`    | React Hook Form + Zod validation              | Optional |
-| `state`    | Zustand with persistence                      | Optional |
-| `api`      | TanStack Query + API client                   | Optional |
-| `i18n`     | LinguiJS internationalization                 | Optional |
-| `testing`  | Vitest + Playwright + MSW                     | Optional |
-| `devtools` | ESLint + Prettier + Husky                     | Optional |
-| `ci`       | GitHub Actions + Lighthouse                   | Optional |
+| Feature         | Description                                   | Required |
+| --------------- | --------------------------------------------- | -------- |
+| `core`          | React 19 + TypeScript + Vite 7 + Tailwind CSS | Always   |
+| `mobile`        | Responsive design utilities + viewport hooks  | Optional |
+| `routing`       | React Router 7 with lazy loading              | Optional |
+| `ui`            | Shadcn/UI + icons + animations + toasts       | Optional |
+| `theming`       | Light/dark/system theme (requires state)      | Optional |
+| `forms`         | React Hook Form + Zod validation              | Optional |
+| `state`         | Zustand with persistence + theme state        | Optional |
+| `api`           | TanStack Query + API client                   | Optional |
+| `i18n`          | LinguiJS internationalization                 | Optional |
+| `testing`       | Vitest + Playwright + MSW                     | Optional |
+| `devtools`      | ESLint + Prettier + Husky                     | Optional |
+| `ci`            | GitHub Actions + Lighthouse                   | Optional |
+| `observability` | Sentry error tracking                         | Optional |
 
 ## Tools
 
@@ -157,7 +160,9 @@ const result = await client.callTool('get_example', {
 | Testing    | `test-component`, `test-hook`, `test-store`, `msw-handler` |
 | i18n       | `trans-component`, `t-function`, `use-language-hook`       |
 | Utilities  | `zod-schema`, `storage-utility`, `format-utility`          |
-| UI         | `theme-toggle`, `seo-component`                            |
+| Mobile     | `mobile-context`, `use-media-query`, `use-touch-sizes`     |
+| UI         | `seo-component`                                            |
+| Theming    | `theme-toggle`                                             |
 
 <details>
 <summary>Full Pattern Reference</summary>
@@ -212,10 +217,19 @@ const result = await client.callTool('get_example', {
 - `storage-utility` — localStorage utilities
 - `format-utility` — Formatting utilities
 
+**Mobile:**
+
+- `mobile-context` — Viewport detection context
+- `use-media-query` — Media query hook with breakpoints
+- `use-touch-sizes` — Touch-aware sizing hook
+
 **UI:**
 
-- `theme-toggle` — Theme toggle component
 - `seo-component` — SEO meta tags
+
+**Theming:**
+
+- `theme-toggle` — Theme toggle component
 
 </details>
 
