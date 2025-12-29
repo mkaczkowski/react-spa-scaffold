@@ -229,19 +229,20 @@ const PATTERN_MAP: Record<
     ],
   },
 
-  // Test patterns
+  // Test patterns (co-located with source files)
   'test-component': {
-    file: 'tests/unit/components/Header.test.tsx',
+    file: 'src/components/layout/Header.test.tsx',
     description: 'Component test with Testing Library',
     keyPoints: [
       'Import from vitest (describe, it, expect)',
       'Custom render from @/test',
       'screen queries (getByRole, getByText)',
       'Semantic role assertions',
+      'Co-located with component source file',
     ],
   },
   'test-hook': {
-    file: 'tests/unit/hooks/useMediaQuery.test.ts',
+    file: 'src/hooks/useMediaQuery.test.ts',
     description: 'Hook test with renderHook',
     keyPoints: [
       'renderHook from Testing Library',
@@ -249,16 +250,18 @@ const PATTERN_MAP: Record<
       'beforeEach for setup',
       'it.each for parameterized tests',
       'act() for state updates',
+      'Co-located with hook source file',
     ],
   },
   'test-store': {
-    file: 'tests/unit/stores/preferencesStore.test.ts',
+    file: 'src/stores/preferencesStore.test.ts',
     description: 'Zustand store test',
     keyPoints: [
       'Direct store access: useStore.getState()',
       'act() wrapper for state changes',
       'Reset state in beforeEach',
       'Test actions and computed values',
+      'Co-located with store source file',
     ],
   },
   'msw-handler': {
@@ -287,6 +290,16 @@ const PATTERN_MAP: Record<
   },
 
   // i18n patterns
+  'i18n-index': {
+    file: 'src/i18n/index.ts',
+    description: 'i18n barrel export with initialization functions',
+    keyPoints: [
+      'Re-exports i18n instance from @lingui/core',
+      'initI18n() async function for app initialization',
+      'getLocale() returns current active locale',
+      'Re-exports config, detectLanguage, and dynamicActivate',
+    ],
+  },
   'trans-component': {
     file: 'src/components/layout/Header.tsx',
     description: 'Trans component usage for JSX text',
@@ -378,6 +391,31 @@ const PATTERN_MAP: Record<
       'Open Graph tags',
       'Twitter Card tags',
       'Conditional rendering for optional tags',
+    ],
+  },
+
+  // Entry point patterns
+  'main-entry': {
+    file: 'src/main.tsx',
+    description: 'Application entry point with Sentry initialization',
+    keyPoints: [
+      'Lazy Sentry initialization with requestIdleCallback for web vitals',
+      'Global error handlers (window.onerror, onunhandledrejection)',
+      'i18n initialization before render',
+      'Provider hierarchy: Query → I18n → Router → Mobile → ErrorBoundary',
+      'Multi-tab preferences sync with HMR cleanup',
+    ],
+  },
+
+  // Config patterns
+  'lib-config': {
+    file: 'src/lib/config.ts',
+    description: 'Centralized application configuration',
+    keyPoints: [
+      'APP_CONFIG for app name and URL',
+      'SENTRY_CONFIG with enabled flag, DSN, and tracesSampleRate',
+      'Environment variables with fallback defaults',
+      'as const for type inference',
     ],
   },
 };

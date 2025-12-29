@@ -65,18 +65,19 @@ See [packages/mcp/README.md](packages/mcp/README.md) for full MCP documentation.
 
 ### Optional (Remove What You Don't Need)
 
-| Feature          | Technologies          | Remove If...                   |
-| ---------------- | --------------------- | ------------------------------ |
-| UI Components    | Shadcn/UI + Radix     | Building custom design system  |
-| State Management | Zustand               | React state is sufficient      |
-| Server State     | TanStack Query        | Simple REST without caching    |
-| Forms            | React Hook Form + Zod | Few or simple forms            |
-| i18n             | LinguiJS              | Single language app            |
-| E2E Testing      | Playwright            | Unit tests cover enough        |
-| API Mocking      | MSW                   | No API integration tests       |
-| Error Tracking   | Sentry                | Using alternative monitoring   |
-| Git Hooks        | Husky + lint-staged   | CI handles all checks          |
-| Commit Linting   | Commitlint            | No changelog automation needed |
+| Feature          | Technologies               | Remove If...                           |
+| ---------------- | -------------------------- | -------------------------------------- |
+| UI Components    | Shadcn/UI + Radix          | Building custom design system          |
+| State Management | Zustand                    | React state is sufficient              |
+| Server State     | TanStack Query             | Simple REST without caching            |
+| Forms            | React Hook Form + Zod      | Few or simple forms                    |
+| i18n             | LinguiJS                   | Single language app                    |
+| E2E Testing      | Playwright                 | Unit tests cover enough                |
+| Performance      | react-performance-tracking | No performance regression tests needed |
+| API Mocking      | MSW                        | No API integration tests               |
+| Error Tracking   | Sentry                     | Using alternative monitoring           |
+| Git Hooks        | Husky + lint-staged        | CI handles all checks                  |
+| Commit Linting   | Commitlint                 | No changelog automation needed         |
 
 ## Project Structure
 
@@ -97,9 +98,10 @@ src/
 ├── test/            # Test utilities and providers
 └── types/           # TypeScript types
 
-tests/unit/          # Vitest tests (mirrors src/)
 e2e/                 # Playwright E2E tests
 ```
+
+Tests are co-located with source files (e.g., `Button.tsx` + `Button.test.tsx`).
 
 ## Quick Start
 
@@ -131,12 +133,13 @@ Open [http://localhost:5173](http://localhost:5173) — you're ready to build.
 
 ### Testing
 
-| Command                 | Description                   |
-| ----------------------- | ----------------------------- |
-| `npm run test`          | Run unit tests                |
-| `npm run test:watch`    | Unit tests in watch mode      |
-| `npm run test:coverage` | Tests with coverage (80% min) |
-| `npm run e2e`           | Playwright E2E tests          |
+| Command                 | Description                     |
+| ----------------------- | ------------------------------- |
+| `npm run test`          | Run unit tests                  |
+| `npm run test:watch`    | Unit tests in watch mode        |
+| `npm run test:coverage` | Tests with coverage (80% min)   |
+| `npm run e2e`           | Playwright functional E2E tests |
+| `npm run e2e:perf`      | Performance regression tests    |
 
 ### i18n
 

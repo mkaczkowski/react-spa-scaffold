@@ -85,88 +85,36 @@ export async function getScaffold(input: GetScaffoldInput) {
     routesTs: scaffold.routesTs, // Only present when routing feature is selected
     docs: scaffold.docs,
     examples,
-    instructions: generateInstructions(projectName, scaffold.setupCommands, resolvedFeatures),
+    instructions: generateInstructions(scaffold.setupCommands, resolvedFeatures),
   };
 }
 
-function generateInstructions(projectName: string, setupCommands: string[], features: string[]): string {
+function generateInstructions(setupCommands: string[], features: string[]): string {
   const hasRouting = features.includes('routing');
 
   return `## Setup Instructions
 
-1. Create project directory:
-   \`\`\`bash
-   mkdir ${projectName} && cd ${projectName}
-   \`\`\`
+1. Create project directory and initialize with provided \`packageJson\`
+2. Create files from \`fileStructure\` using \`get_example\` patterns
+3. Use provided content directly for: \`viteEnvDts\`, \`envTs\`${hasRouting ? ', `routesTs`' : ''}, \`claudeMd\`, \`docs\`
+4. Run: ${setupCommands.join(' && ')}
 
-2. Initialize package.json with the provided dependencies
+## IMPORTANT
 
-3. Create the file structure as listed
-
-4. Create src/vite-env.d.ts using the provided viteEnvDts content
-
-5. Create src/lib/env.ts using the provided envTs content
-${hasRouting ? '\n6. Create src/lib/routes.ts using the provided routesTs content\n' : ''}
-7. Create CLAUDE.md using the provided claudeMd content
-
-8. Create docs/ directory with the provided docs content
-
-9. Run setup commands:
-   \`\`\`bash
-   ${setupCommands.join('\n   ')}
-   \`\`\`
-
-10. Start development:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
-
-## SEO Setup
-- SEO component is always included (from core feature)
-
-## Notes
-- Core feature is always included
-- Use get_example tool to get code patterns for each file type
-- CLAUDE.md, vite-env.d.ts, env.ts content is dynamically generated based on selected features`;
+Templates are written for ALL features. Remove imports, providers, and code for features not in \`resolvedFeatures\`.`;
 }
 
 export const getScaffoldToolDefinition = {
   name: 'get_scaffold',
   description: `Get complete scaffold information for a new react-spa-scaffold project.
 
-Given a list of features, returns:
-- Resolved dependencies (including auto-required features)
-- Complete package.json (dependencies + devDependencies + scripts)
-- File structure to create
-- Config files needed
-- Documentation files (filtered by selected features)
-- Setup commands to run after creation
-- Generated file contents (env.ts, routes.ts, etc.) based on selected features
+Returns package.json, file structure, config files, generated content (env.ts, routes.ts, CLAUDE.md), and setup commands.
 
-The AI agent should use this information to:
-1. Create the project directory
-2. Write package.json
-3. Create generated files (viteEnvDts, envTs, routesTs) using provided content
-4. Create all other files using get_example for patterns
-5. Create docs/ with provided documentation
-6. Run setup commands
+IMPORTANT: Templates contain code for ALL features. Strip imports and code for features not in \`resolvedFeatures\`.
 
-Feature dependencies (auto-included):
-- theming → state (for Zustand persistence)
+Feature dependencies: theming → state (auto-included)
 
-SEO Component (always included from core):
-- Import in App.tsx: import { SEO } from '@/components/shared';
-- Add <SEO description="..." /> in App.tsx for site-wide default meta tags
-- Individual pages can override with page-specific SEO props
-- Use get_example with pattern 'seo-component' for implementation details
-
-When forms feature is selected:
-- RegisterForm component is displayed on HomePage
-- No additional routing required
-
-Example usage:
-- features: ["routing", "ui", "theming", "testing"]
-- This will auto-include: core, state`,
+Example: features: ["routing", "ui", "theming"] → resolvedFeatures: ["core", "routing", "ui", "theming", "state"]`,
   inputSchema: {
     type: 'object' as const,
     properties: {

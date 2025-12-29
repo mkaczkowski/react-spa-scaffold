@@ -28,7 +28,7 @@ if (existsSync(TEMPLATES_DIR)) {
 mkdirSync(TEMPLATES_DIR, { recursive: true });
 
 // Directories to copy
-const directories = ['docs', 'src', 'tests', 'e2e', '.github', '.husky', 'public'];
+const directories = ['docs', 'src', 'e2e', '.github', '.husky', 'public'];
 
 for (const dir of directories) {
   const src = join(WEBAPP_BASE_DIR, dir);
@@ -71,10 +71,6 @@ const files = [
 
   // i18n feature
   'lingui.config.js',
-
-  // CI feature
-  'lighthouserc.json',
-  'lighthouse-budget.json',
 ];
 
 for (const file of files) {

@@ -50,7 +50,7 @@ For test patterns, utilities, and conventions, reference:
 
 Key points from project testing standards:
 
-- Tests go in `tests/unit/` mirroring `src/` structure
+- Tests are co-located with source files (e.g., `Button.tsx` + `Button.test.tsx`)
 - Use `render` from `@/test` (not @testing-library directly)
 - 80% coverage required
 

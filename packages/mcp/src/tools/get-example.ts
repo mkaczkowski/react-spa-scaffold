@@ -53,8 +53,9 @@ function generateUsageHint(pattern: string): string {
     'zustand-store': 'Place in src/stores/ with xxxStore.ts naming',
     'page-component': 'Place in src/pages/ with XxxPage named export',
     'context-provider': 'Place in src/contexts/ - export both Provider and hook',
-    'test-component': 'Place in tests/unit/components/ mirroring src structure',
-    'test-hook': 'Place in tests/unit/hooks/',
+    'test-component': 'Co-locate with component: ComponentName.test.tsx next to ComponentName.tsx',
+    'test-hook': 'Co-locate with hook: useXxx.test.ts next to useXxx.ts',
+    'test-store': 'Co-locate with store: xxxStore.test.ts next to xxxStore.ts',
     'msw-handler': 'Place in src/mocks/handlers/',
     'zod-schema': 'Add to src/lib/validations.ts',
   };

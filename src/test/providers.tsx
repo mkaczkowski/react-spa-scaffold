@@ -6,6 +6,7 @@ import { type ReactElement, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router';
 
 import { MobileProvider } from '@/contexts/mobileContext';
+import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 
 // Setup empty English catalog for tests
 i18n.loadAndActivate({ locale: 'en', messages: {} });
@@ -36,11 +37,14 @@ interface WrapperProps {
 function AllProviders({ children }: WrapperProps) {
   const queryClient = createTestQueryClient();
 
+  // Provider order matches main.tsx: Query > I18n > Router > Mobile > Performance
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider i18n={i18n}>
         <MemoryRouter>
-          <MobileProvider>{children}</MobileProvider>
+          <MobileProvider>
+            <PerformanceProviderWrapper>{children}</PerformanceProviderWrapper>
+          </MobileProvider>
         </MemoryRouter>
       </I18nProvider>
     </QueryClientProvider>

@@ -298,4 +298,4 @@ Before submitting a component:
 - [ ] Uses `cn()` for className merging
 - [ ] Accessible (roles, aria-labels, keyboard nav)
 - [ ] Barrel export in `index.ts` (except UI primitives)
-- [ ] Test file in `tests/unit/`
+- [ ] Test file co-located (e.g., `Button.test.tsx`)

@@ -117,8 +117,9 @@ Or point directly to the built file:
 | `api`           | TanStack Query + API client                   | Optional |
 | `i18n`          | LinguiJS internationalization                 | Optional |
 | `testing`       | Vitest + Playwright + MSW                     | Optional |
+| `performance`   | React Profiler + Lighthouse + Web Vitals      | Optional |
 | `devtools`      | ESLint + Prettier + Husky                     | Optional |
-| `ci`            | GitHub Actions + Lighthouse                   | Optional |
+| `ci`            | GitHub Actions + Dependabot                   | Optional |
 | `observability` | Sentry error tracking                         | Optional |
 
 ## Tools

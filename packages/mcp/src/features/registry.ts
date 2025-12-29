@@ -1,9 +1,12 @@
 /**
  * Feature Registry - Defines all available features for react-spa-scaffold scaffolding
+ *
+ * Dependencies are specified as names only. Versions are resolved from the
+ * webapp-base package.json at runtime to ensure scaffolded projects always
+ * get up-to-date dependency versions.
  */
 
 import type { Feature, FeatureRegistry } from './types.js';
-import { CONFIG_VERSIONS } from './versions.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CORE FEATURE (Always included)
@@ -25,25 +28,18 @@ const core: Feature = {
     'Type definitions',
     'ErrorBoundary component with reset functionality',
   ],
-  dependencies: {
-    '@fontsource-variable/inter': '^5.2.5',
-    clsx: '^2.1.1',
-    react: '^19.1.0',
-    'react-dom': '^19.1.0',
-    'tailwind-merge': '^3.3.0',
-    zod: '^3.25.64',
-  },
-  devDependencies: {
-    '@tailwindcss/vite': '^4.1.17',
-    '@types/node': '^22.15.0',
-    '@types/react': '^19.1.8',
-    '@types/react-dom': '^19.1.6',
-    '@vitejs/plugin-react': '^5.1.2',
-    '@react-spa-scaffold/tsconfig': CONFIG_VERSIONS['@react-spa-scaffold/tsconfig'],
-    tailwindcss: '^4.1.17',
-    typescript: '~5.9.0',
-    vite: '^7.0.0',
-  },
+  dependencyNames: ['@fontsource-variable/inter', 'clsx', 'react', 'react-dom', 'tailwind-merge', 'zod'],
+  devDependencyNames: [
+    '@tailwindcss/vite',
+    '@types/node',
+    '@types/react',
+    '@types/react-dom',
+    '@vitejs/plugin-react',
+    '@react-spa-scaffold/tsconfig',
+    'tailwindcss',
+    'typescript',
+    'vite',
+  ],
   files: [
     'src/main.tsx',
     'src/App.tsx',
@@ -68,6 +64,12 @@ const core: Feature = {
     '.env.example',
     '.gitignore',
     'public/favicon.svg',
+  ],
+  testFiles: [
+    'src/lib/utils.test.ts',
+    'src/components/shared/SEO/SEO.test.tsx',
+    'src/components/shared/ErrorBoundary/ErrorBoundary.test.tsx',
+    'e2e/tests/home.spec.ts',
   ],
   patterns: ['component-shared', 'hook-effect', 'error-boundary', 'seo-component'],
   scripts: {
@@ -103,9 +105,9 @@ const mobile: Feature = {
     'requestAnimationFrame-debounced resize handling',
     'SSR-safe viewport detection with fallbacks',
   ],
-  dependencies: {},
-  devDependencies: {},
+  // No additional dependencies - pure React implementation
   files: ['src/contexts/mobileContext.tsx', 'src/hooks/useMediaQuery.ts', 'src/hooks/useTouchSizes.ts'],
+  testFiles: ['src/contexts/mobileContext.test.tsx', 'src/hooks/useMediaQuery.test.ts'],
   patterns: ['mobile-context', 'use-media-query', 'use-touch-sizes'],
   scripts: {},
 };
@@ -126,10 +128,7 @@ const routing: Feature = {
     'App.tsx with Suspense fallback',
     'PageLoading component for transitions',
   ],
-  dependencies: {
-    'react-router': '^7.11.0',
-  },
-  devDependencies: {},
+  dependencyNames: ['react-router'],
   files: [
     // routes.ts is generated dynamically (see routesTs in scaffold output)
     'src/pages/Home.tsx',
@@ -138,6 +137,7 @@ const routing: Feature = {
     'src/components/ui/loading.tsx',
     'src/components/ui/visually-hidden.tsx',
   ],
+  testFiles: ['e2e/tests/navigation.spec.ts'],
   patterns: ['lazy-page', 'route-constants', 'page-component'],
   scripts: {},
 };
@@ -163,17 +163,15 @@ const ui: Feature = {
     'VisuallyHidden and SkipLink (accessibility)',
     'components.json for shadcn CLI',
   ],
-  dependencies: {
-    '@radix-ui/react-slot': '^1.2.3',
-    'class-variance-authority': '^0.7.1',
-    'lucide-react': '^0.562.0',
-    'radix-ui': '^1.4.3',
-    sonner: '^2.0.7',
-    'tw-animate-css': '^1.2.9',
-  },
-  devDependencies: {
-    shadcn: '^3.6.2',
-  },
+  dependencyNames: [
+    '@radix-ui/react-slot',
+    'class-variance-authority',
+    'lucide-react',
+    'radix-ui',
+    'sonner',
+    'tw-animate-css',
+  ],
+  devDependencyNames: ['shadcn'],
   files: [
     'src/components/ui/button.tsx',
     'src/components/ui/dropdown-menu.tsx',
@@ -186,6 +184,7 @@ const ui: Feature = {
     'src/components/layout/index.ts',
     'components.json',
   ],
+  testFiles: ['src/components/ui/loading.test.tsx', 'src/components/layout/Header.test.tsx'],
   patterns: ['component-ui', 'button-variants', 'forward-ref-component'],
   scripts: {},
   configFiles: ['components.json'],
@@ -207,12 +206,11 @@ const forms: Feature = {
     'useRegisterForm custom hook pattern',
     'Zod schema with refine() for cross-field validation',
   ],
-  dependencies: {
-    '@hookform/resolvers': '^5.0.1',
-    'react-hook-form': '^7.58.0',
+  dependencyNames: [
+    '@hookform/resolvers',
+    'react-hook-form',
     // zod already in core
-  },
-  devDependencies: {},
+  ],
   files: [
     'src/lib/validations.ts',
     'src/hooks/useRegisterForm.ts',
@@ -222,6 +220,11 @@ const forms: Feature = {
     'src/components/ui/card.tsx',
     'src/components/shared/RegisterForm/RegisterForm.tsx',
     'src/components/shared/RegisterForm/index.ts',
+  ],
+  testFiles: [
+    'src/lib/validations.test.ts',
+    'src/hooks/useRegisterForm.test.tsx',
+    'src/components/shared/RegisterForm/RegisterForm.test.tsx',
   ],
   patterns: ['zod-schema', 'hook-form', 'form-error-component', 'register-form'],
   scripts: {},
@@ -245,10 +248,7 @@ const state: Feature = {
     'Example preferences store (theme)',
     'Type-safe store selectors',
   ],
-  dependencies: {
-    zustand: '^5.0.9',
-  },
-  devDependencies: {},
+  dependencyNames: ['zustand'],
   files: [
     'src/stores/preferencesStore.ts',
     'src/stores/index.ts',
@@ -256,6 +256,7 @@ const state: Feature = {
     'src/lib/storageKeys.ts',
     'src/types/preferences.ts',
   ],
+  testFiles: ['src/lib/storage.test.ts', 'src/stores/preferencesStore.test.ts'],
   patterns: ['zustand-store', 'store-persistence', 'multi-tab-sync', 'storage-utility'],
   scripts: {},
 };
@@ -277,11 +278,9 @@ const api: Feature = {
     'Example useExampleQuery hook',
     'API types (Todo, PaginatedResponse, etc.)',
   ],
-  dependencies: {
-    '@tanstack/react-query': '^5.81.5',
-  },
-  devDependencies: {},
+  dependencyNames: ['@tanstack/react-query'],
   files: ['src/lib/api.ts', 'src/contexts/queryContext.tsx', 'src/hooks/useExampleQuery.ts', 'src/types/api.ts'],
+  testFiles: ['src/lib/api.test.ts', 'src/hooks/useExampleQuery.test.tsx'],
   patterns: ['query-provider', 'use-query-hook', 'api-client'],
   scripts: {},
 };
@@ -306,17 +305,14 @@ const i18n: Feature = {
     'Vite plugin for compilation',
     'useLanguage hook',
   ],
-  dependencies: {
-    '@lingui/core': '^5.7.0',
-    '@lingui/react': '^5.7.0',
-  },
-  devDependencies: {
-    '@lingui/babel-plugin-lingui-macro': '^5.7.0',
-    '@lingui/cli': '^5.7.0',
-    '@lingui/vite-plugin': '^5.7.0',
-    'babel-plugin-macros': '^3.1.0',
-    'eslint-plugin-lingui': '^0.11.0',
-  },
+  dependencyNames: ['@lingui/core', '@lingui/react'],
+  devDependencyNames: [
+    '@lingui/babel-plugin-lingui-macro',
+    '@lingui/cli',
+    '@lingui/vite-plugin',
+    'babel-plugin-macros',
+    'eslint-plugin-lingui',
+  ],
   files: [
     'src/i18n/config.ts',
     'src/i18n/detectLanguage.ts',
@@ -330,7 +326,14 @@ const i18n: Feature = {
     'src/components/shared/LanguageSwitcher/index.ts',
     'lingui.config.js',
   ],
-  patterns: ['trans-component', 't-function', 'language-switcher', 'use-language-hook'],
+  testFiles: [
+    'src/i18n/detectLanguage.test.ts',
+    'src/i18n/loadCatalog.test.ts',
+    'src/hooks/useLanguage.test.tsx',
+    'src/components/shared/LanguageSwitcher/LanguageSwitcher.test.tsx',
+    'e2e/tests/language.spec.ts',
+  ],
+  patterns: ['i18n-index', 'trans-component', 't-function', 'language-switcher', 'use-language-hook'],
   scripts: {
     'i18n:extract': 'lingui extract',
   },
@@ -357,17 +360,16 @@ const testing: Feature = {
     'MSW handlers for API endpoints',
     'Test fixtures for mock data',
   ],
-  dependencies: {},
-  devDependencies: {
-    '@playwright/test': '^1.52.0',
-    '@testing-library/jest-dom': '^6.6.3',
-    '@testing-library/react': '^16.3.0',
-    '@testing-library/user-event': '^14.6.1',
-    '@vitest/coverage-v8': '^4.0.16',
-    jsdom: '^27.3.0',
-    msw: '^2.12.4',
-    vitest: '^4.0.16',
-  },
+  devDependencyNames: [
+    '@playwright/test',
+    '@testing-library/jest-dom',
+    '@testing-library/react',
+    '@testing-library/user-event',
+    '@vitest/coverage-v8',
+    'jsdom',
+    'msw',
+    'vitest',
+  ],
   files: [
     'src/test-setup.ts',
     'src/test/mocks.ts',
@@ -379,20 +381,54 @@ const testing: Feature = {
     'src/mocks/fixtures/index.ts',
     'src/mocks/node.ts',
     'src/mocks/index.ts',
-    'tests/unit/',
+    'e2e/fixtures/',
     'e2e/tests/',
     'vitest.config.ts',
     'playwright.config.ts',
+    'docs/TESTING.md',
+    'docs/E2E_TESTING.md',
   ],
   patterns: ['test-component', 'test-hook', 'test-store', 'test-utility', 'msw-handler', 'test-fixture'],
   scripts: {
     test: 'vitest run',
     'test:watch': 'vitest',
     'test:coverage': 'vitest run --coverage',
-    e2e: 'playwright test',
-    'e2e:ui': 'playwright test --ui',
+    e2e: 'playwright test --project=functional',
+    'e2e:ui': 'playwright test --project=functional --ui',
   },
   configFiles: ['vitest.config.ts', 'playwright.config.ts', 'src/test-setup.ts'],
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PERFORMANCE TESTING FEATURE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const performance: Feature = {
+  name: 'Performance Testing',
+  description: 'React Profiler + Lighthouse + Web Vitals via react-performance-tracking',
+  required: false,
+  includes: [
+    'react-performance-tracking for unified performance testing',
+    'React Profiler metrics (render duration, re-renders)',
+    'Lighthouse audits (performance, accessibility, best practices)',
+    'Core Web Vitals (LCP, INP, CLS)',
+    'FPS monitoring (Chromium only)',
+    'PerformanceProviderWrapper with lazy loading (zero prod overhead)',
+    'Safe usePerformance hook (never throws)',
+    'Separate Playwright project for performance tests',
+    'CI-optimized Chrome flags (--no-sandbox)',
+  ],
+  dependencyNames: ['react-performance-tracking'],
+  devDependencyNames: ['chrome-launcher', 'lighthouse'],
+  files: ['src/contexts/performanceContext.tsx', 'e2e/performance/setup.ts'],
+  testFiles: ['e2e/performance/home.spec.ts', 'src/contexts/performanceContext.test.tsx'],
+  patterns: ['performance-context', 'performance-e2e', 'profiler-wrapper'],
+  scripts: {
+    'e2e:perf': 'PERF_TEST=true playwright test --project=performance',
+    'e2e:perf:ui': 'PERF_TEST=true playwright test --project=performance --ui',
+    'e2e:all': 'PERF_TEST=true playwright test',
+  },
+  configFiles: [],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -416,24 +452,23 @@ const devtools: Feature = {
     'Pre-commit hook: typecheck + lint-staged',
     'Commit-msg hook: commitlint',
   ],
-  dependencies: {},
-  devDependencies: {
-    '@commitlint/config-conventional': '^20.2.0',
-    '@eslint/js': '^9.28.0',
-    '@react-spa-scaffold/eslint-config': CONFIG_VERSIONS['@react-spa-scaffold/eslint-config'],
-    '@react-spa-scaffold/prettier-config': CONFIG_VERSIONS['@react-spa-scaffold/prettier-config'],
-    commitlint: '^20.2.0',
-    eslint: '^9.28.0',
-    'eslint-config-prettier': '^10.1.0',
-    'eslint-plugin-lingui': '^0.11.0',
-    'eslint-plugin-react-hooks': '^5.2.0',
-    'eslint-plugin-react-refresh': '^0.4.20',
-    husky: '^9.1.7',
-    'lint-staged': '^16.1.0',
-    prettier: '^3.5.3',
-    'prettier-plugin-tailwindcss': '^0.7.2',
-    'typescript-eslint': '^8.33.0',
-  },
+  devDependencyNames: [
+    '@commitlint/config-conventional',
+    '@eslint/js',
+    '@react-spa-scaffold/eslint-config',
+    '@react-spa-scaffold/prettier-config',
+    'commitlint',
+    'eslint',
+    'eslint-config-prettier',
+    'eslint-plugin-lingui',
+    'eslint-plugin-react-hooks',
+    'eslint-plugin-react-refresh',
+    'husky',
+    'lint-staged',
+    'prettier',
+    'prettier-plugin-tailwindcss',
+    'typescript-eslint',
+  ],
   files: [
     'eslint.config.js',
     'prettier.config.js',
@@ -459,31 +494,28 @@ const devtools: Feature = {
 
 const ci: Feature = {
   name: 'CI/CD',
-  description: 'GitHub Actions + Lighthouse + Dependabot',
+  description: 'GitHub Actions + Performance Testing + Dependabot',
   required: false,
   includes: [
     'GitHub Actions CI workflow',
-    'Parallel jobs: lint, typecheck, security audit, build, unit tests, e2e tests',
-    'Lighthouse CI with performance budgets',
+    'Parallel jobs: lint, typecheck, security audit, build, unit tests, e2e tests, performance tests',
+    'Performance testing with react-performance-tracking (React Profiler, Lighthouse, Web Vitals)',
     'Dependabot with grouped updates by category',
     'PR template',
-    'Artifact uploads (dist, coverage, lighthouse reports)',
+    'Artifact uploads (dist, coverage, performance reports)',
     'Dependency caching for faster builds',
     'Custom setup-node-deps action',
   ],
-  dependencies: {},
-  devDependencies: {},
+  // No additional dependencies - CI configuration only
   files: [
     '.github/workflows/ci.yml',
     '.github/actions/setup-node-deps/action.yml',
     '.github/dependabot.yml',
     '.github/PULL_REQUEST_TEMPLATE.md',
-    'lighthouserc.json',
-    'lighthouse-budget.json',
   ],
   patterns: [],
   scripts: {},
-  configFiles: ['lighthouserc.json', 'lighthouse-budget.json'],
+  configFiles: [],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -504,14 +536,10 @@ const observability: Feature = {
     'VITE_SENTRY_ENABLED flag for opt-out',
     'SENTRY_CONFIG in lib/config.ts',
   ],
-  dependencies: {
-    '@sentry/react': '^10.32.1',
-  },
-  devDependencies: {
-    '@sentry/vite-plugin': '^4.6.1',
-  },
-  files: [],
-  patterns: ['sentry-init', 'error-tracking'],
+  dependencyNames: ['@sentry/react'],
+  devDependencyNames: ['@sentry/vite-plugin'],
+  files: ['src/lib/config.ts'],
+  patterns: ['main-entry', 'lib-config'],
   scripts: {},
   options: {
     enabled: {
@@ -537,12 +565,16 @@ const theming: Feature = {
     'Zustand persistence via preferencesStore',
     'Multi-tab sync via storage events',
   ],
-  dependencies: {},
-  devDependencies: {},
+  // No additional dependencies - uses state feature's Zustand
   files: [
     'src/hooks/useThemeEffect.ts',
     'src/components/shared/ThemeToggle/ThemeToggle.tsx',
     'src/components/shared/ThemeToggle/index.ts',
+  ],
+  testFiles: [
+    'src/hooks/useThemeEffect.test.ts',
+    'src/components/shared/ThemeToggle/ThemeToggle.test.tsx',
+    'e2e/tests/theme.spec.ts',
   ],
   patterns: ['theme-toggle', 'hook-effect'],
   scripts: {},
@@ -562,6 +594,7 @@ export const FEATURES: FeatureRegistry = {
   api,
   i18n,
   testing,
+  performance,
   devtools,
   ci,
   observability,

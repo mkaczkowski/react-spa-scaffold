@@ -35,7 +35,6 @@ src/
 ├── test/           # Test utilities and providers
 └── types/          # Shared TypeScript definitions
 
-tests/unit/         # Vitest tests (mirrors src/ structure)
 e2e/                # Playwright end-to-end tests
 ```
 

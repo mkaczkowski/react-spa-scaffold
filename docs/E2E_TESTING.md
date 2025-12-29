@@ -12,11 +12,14 @@
 e2e/
 ├── fixtures/
 │   └── index.ts           # setupPage, clearAppState
-└── tests/
-    ├── home.spec.ts       # Page structure, accessibility
-    ├── theme.spec.ts      # Theme toggle, persistence
-    ├── language.spec.ts   # Language switcher
-    └── navigation.spec.ts # Routing, 404
+├── tests/                  # Functional E2E tests
+│   ├── home.spec.ts       # Page structure, accessibility
+│   ├── theme.spec.ts      # Theme toggle, persistence
+│   ├── language.spec.ts   # Language switcher
+│   └── navigation.spec.ts # Routing, 404
+└── performance/            # Performance regression tests
+    ├── setup.ts           # Performance test fixture
+    └── home.spec.ts       # Home page performance tests
 ```
 
 ## Imports
@@ -104,9 +107,21 @@ await page.waitForTimeout(500);
 ## Running Tests
 
 ```bash
-npm run e2e        # Run all
-npm run e2e:ui     # Interactive UI
+npm run e2e           # Run functional tests
+npm run e2e:ui        # Functional tests with interactive UI
+npm run e2e:perf      # Run performance tests
+npm run e2e:perf:ui   # Performance tests with interactive UI
+npm run e2e:all       # Run all tests (functional + performance)
 ```
+
+## Performance Testing
+
+Performance tests use [react-performance-tracking](https://github.com/mkaczkowski/react-performance-tracking) to measure:
+
+- React Profiler metrics (render duration, re-renders)
+- Lighthouse audits (performance, accessibility)
+- Core Web Vitals (LCP, INP, CLS)
+- FPS monitoring (Chromium only)
 
 ## Checklist
 

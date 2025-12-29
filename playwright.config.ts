@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './e2e/tests',
+  testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -17,12 +17,24 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
+      name: 'functional',
+      testDir: './e2e/tests',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'performance',
+      testDir: './e2e/performance',
+      use: {
+        ...devices['Desktop Chrome'],
+        // CI containers require --no-sandbox; --disable-dev-shm-usage prevents memory issues
+        launchOptions: {
+          args: process.env.CI ? ['--no-sandbox', '--disable-dev-shm-usage'] : [],
+        },
+      },
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    command: process.env.PERF_TEST ? 'VITE_PERF_TEST=true npm run dev' : 'npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

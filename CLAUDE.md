@@ -14,7 +14,8 @@ npm run format           # Prettier format
 npm run test             # Vitest once
 npm run test:watch       # Vitest watch mode
 npm run test:coverage    # Coverage (80% threshold)
-npm run e2e              # Playwright E2E
+npm run e2e              # Playwright functional E2E tests
+npm run e2e:perf         # Performance regression tests
 npm run i18n:extract     # Extract translations to .po
 ```
 
@@ -32,9 +33,10 @@ src/
 ├── stores/        # Zustand stores
 └── types/         # TypeScript definitions
 
-tests/unit/        # Vitest (mirrors src/)
 e2e/               # Playwright tests
 ```
+
+**Tests**: Co-located with source files (e.g., `foo.tsx` + `foo.test.tsx`)
 
 ## Code Patterns
 
@@ -128,7 +130,7 @@ See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md) for full detail
 
 See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
 
-Tests in `tests/unit/` mirror `src/` structure. 80% coverage required.
+Tests are co-located with source files (e.g., `foo.tsx` + `foo.test.tsx`). 80% coverage required.
 
 ```typescript
 import { describe, it, expect, vi } from 'vitest';

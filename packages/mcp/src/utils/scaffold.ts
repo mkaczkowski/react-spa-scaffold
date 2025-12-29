@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedReference
+
 /**
  * Scaffold computation utilities
  */
@@ -37,25 +39,70 @@ export function resolveFeatureDependencies(selectedFeatures: string[]): string[]
   return Array.from(resolved);
 }
 
-/**
- * Merge dependencies from multiple features
- */
-export function mergeDependencies(featureIds: string[]): {
+// Cache for source package.json to avoid repeated file reads
+let cachedSourcePackageJson: {
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
-} {
+} | null = null;
+
+/**
+ * Read and cache the source package.json dependencies
+ */
+async function getSourceDependencies(): Promise<{
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+}> {
+  if (!cachedSourcePackageJson) {
+    const path = resolveTemplatePath('package.json');
+    const content = await readFile(path, 'utf-8');
+    const pkg = JSON.parse(content);
+    cachedSourcePackageJson = {
+      dependencies: (pkg.dependencies || {}) as Record<string, string>,
+      devDependencies: (pkg.devDependencies || {}) as Record<string, string>,
+    };
+  }
+  return cachedSourcePackageJson;
+}
+
+/**
+ * Merge dependencies from multiple features
+ *
+ * Resolves package versions from the source package.json at runtime.
+ * This ensures scaffolded projects always use up-to-date dependency versions.
+ */
+export async function mergeDependencies(featureIds: string[]): Promise<{
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+}> {
   const dependencies: Record<string, string> = {};
   const devDependencies: Record<string, string> = {};
+
+  // Get source package.json for version lookup
+  const sourcePkg = await getSourceDependencies();
 
   for (const featureId of featureIds) {
     const feature = FEATURES[featureId];
     if (!feature) continue;
 
-    if (feature.dependencies) {
-      Object.assign(dependencies, feature.dependencies);
+    // Look up dependency versions from source package.json
+    if (feature.dependencyNames) {
+      for (const name of feature.dependencyNames) {
+        if (sourcePkg.dependencies[name]) {
+          dependencies[name] = sourcePkg.dependencies[name];
+        } else {
+          console.warn(`Dependency "${name}" not found in source package.json`);
+        }
+      }
     }
-    if (feature.devDependencies) {
-      Object.assign(devDependencies, feature.devDependencies);
+
+    if (feature.devDependencyNames) {
+      for (const name of feature.devDependencyNames) {
+        if (sourcePkg.devDependencies[name]) {
+          devDependencies[name] = sourcePkg.devDependencies[name];
+        } else {
+          console.warn(`DevDependency "${name}" not found in source package.json`);
+        }
+      }
     }
   }
 
@@ -86,16 +133,31 @@ export function mergeScripts(featureIds: string[]): Record<string, string> {
 
 /**
  * Compute file structure for selected features
+ *
+ * When the 'testing' feature is selected, testFiles from all selected features
+ * are also included. This ensures scaffolded projects get tests that match
+ * their source files.
  */
 export function computeFileStructure(featureIds: string[]): string[] {
   const files = new Set<string>();
+  const includeTests = featureIds.includes('testing');
 
   for (const featureId of featureIds) {
     const feature = FEATURES[featureId];
-    if (!feature?.files) continue;
+    if (!feature) continue;
 
-    for (const file of feature.files) {
-      files.add(file);
+    // Always include source files
+    if (feature.files) {
+      for (const file of feature.files) {
+        files.add(file);
+      }
+    }
+
+    // Include test files only when testing feature is selected
+    if (includeTests && feature.testFiles) {
+      for (const file of feature.testFiles) {
+        files.add(file);
+      }
     }
   }
 
@@ -227,8 +289,11 @@ ${commandLines.join('\n')}
 
   if (featureIds.includes('testing')) {
     structureParts.push('');
-    structureParts.push('tests/unit/        # Vitest (mirrors src/)');
-    structureParts.push('e2e/               # Playwright tests');
+    structureParts.push('# Unit tests co-located: *.test.ts/tsx next to source');
+    structureParts.push('e2e/tests/         # Playwright functional E2E tests');
+    if (featureIds.includes('performance')) {
+      structureParts.push('e2e/performance/   # Performance regression tests');
+    }
   }
 
   sections.push(`
@@ -405,7 +470,7 @@ See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).`);
 
 See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
 
-Tests in \`tests/unit/\` mirror \`src/\` structure. 80% coverage required.
+Unit tests are **co-located** with source files (\`*.test.ts/tsx\`). 80% coverage required.
 
 \`\`\`typescript
 import { describe, it, expect, vi } from 'vitest';
@@ -443,6 +508,17 @@ ${gotchas.map((g, i) => `${i + 1}. ${g}`).join('\n')}
  * Generate vite-env.d.ts content based on selected features
  */
 export function generateViteEnvDts(featureIds: string[]): string {
+  const sections: string[] = [];
+
+  // Add .po module declaration if i18n feature is selected (LinguiJS uses .po files)
+  if (featureIds.includes('i18n')) {
+    sections.push(`declare module '*.po' {
+  import type { Messages } from '@lingui/core';
+  export const messages: Messages;
+}`);
+  }
+
+  // Build env vars section
   const envVars: string[] = [];
 
   // Core env vars (always included)
@@ -460,7 +536,7 @@ export function generateViteEnvDts(featureIds: string[]): string {
     envVars.push('  readonly VITE_SENTRY_ENABLED: string;');
   }
 
-  return `/// <reference types="vite/client" />
+  sections.push(`/// <reference types="vite/client" />
 
 interface ImportMetaEnv {
 ${envVars.join('\n')}
@@ -468,8 +544,9 @@ ${envVars.join('\n')}
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
-}
-`;
+}`);
+
+  return sections.join('\n\n') + '\n';
 }
 
 /**
@@ -540,7 +617,7 @@ ${envFields.join('\n')}
     }
   }
 
-  return result.success ? result.data : (env as Env);
+  return result.data
 }
 
 /**
@@ -602,8 +679,8 @@ export async function computeScaffold(
   const sourcePackageJson = await readSourcePackageJson();
   const engines = (sourcePackageJson.engines as Record<string, string>) || {};
 
-  // Merge all dependencies
-  const { dependencies, devDependencies } = mergeDependencies(resolvedFeatures);
+  // Merge all dependencies (async to read versions from source package.json)
+  const { dependencies, devDependencies } = await mergeDependencies(resolvedFeatures);
 
   // Merge all scripts
   const scripts = mergeScripts(resolvedFeatures);

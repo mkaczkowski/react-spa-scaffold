@@ -150,7 +150,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 IMPORTANT: During Phase 5 (Implementation), follow TDD strictly:
 - Write failing tests BEFORE implementation code
 - Follow Red-Green-Refactor cycle
-- Place tests in tests/unit/ mirroring src/
+- Place tests next to source files (e.g., `useAuth.test.ts` beside `useAuth.ts`)
 - Reference docs/TESTING.md for test patterns
 ```
 

@@ -95,7 +95,7 @@ CREATE: src/components/[Feature].tsx
 MODIFY: src/pages/[Page].tsx
   - [what changes]
 
-CREATE: tests/unit/hooks/use[Feature].test.ts
+CREATE: src/hooks/use[Feature].test.ts
 ```
 
 ### 2.3 Get Approval
@@ -151,7 +151,7 @@ Run test - it should pass.
 
 ### Implementation Rules
 
-- Tests in `tests/unit/` mirroring `src/` structure
+- Tests co-located with source files (e.g., `Button.tsx` + `Button.test.tsx`)
 - Use `@/` import alias
 - Named exports + Props interface for components
 - Translator comments on all user-facing text

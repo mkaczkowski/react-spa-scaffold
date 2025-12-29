@@ -7,6 +7,7 @@ import './index.css';
 import { ErrorBoundary } from '@/components/shared';
 import { Toaster } from '@/components/ui/sonner';
 import { MobileProvider } from '@/contexts/mobileContext';
+import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 import { QueryProvider } from '@/contexts/queryContext';
 import { i18n, initI18n } from '@/i18n';
 import { SENTRY_CONFIG } from '@/lib/config';
@@ -75,8 +76,10 @@ initI18n().then(() => {
           <BrowserRouter>
             <MobileProvider>
               <ErrorBoundary>
-                <App />
-                <Toaster />
+                <PerformanceProviderWrapper>
+                  <App />
+                  <Toaster />
+                </PerformanceProviderWrapper>
               </ErrorBoundary>
             </MobileProvider>
           </BrowserRouter>
