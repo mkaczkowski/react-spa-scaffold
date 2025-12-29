@@ -1,0 +1,56 @@
+{
+  "name": "@react-spa-scaffold/eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint configuration for react-spa-scaffold projects",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./base": "./base.js",
+    "./react": "./index.js",
+    "./node": "./node.js"
+  },
+  "files": [
+    "*.js"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "react-spa-scaffold"
+  ],
+  "author": "Mariusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
+    "directory": "packages/eslint-config"
+  },
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/eslint-config#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
+  },
+  "peerDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-lingui": "^0.11.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-lingui": {
+      "optional": true
+    },
+    "eslint-plugin-react-hooks": {
+      "optional": true
+    },
+    "eslint-plugin-react-refresh": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "@react-spa-scaffold/mcp",
+  "version": "0.3.0",
+  "description": "MCP server for scaffolding projects based on react-spa-scaffold template",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "react-spa-scaffold-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "bundle": "node scripts/bundle-templates.js",
+    "prepublishOnly": "npm run bundle && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "react-spa-scaffold",
+    "scaffolding",
+    "react",
+    "typescript"
+  ],
+  "author": "Mariusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@react-spa-scaffold/tsconfig": "*",
+    "typescript": "~5.9.0",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

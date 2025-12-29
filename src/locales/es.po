@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Language: es\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. Button label to navigate back to the home page from 404 error
+#: src/pages/NotFound.tsx:23
+msgid "Back to Home"
+msgstr ""
+
+#. Accessibility label for the language selector dropdown button
+#: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:24
+msgid "Change language"
+msgstr "Cambiar idioma"
+
+#. Instructions for developers on how to start customizing the app
+#: src/pages/Home.tsx:10
+msgid "Get started by editing <0>src/App.tsx</0>"
+msgstr "Comienza editando <0>src/App.tsx</0>"
+
+#: src/components/ui/loading.tsx:54
+msgid "Loading..."
+msgstr ""
+
+#. Application name displayed in the header navigation
+#: src/components/layout/Header.tsx:10
+msgid "My App"
+msgstr "Mi App"
+
+#. Heading shown on 404 error page when URL doesn't exist
+#: src/pages/NotFound.tsx:13
+msgid "Page Not Found"
+msgstr ""
+
+#. Accessibility label when clicking will switch to dark theme
+#. Accessibility label when clicking will switch to dark theme
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:26
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:29
+msgid "Switch to dark mode"
+msgstr "Cambiar a modo oscuro"
+
+#. Accessibility label when clicking will switch to light theme
+#. Accessibility label when clicking will switch to light theme
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:22
+#: src/components/shared/ThemeToggle/ThemeToggle.tsx:30
+msgid "Switch to light mode"
+msgstr "Cambiar a modo claro"
+
+#. Explanation message on 404 error page
+#: src/pages/NotFound.tsx:16
+msgid "The page you're looking for doesn't exist or has been moved."
+msgstr ""
+
+#. Main heading on the home page
+#: src/pages/Home.tsx:7
+msgid "Welcome to My App"
+msgstr "Bienvenido a Mi App"

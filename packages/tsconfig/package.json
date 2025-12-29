@@ -1,0 +1,38 @@
+{
+  "name": "@react-spa-scaffold/tsconfig",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configurations for react-spa-scaffold projects",
+  "type": "module",
+  "exports": {
+    "./base": "./base.json",
+    "./react": "./react.json",
+    "./node": "./node.json",
+    "./vite": "./vite.json"
+  },
+  "files": [
+    "*.json"
+  ],
+  "keywords": [
+    "tsconfig",
+    "typescript",
+    "react-spa-scaffold"
+  ],
+  "author": "Mariusz Kaczkowski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkaczkowski/react-spa-scaffold.git",
+    "directory": "packages/tsconfig"
+  },
+  "homepage": "https://github.com/mkaczkowski/react-spa-scaffold/tree/main/packages/tsconfig#readme",
+  "bugs": {
+    "url": "https://github.com/mkaczkowski/react-spa-scaffold/issues"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
