@@ -15,11 +15,7 @@ export default [
 
   // UI components from shadcn and context/provider files - don't modify
   {
-    files: [
-      '**/components/ui/**/*.{ts,tsx}',
-      '**/contexts/**/*.{ts,tsx}',
-      '**/test/**/*.{ts,tsx}',
-    ],
+    files: ['**/components/ui/**/*.{ts,tsx}', '**/contexts/**/*.{ts,tsx}', '**/test/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
