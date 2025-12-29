@@ -28,7 +28,7 @@ if (existsSync(TEMPLATES_DIR)) {
 mkdirSync(TEMPLATES_DIR, { recursive: true });
 
 // Directories to copy
-const directories = ['docs', 'src', 'tests'];
+const directories = ['docs', 'src', 'tests', 'e2e', '.github', '.husky', 'public'];
 
 for (const dir of directories) {
   const src = join(WEBAPP_BASE_DIR, dir);
@@ -42,8 +42,40 @@ for (const dir of directories) {
   }
 }
 
-// Copy individual files
-const files = ['CLAUDE.md'];
+// Copy individual files (CLAUDE.md, package.json, and all config files from feature registry)
+const files = [
+  // Core
+  'CLAUDE.md',
+  'package.json',
+  'index.html',
+  '.env.example',
+  '.nvmrc',
+
+  // Build config (core feature)
+  'vite.config.ts',
+  'tsconfig.json',
+  'tsconfig.app.json',
+  'tsconfig.node.json',
+
+  // UI feature
+  'components.json',
+
+  // Testing feature
+  'vitest.config.ts',
+  'playwright.config.ts',
+
+  // Devtools feature
+  'eslint.config.js',
+  'prettier.config.js',
+  'commitlint.config.js',
+
+  // i18n feature
+  'lingui.config.js',
+
+  // CI feature
+  'lighthouserc.json',
+  'lighthouse-budget.json',
+];
 
 for (const file of files) {
   const src = join(WEBAPP_BASE_DIR, file);
