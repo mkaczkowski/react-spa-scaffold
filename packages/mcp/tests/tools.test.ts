@@ -230,6 +230,20 @@ describe('get_scaffold tool', () => {
     const componentsJson = JSON.parse(result.configFiles['components.json']);
     expect(componentsJson.style).toBe('radix-nova');
   });
+
+  it('always includes .gitignore in fileStructure (core feature)', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.fileStructure).toContain('.gitignore');
+  });
+
+  it('always includes .gitignore content in configFiles (core feature)', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.configFiles).toHaveProperty('.gitignore');
+    expect(result.configFiles['.gitignore']).toContain('node_modules');
+    expect(result.configFiles['.gitignore']).toContain('dist/');
+  });
 });
 
 describe('get_example tool', () => {

@@ -89,6 +89,22 @@ for (const file of files) {
   }
 }
 
+// Copy dotfiles that npm would otherwise strip (rename to avoid npm ignoring them)
+// npm removes .gitignore files during publish, so we rename them
+const dotfileRenames = [{ src: '.gitignore', dest: 'gitignore' }];
+
+for (const { src, dest } of dotfileRenames) {
+  const srcPath = join(WEBAPP_BASE_DIR, src);
+  const destPath = join(TEMPLATES_DIR, dest);
+
+  if (existsSync(srcPath)) {
+    cpSync(srcPath, destPath);
+    console.log(`  Copied ${src} → ${dest} (renamed to avoid npm stripping)`);
+  } else {
+    console.warn(`  Warning: ${src} not found, skipping`);
+  }
+}
+
 // Create marker file to indicate this is a bundled distribution
 writeFileSync(join(TEMPLATES_DIR, '.bundled'), '');
 console.log('  Created .bundled marker');

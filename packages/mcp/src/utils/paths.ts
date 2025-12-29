@@ -40,8 +40,24 @@ export const isNpxMode = existsSync(BUNDLE_MARKER);
 export const TEMPLATES_ROOT = isNpxMode ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
 
 /**
- * Resolve a path relative to templates root
+ * Dotfiles that npm strips during publish, renamed in bundled templates.
+ * Maps from original name → bundled name
+ */
+const RENAMED_DOTFILES: Record<string, string> = {
+  '.gitignore': 'gitignore',
+};
+
+/**
+ * Resolve a path relative to templates root.
+ * In npx mode, handles renamed dotfiles (npm strips .gitignore during publish).
  */
 export function resolveTemplatePath(relativePath: string): string {
-  return join(TEMPLATES_ROOT, relativePath);
+  let resolvedPath = relativePath;
+
+  // In npx mode, use renamed versions of dotfiles that npm would strip
+  if (isNpxMode && RENAMED_DOTFILES[relativePath]) {
+    resolvedPath = RENAMED_DOTFILES[relativePath];
+  }
+
+  return join(TEMPLATES_ROOT, resolvedPath);
 }

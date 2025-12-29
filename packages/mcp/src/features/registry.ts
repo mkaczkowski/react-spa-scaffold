@@ -69,6 +69,7 @@ const core: Feature = {
     'tsconfig.app.json',
     'tsconfig.node.json',
     '.env.example',
+    '.gitignore',
     'public/favicon.svg',
   ],
   patterns: ['component-shared', 'hook-effect', 'error-boundary'],
@@ -78,7 +79,7 @@ const core: Feature = {
     preview: 'vite preview',
     typecheck: 'tsc --noEmit',
   },
-  configFiles: ['vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json'],
+  configFiles: ['vite.config.ts', 'tsconfig.json', 'tsconfig.app.json', 'tsconfig.node.json', '.gitignore'],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
