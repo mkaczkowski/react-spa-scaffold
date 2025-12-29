@@ -111,7 +111,7 @@
     "vitest": "^4.0.16"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "*.{ts,tsx,js}": [
       "eslint --fix",
       "prettier --write"
     ],
