@@ -211,28 +211,40 @@ refactor(hooks): simplify useAuth implementation
 
 ## Releasing
 
-> Note: Releases are managed by maintainers.
+This project uses [Changesets](https://github.com/changesets/changesets) for automated versioning and publishing.
 
-### Version Bumping
+### Adding a Changeset
 
-This project uses semantic versioning. Update versions in:
-
-- Root `package.json`
-- Individual package `package.json` files
-- `CHANGELOG.md`
-
-### Publishing Packages
+When your PR changes a package, add a changeset:
 
 ```bash
-# Build all packages
-npm run build -ws
-
-# Publish packages (maintainers only)
-npm publish -w @react-spa-scaffold/mcp
-npm publish -w @react-spa-scaffold/eslint-config
-npm publish -w @react-spa-scaffold/prettier-config
-npm publish -w @react-spa-scaffold/tsconfig
+npm run changeset
 ```
+
+This will prompt you to:
+
+1. Select affected packages
+2. Choose version bump type (patch/minor/major)
+3. Write a summary (appears in CHANGELOG)
+
+A `.changeset/*.md` file is created. **Commit this file with your PR**.
+
+### When to Add Changesets
+
+| Change Type     | Version Bump | Example               |
+| --------------- | ------------ | --------------------- |
+| Bug fix         | `patch`      | Fix export issue      |
+| New feature     | `minor`      | Add new config option |
+| Breaking change | `major`      | Remove deprecated API |
+
+**Skip changesets** for: docs-only, tests-only, CI changes, or changes to the root app (not published).
+
+### Release Flow
+
+1. PR merged → changesets accumulate on `master`
+2. Bot opens "Version Packages" PR (auto-created)
+3. Maintainer merges version PR
+4. Packages auto-publish to npm + GitHub releases created
 
 ---
 
