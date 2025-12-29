@@ -19,6 +19,7 @@ const config = {
   printWidth: 120,
   tabWidth: 2,
   useTabs: false,
+  endOfLine: 'lf',
 };
 
 export default config;
