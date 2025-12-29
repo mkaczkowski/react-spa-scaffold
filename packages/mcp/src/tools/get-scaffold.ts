@@ -121,14 +121,13 @@ ${hasRouting ? '\n6. Create src/lib/routes.ts using the provided routesTs conten
    npm run dev
    \`\`\`
 
+## SEO Setup
+- SEO component is always included (from core feature)
+
 ## Notes
 - Core feature is always included
-- Auto-included features are dependencies of selected features
 - Use get_example tool to get code patterns for each file type
-- CLAUDE.md content is dynamically generated based on selected features
-- vite-env.d.ts content is dynamically generated based on selected features
-- env.ts content is dynamically generated based on selected features${hasRouting ? '\n- routes.ts content is dynamically generated based on selected features' : ''}
-- docs/ content is filtered based on selected features`;
+- CLAUDE.md, vite-env.d.ts, env.ts content is dynamically generated based on selected features`;
 }
 
 export const getScaffoldToolDefinition = {
@@ -154,6 +153,12 @@ The AI agent should use this information to:
 
 Feature dependencies (auto-included):
 - theming → state (for Zustand persistence)
+
+SEO Component (always included from core):
+- Import in App.tsx: import { SEO } from '@/components/shared';
+- Add <SEO description="..." /> in App.tsx for site-wide default meta tags
+- Individual pages can override with page-specific SEO props
+- Use get_example with pattern 'seo-component' for implementation details
 
 When forms feature is selected:
 - RegisterForm component is displayed on HomePage

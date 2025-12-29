@@ -69,7 +69,7 @@ const core: Feature = {
     '.gitignore',
     'public/favicon.svg',
   ],
-  patterns: ['component-shared', 'hook-effect', 'error-boundary'],
+  patterns: ['component-shared', 'hook-effect', 'error-boundary', 'seo-component'],
   scripts: {
     dev: 'vite',
     build: 'tsc -b && vite build',
