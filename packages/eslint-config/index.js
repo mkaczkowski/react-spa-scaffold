@@ -54,21 +54,56 @@ const config = tseslint.config(
             '^\\(.*\\)$', // CSS media queries
           ],
           ignoreNames: [
-            'className', 'styleName', 'type', 'id', 'key', 'name',
-            'variant', 'size', 'href', 'to', 'src', 'alt',
-            'data-testid', 'role', 'path', 'element',
-            'viewBox', 'd', 'fill', 'stroke', 'strokeWidth',
-            'strokeLinecap', 'strokeLinejoin',
-            'queryKey', 'staleTime',
+            'className',
+            'styleName',
+            'type',
+            'id',
+            'key',
+            'name',
+            'variant',
+            'size',
+            'href',
+            'to',
+            'src',
+            'alt',
+            'data-testid',
+            'role',
+            'path',
+            'element',
+            'viewBox',
+            'd',
+            'fill',
+            'stroke',
+            'strokeWidth',
+            'strokeLinecap',
+            'strokeLinejoin',
+            'queryKey',
+            'staleTime',
             // Component props - don't need translation for prop values
-            'align', 'side', 'asChild', 'open', 'disabled',
-            'ogType', 'ogImage', 'canonical', 'noIndex', // SEO component props
+            'align',
+            'side',
+            'asChild',
+            'open',
+            'disabled',
+            'ogType',
+            'ogImage',
+            'canonical',
+            'noIndex', // SEO component props
           ],
           ignoreFunctions: [
-            'console.*', 'Error', 'TypeError', 'require', 'import',
-            'matchMedia', 'addEventListener', 'removeEventListener',
-            'querySelector', 'querySelectorAll',
-            'getAttribute', 'setAttribute', 'classList.*',
+            'console.*',
+            'Error',
+            'TypeError',
+            'require',
+            'import',
+            'matchMedia',
+            'addEventListener',
+            'removeEventListener',
+            'querySelector',
+            'querySelectorAll',
+            'getAttribute',
+            'setAttribute',
+            'classList.*',
           ],
         },
       ],
@@ -112,13 +147,13 @@ const config = tseslint.config(
       'src/test/**/*.{ts,tsx}',
       'src/test-*.{ts,tsx}',
       // Technical/non-user-facing files
-      'src/lib/**/*.{ts,tsx}',        // API, utilities, format, validation
-      'src/hooks/**/*.{ts,tsx}',      // Custom hooks with technical strings
-      'src/i18n/**/*.{ts,tsx}',       // i18n configuration
-      'src/stores/**/*.{ts,tsx}',     // Store configuration
-      'src/contexts/**/*.{ts,tsx}',   // Context providers with technical strings
+      'src/lib/**/*.{ts,tsx}', // API, utilities, format, validation
+      'src/hooks/**/*.{ts,tsx}', // Custom hooks with technical strings
+      'src/i18n/**/*.{ts,tsx}', // i18n configuration
+      'src/stores/**/*.{ts,tsx}', // Store configuration
+      'src/contexts/**/*.{ts,tsx}', // Context providers with technical strings
       'src/components/shared/SEO/**/*.{ts,tsx}', // SEO component (metadata only)
-      'src/main.tsx',                 // App setup
+      'src/main.tsx', // App setup
       'packages/mcp/templates/**/*.{ts,tsx}', // Template files
     ],
     rules: {
