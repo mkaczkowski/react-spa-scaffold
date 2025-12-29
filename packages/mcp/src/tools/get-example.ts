@@ -13,7 +13,7 @@ const AVAILABLE_PATTERNS = getAvailablePatterns() as [string, ...string[]];
 
 export const getExampleSchema = z.object({
   pattern: z.enum(AVAILABLE_PATTERNS, {
-    errorMap: () => ({ message: `Invalid pattern. Available: ${AVAILABLE_PATTERNS.join(', ')}` }),
+    error: `Invalid pattern. Available: ${AVAILABLE_PATTERNS.join(', ')}`,
   }),
 });
 

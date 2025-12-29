@@ -14,12 +14,17 @@ export const getScaffoldSchema = z.object({
   features: z
     .array(z.string())
     .max(15, 'Maximum 15 features allowed')
-    .refine(
-      (features) => features.every((f) => f in FEATURES),
-      (features) => ({
-        message: `Invalid features: ${features.filter((f) => !(f in FEATURES)).join(', ')}. Valid: ${FEATURE_IDS.join(', ')}`,
-      }),
-    )
+    .check((ctx) => {
+      const invalidFeatures = ctx.value.filter((f: string) => !(f in FEATURES));
+      if (invalidFeatures.length > 0) {
+        ctx.issues.push({
+          code: 'custom',
+          message: `Invalid features: ${invalidFeatures.join(', ')}. Valid: ${FEATURE_IDS.join(', ')}`,
+          input: ctx.value,
+          path: [],
+        });
+      }
+    })
     .describe('List of feature IDs to include (e.g., ["routing", "ui", "forms"])'),
   projectName: z
     .string()
