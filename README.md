@@ -98,9 +98,10 @@ src/
 ├── test/            # Test utilities and providers
 └── types/           # TypeScript types
 
-tests/unit/          # Vitest tests (mirrors src/)
 e2e/                 # Playwright E2E tests
 ```
+
+Tests are co-located with source files (e.g., `Button.tsx` + `Button.test.tsx`).
 
 ## Quick Start
 

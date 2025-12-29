@@ -229,19 +229,20 @@ const PATTERN_MAP: Record<
     ],
   },
 
-  // Test patterns
+  // Test patterns (co-located with source files)
   'test-component': {
-    file: 'tests/unit/components/Header.test.tsx',
+    file: 'src/components/layout/Header.test.tsx',
     description: 'Component test with Testing Library',
     keyPoints: [
       'Import from vitest (describe, it, expect)',
       'Custom render from @/test',
       'screen queries (getByRole, getByText)',
       'Semantic role assertions',
+      'Co-located with component source file',
     ],
   },
   'test-hook': {
-    file: 'tests/unit/hooks/useMediaQuery.test.ts',
+    file: 'src/hooks/useMediaQuery.test.ts',
     description: 'Hook test with renderHook',
     keyPoints: [
       'renderHook from Testing Library',
@@ -249,16 +250,18 @@ const PATTERN_MAP: Record<
       'beforeEach for setup',
       'it.each for parameterized tests',
       'act() for state updates',
+      'Co-located with hook source file',
     ],
   },
   'test-store': {
-    file: 'tests/unit/stores/preferencesStore.test.ts',
+    file: 'src/stores/preferencesStore.test.ts',
     description: 'Zustand store test',
     keyPoints: [
       'Direct store access: useStore.getState()',
       'act() wrapper for state changes',
       'Reset state in beforeEach',
       'Test actions and computed values',
+      'Co-located with store source file',
     ],
   },
   'msw-handler': {

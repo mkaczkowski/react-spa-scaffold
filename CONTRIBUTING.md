@@ -91,7 +91,6 @@ react-spa-scaffold/
 │   ├── eslint-config/     # Shared ESLint config
 │   ├── prettier-config/   # Shared Prettier config
 │   └── tsconfig/          # Shared TypeScript configs
-├── tests/unit/            # Unit tests (Vitest)
 ├── e2e/                   # E2E tests (Playwright)
 └── docs/                  # Documentation
 ```

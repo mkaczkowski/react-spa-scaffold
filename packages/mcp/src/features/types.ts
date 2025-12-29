@@ -19,6 +19,12 @@ export interface Feature {
   dependencyNames?: string[];
   devDependencyNames?: string[];
   files: string[];
+  /**
+   * Test files associated with this feature.
+   * Only included in scaffold when the 'testing' feature is also selected.
+   * This keeps feature source files separate from test infrastructure concerns.
+   */
+  testFiles?: string[];
   patterns: string[];
   options?: Record<string, FeatureOption>;
   scripts?: Record<string, string>;

@@ -4,19 +4,7 @@
 
 - **Framework**: Vitest + React Testing Library
 - **Coverage threshold**: 80% (lines, branches, functions, statements)
-- **Test location**: `tests/unit/` mirroring `src/` structure
-
-## File Structure
-
-```
-tests/unit/
-├── components/     # Component tests
-├── hooks/          # Hook tests
-├── lib/            # Utility function tests
-├── stores/         # Zustand store tests
-├── contexts/       # Context provider tests
-└── i18n/           # Internationalization tests
-```
+- **Test location**: Co-located with source files (e.g., `Button.tsx` + `Button.test.tsx`)
 
 ## Naming Conventions
 
@@ -85,7 +73,7 @@ describe('useMediaQuery', () => {
 
 ### Component Testing
 
-```typescript
+```tsx
 import { screen } from '@testing-library/react';
 import { render } from '@/test';
 

@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedReference
+
 /**
  * Scaffold computation utilities
  */
@@ -131,16 +133,31 @@ export function mergeScripts(featureIds: string[]): Record<string, string> {
 
 /**
  * Compute file structure for selected features
+ *
+ * When the 'testing' feature is selected, testFiles from all selected features
+ * are also included. This ensures scaffolded projects get tests that match
+ * their source files.
  */
 export function computeFileStructure(featureIds: string[]): string[] {
   const files = new Set<string>();
+  const includeTests = featureIds.includes('testing');
 
   for (const featureId of featureIds) {
     const feature = FEATURES[featureId];
-    if (!feature?.files) continue;
+    if (!feature) continue;
 
-    for (const file of feature.files) {
-      files.add(file);
+    // Always include source files
+    if (feature.files) {
+      for (const file of feature.files) {
+        files.add(file);
+      }
+    }
+
+    // Include test files only when testing feature is selected
+    if (includeTests && feature.testFiles) {
+      for (const file of feature.testFiles) {
+        files.add(file);
+      }
     }
   }
 
@@ -272,8 +289,11 @@ ${commandLines.join('\n')}
 
   if (featureIds.includes('testing')) {
     structureParts.push('');
-    structureParts.push('tests/unit/        # Vitest (mirrors src/)');
-    structureParts.push('e2e/               # Playwright tests');
+    structureParts.push('# Unit tests co-located: *.test.ts/tsx next to source');
+    structureParts.push('e2e/tests/         # Playwright functional E2E tests');
+    if (featureIds.includes('performance')) {
+      structureParts.push('e2e/performance/   # Performance regression tests');
+    }
   }
 
   sections.push(`
@@ -450,7 +470,7 @@ See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md).`);
 
 See [docs/TESTING.md](docs/TESTING.md) and [docs/E2E_TESTING.md](docs/E2E_TESTING.md).
 
-Tests in \`tests/unit/\` mirror \`src/\` structure. 80% coverage required.
+Unit tests are **co-located** with source files (\`*.test.ts/tsx\`). 80% coverage required.
 
 \`\`\`typescript
 import { describe, it, expect, vi } from 'vitest';
@@ -597,7 +617,7 @@ ${envFields.join('\n')}
     }
   }
 
-  return result.success ? result.data : (env as Env);
+  return result.data
 }
 
 /**

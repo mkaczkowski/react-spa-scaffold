@@ -65,6 +65,12 @@ const core: Feature = {
     '.gitignore',
     'public/favicon.svg',
   ],
+  testFiles: [
+    'src/lib/utils.test.ts',
+    'src/components/shared/SEO/SEO.test.tsx',
+    'src/components/shared/ErrorBoundary/ErrorBoundary.test.tsx',
+    'e2e/tests/home.spec.ts',
+  ],
   patterns: ['component-shared', 'hook-effect', 'error-boundary', 'seo-component'],
   scripts: {
     dev: 'vite',
@@ -101,6 +107,7 @@ const mobile: Feature = {
   ],
   // No additional dependencies - pure React implementation
   files: ['src/contexts/mobileContext.tsx', 'src/hooks/useMediaQuery.ts', 'src/hooks/useTouchSizes.ts'],
+  testFiles: ['src/contexts/mobileContext.test.tsx', 'src/hooks/useMediaQuery.test.ts'],
   patterns: ['mobile-context', 'use-media-query', 'use-touch-sizes'],
   scripts: {},
 };
@@ -130,6 +137,7 @@ const routing: Feature = {
     'src/components/ui/loading.tsx',
     'src/components/ui/visually-hidden.tsx',
   ],
+  testFiles: ['e2e/tests/navigation.spec.ts'],
   patterns: ['lazy-page', 'route-constants', 'page-component'],
   scripts: {},
 };
@@ -176,6 +184,7 @@ const ui: Feature = {
     'src/components/layout/index.ts',
     'components.json',
   ],
+  testFiles: ['src/components/ui/loading.test.tsx', 'src/components/layout/Header.test.tsx'],
   patterns: ['component-ui', 'button-variants', 'forward-ref-component'],
   scripts: {},
   configFiles: ['components.json'],
@@ -212,6 +221,11 @@ const forms: Feature = {
     'src/components/shared/RegisterForm/RegisterForm.tsx',
     'src/components/shared/RegisterForm/index.ts',
   ],
+  testFiles: [
+    'src/lib/validations.test.ts',
+    'src/hooks/useRegisterForm.test.tsx',
+    'src/components/shared/RegisterForm/RegisterForm.test.tsx',
+  ],
   patterns: ['zod-schema', 'hook-form', 'form-error-component', 'register-form'],
   scripts: {},
 };
@@ -242,6 +256,7 @@ const state: Feature = {
     'src/lib/storageKeys.ts',
     'src/types/preferences.ts',
   ],
+  testFiles: ['src/lib/storage.test.ts', 'src/stores/preferencesStore.test.ts'],
   patterns: ['zustand-store', 'store-persistence', 'multi-tab-sync', 'storage-utility'],
   scripts: {},
 };
@@ -265,6 +280,7 @@ const api: Feature = {
   ],
   dependencyNames: ['@tanstack/react-query'],
   files: ['src/lib/api.ts', 'src/contexts/queryContext.tsx', 'src/hooks/useExampleQuery.ts', 'src/types/api.ts'],
+  testFiles: ['src/lib/api.test.ts', 'src/hooks/useExampleQuery.test.tsx'],
   patterns: ['query-provider', 'use-query-hook', 'api-client'],
   scripts: {},
 };
@@ -309,6 +325,13 @@ const i18n: Feature = {
     'src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx',
     'src/components/shared/LanguageSwitcher/index.ts',
     'lingui.config.js',
+  ],
+  testFiles: [
+    'src/i18n/detectLanguage.test.ts',
+    'src/i18n/loadCatalog.test.ts',
+    'src/hooks/useLanguage.test.tsx',
+    'src/components/shared/LanguageSwitcher/LanguageSwitcher.test.tsx',
+    'e2e/tests/language.spec.ts',
   ],
   patterns: ['i18n-index', 'trans-component', 't-function', 'language-switcher', 'use-language-hook'],
   scripts: {
@@ -358,9 +381,8 @@ const testing: Feature = {
     'src/mocks/fixtures/index.ts',
     'src/mocks/node.ts',
     'src/mocks/index.ts',
-    'tests/unit/',
-    'e2e/tests/',
     'e2e/fixtures/',
+    'e2e/tests/',
     'vitest.config.ts',
     'playwright.config.ts',
     'docs/TESTING.md',
@@ -398,12 +420,8 @@ const performance: Feature = {
   ],
   dependencyNames: ['react-performance-tracking'],
   devDependencyNames: ['chrome-launcher', 'lighthouse'],
-  files: [
-    'src/contexts/performanceContext.tsx',
-    'e2e/performance/setup.ts',
-    'e2e/performance/home.spec.ts',
-    'tests/unit/contexts/performanceContext.test.tsx',
-  ],
+  files: ['src/contexts/performanceContext.tsx', 'e2e/performance/setup.ts'],
+  testFiles: ['e2e/performance/home.spec.ts', 'src/contexts/performanceContext.test.tsx'],
   patterns: ['performance-context', 'performance-e2e', 'profiler-wrapper'],
   scripts: {
     'e2e:perf': 'PERF_TEST=true playwright test --project=performance',
@@ -552,6 +570,11 @@ const theming: Feature = {
     'src/hooks/useThemeEffect.ts',
     'src/components/shared/ThemeToggle/ThemeToggle.tsx',
     'src/components/shared/ThemeToggle/index.ts',
+  ],
+  testFiles: [
+    'src/hooks/useThemeEffect.test.ts',
+    'src/components/shared/ThemeToggle/ThemeToggle.test.tsx',
+    'e2e/tests/theme.spec.ts',
   ],
   patterns: ['theme-toggle', 'hook-effect'],
   scripts: {},

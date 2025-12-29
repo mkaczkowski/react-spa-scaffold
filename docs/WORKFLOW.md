@@ -71,12 +71,12 @@ The `tdd-workflow` skill (`.claude/skills/tdd-workflow/SKILL.md`) provides TDD g
 
 ### Test Location
 
-Tests go in `tests/unit/` mirroring `src/`:
+Tests are co-located with source files:
 
-| Source                      | Test                                    |
-| --------------------------- | --------------------------------------- |
-| `src/hooks/useAuth.ts`      | `tests/unit/hooks/useAuth.test.ts`      |
-| `src/components/Button.tsx` | `tests/unit/components/Button.test.tsx` |
+| Source                      | Test                             |
+| --------------------------- | -------------------------------- |
+| `src/hooks/useAuth.ts`      | `src/hooks/useAuth.test.ts`      |
+| `src/components/Button.tsx` | `src/components/Button.test.tsx` |
 
 ### Test Patterns
 
