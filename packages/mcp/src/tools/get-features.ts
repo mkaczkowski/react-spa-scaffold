@@ -7,7 +7,9 @@
  */
 
 import { FEATURES, FEATURE_IDS } from '../features/index.js';
+import type { ToolDefinition } from './types.js';
 
+/** Feature summary returned by get_features tool. */
 export interface FeatureSummary {
   id: string;
   name: string;
@@ -16,6 +18,17 @@ export interface FeatureSummary {
   includes: string[];
 }
 
+/**
+ * Lists all available features for scaffolding.
+ *
+ * @returns Array of feature summaries with id, name, description, required flag, and includes
+ *
+ * @example
+ * ```typescript
+ * const features = getFeatures();
+ * // [{ id: 'core', name: 'Core', required: true, ... }, ...]
+ * ```
+ */
 export function getFeatures(): FeatureSummary[] {
   return FEATURE_IDS.map((id): FeatureSummary => {
     const feature = FEATURES[id];
@@ -29,7 +42,8 @@ export function getFeatures(): FeatureSummary[] {
   });
 }
 
-export const getFeaturesToolDefinition = {
+/** Tool definition for get_features - no input required. */
+export const getFeaturesToolDefinition: ToolDefinition = {
   name: 'get_features',
   description: `List all available feature modules for react-spa-scaffold project scaffolding.
 
@@ -48,8 +62,8 @@ Returns a list of features that can be selected when creating a new project:
 
 Use this to understand available options before scaffolding a project.`,
   inputSchema: {
-    type: 'object' as const,
+    type: 'object',
     properties: {},
-    required: [] as string[],
+    required: [],
   },
 };

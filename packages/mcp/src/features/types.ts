@@ -36,18 +36,13 @@ export interface Feature {
   description: string;
   required: boolean;
   includes: string[];
-  /**
-   * Dependency package names - versions resolved from webapp-base package.json at runtime.
-   * This ensures scaffolded projects always get up-to-date dependency versions.
-   */
+  /** Other features this feature depends on (auto-included when this feature is selected). */
+  requires?: FeatureId[];
+  /** Dependency package names - versions resolved from package.json at runtime. */
   dependencyNames?: string[];
   devDependencyNames?: string[];
   files: string[];
-  /**
-   * Test files associated with this feature.
-   * Only included in scaffold when the 'testing' feature is also selected.
-   * This keeps feature source files separate from test infrastructure concerns.
-   */
+  /** Test files - only included when 'testing' feature is also selected. */
   testFiles?: string[];
   patterns: string[];
   scripts?: Record<string, string>;

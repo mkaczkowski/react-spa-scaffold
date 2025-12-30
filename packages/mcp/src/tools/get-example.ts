@@ -8,9 +8,11 @@
 
 import { z } from 'zod';
 import { getCodeExample, getAvailablePatterns } from '../utils/index.js';
+import type { ToolDefinition } from './types.js';
 
 const AVAILABLE_PATTERNS = getAvailablePatterns() as [string, ...string[]];
 
+/** Zod schema for get_example input - single source of truth. */
 export const getExampleSchema = z.object({
   pattern: z.enum(AVAILABLE_PATTERNS, {
     error: `Invalid pattern. Available: ${AVAILABLE_PATTERNS.join(', ')}`,
@@ -63,7 +65,8 @@ function generateUsageHint(pattern: string): string {
   return hints[pattern] || 'Follow the file path shown in the example';
 }
 
-export const getExampleToolDefinition = {
+/** Tool definition derived from Zod schema (Zod v4 native). */
+export const getExampleToolDefinition: ToolDefinition = {
   name: 'get_example',
   description: `Get real code example for a specific pattern type.
 
@@ -88,15 +91,5 @@ Each example includes:
 - Actual working code
 - Key points explaining the pattern
 - File path where it should be placed`,
-  inputSchema: {
-    type: 'object' as const,
-    properties: {
-      pattern: {
-        type: 'string' as const,
-        description: 'Pattern type to get example for',
-        enum: AVAILABLE_PATTERNS,
-      },
-    },
-    required: ['pattern'],
-  },
+  inputSchema: z.toJSONSchema(getExampleSchema) as ToolDefinition['inputSchema'],
 };

@@ -57,16 +57,9 @@ async function readDoc(docPath: string): Promise<string> {
   }
 }
 
-/**
- * Read all docs for scaffolding based on selected features
- */
+/** Read all docs for scaffolding based on selected features (parallel). */
 export async function computeDocsContent(featureIds: readonly string[]): Promise<Record<string, string>> {
   const docPaths = computeDocsForFeatures(featureIds);
-  const docs: Record<string, string> = {};
-
-  for (const docPath of docPaths) {
-    docs[docPath] = await readDoc(docPath);
-  }
-
-  return docs;
+  const contents = await Promise.all(docPaths.map(readDoc));
+  return Object.fromEntries(docPaths.map((path, i) => [path, contents[i]]));
 }

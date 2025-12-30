@@ -1,17 +1,13 @@
 /**
- * Documentation resources
- *
- * Reads actual documentation files from the react-spa-scaffold repository
- * to ensure MCP resources stay in sync with the real docs.
- * Uses in-memory caching to avoid repeated disk reads.
+ * Documentation resources - reads docs from react-spa-scaffold repository.
  */
 
 import { readFile } from 'fs/promises';
 
+import { createCache } from '../utils/cache.js';
 import { resolveTemplatePath } from '../utils/paths.js';
 
-// Simple in-memory cache for documentation content
-const cache = new Map<string, string>();
+const docsCache = createCache<string>();
 
 /**
  * Documentation file mapping
@@ -71,42 +67,26 @@ export function getDocumentationResources() {
   }));
 }
 
-/**
- * Read documentation content for a resource URI (cached)
- */
+/** Read documentation content for a resource URI (cached). */
 export async function readDocumentation(uri: string): Promise<string | null> {
   const doc = DOCS_MAP[uri];
-  if (!doc) {
-    return null;
-  }
+  if (!doc) return null;
 
-  // Return cached content if available
-  if (cache.has(uri)) {
-    return cache.get(uri)!;
-  }
+  return docsCache.getOrSet(uri, async () => {
+    const contents: string[] = [];
 
-  const contents: string[] = [];
-
-  for (const file of doc.files) {
-    const fullPath = resolveTemplatePath(file);
-    try {
-      const content = await readFile(fullPath, 'utf-8');
-      contents.push(content);
-    } catch {
-      // File might not exist
-      contents.push(`<!-- File not found: ${file} -->\n`);
+    for (const file of doc.files) {
+      const fullPath = resolveTemplatePath(file);
+      try {
+        const content = await readFile(fullPath, 'utf-8');
+        contents.push(content);
+      } catch {
+        contents.push(`<!-- File not found: ${file} -->\n`);
+      }
     }
-  }
 
-  // Join multiple files with a separator
-  const result = contents.length > 1 ? contents.join('\n\n---\n\n') : contents[0] || null;
-
-  // Cache the result
-  if (result) {
-    cache.set(uri, result);
-  }
-
-  return result;
+    return contents.length > 1 ? contents.join('\n\n---\n\n') : (contents[0] ?? '');
+  });
 }
 
 /**

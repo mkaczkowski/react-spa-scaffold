@@ -23,69 +23,50 @@ async function readSourcePackageJson(): Promise<Record<string, unknown>> {
 
 /**
  * Computes complete scaffold for selected features.
- *
- * Orchestrates dependency resolution, file structure computation,
- * and dynamic content generation to produce a complete project scaffold.
- *
- * @example
- * const scaffold = await computeScaffold(['routing', 'ui'], 'my-app');
- * // Returns: { packageJson, structure, configFiles, claudeMd, ... }
+ * Uses parallel I/O where possible for better performance.
  */
 export async function computeScaffold(
   selectedFeatures: string[],
   projectName: string = 'my-app',
 ): Promise<ScaffoldResult> {
-  // Resolve all dependencies
+  // Resolve all dependencies (sync)
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 
-  // Read engines from source package.json
-  const sourcePackageJson = await readSourcePackageJson();
+  // Parallel async operations: package.json, dependencies, and docs
+  const [sourcePackageJson, depsResult, docs] = await Promise.all([
+    readSourcePackageJson(),
+    mergeDependencies(resolvedFeatures),
+    computeDocsContent(resolvedFeatures),
+  ]);
+
   const engines = (sourcePackageJson.engines as Record<string, string>) || {};
+  const { dependencies, devDependencies, warnings } = depsResult;
 
-  // Merge all dependencies (async to read versions from source package.json)
-  const { dependencies, devDependencies } = await mergeDependencies(resolvedFeatures);
-
-  // Merge all scripts
-  const scripts = mergeScripts(resolvedFeatures);
-
-  // Get file structure (add CLAUDE.md which is generated, not from patterns)
-  // Also add docs based on selected features
-  const docPaths = computeDocsForFeatures(resolvedFeatures);
-  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docPaths];
-
-  // Get config files with actual content read from templates
-  const configFiles: Record<string, string> = {};
-  const configPaths = getConfigFiles(resolvedFeatures);
-  for (const config of configPaths) {
-    configFiles[config] = await readConfigFileContent(config);
+  if (warnings.length > 0) {
+    console.error('[MCP] Dependency warnings:', warnings.join('; '));
   }
 
-  // Get setup commands
+  // Sync operations
+  const scripts = mergeScripts(resolvedFeatures);
+  const docPaths = computeDocsForFeatures(resolvedFeatures);
+  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docPaths];
   const setupCommands = getSetupCommands(resolvedFeatures);
 
-  // Generate CLAUDE.md content
+  // Read config files in parallel
+  const configPaths = getConfigFiles(resolvedFeatures);
+  const configContents = await Promise.all(configPaths.map(readConfigFileContent));
+  const configFiles: Record<string, string> = Object.fromEntries(
+    configPaths.map((path, i) => [path, configContents[i]]),
+  );
+
+  // Generate content (sync)
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
-
-  // Generate vite-env.d.ts content
   const viteEnvDts = generateViteEnvDts(resolvedFeatures);
-
-  // Generate env.ts content
   const envTs = generateEnvTs(resolvedFeatures);
-
-  // Generate routes.ts content (only if routing feature is selected)
   const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs() : undefined;
 
-  // Get docs with content filtered by features
-  const docs = await computeDocsContent(resolvedFeatures);
-
   return {
-    packageJson: {
-      name: projectName,
-      dependencies,
-      devDependencies,
-      scripts,
-      engines,
-    },
+    packageJson: { name: projectName, dependencies, devDependencies, scripts, engines },
     structure,
     configFiles,
     setupCommands,

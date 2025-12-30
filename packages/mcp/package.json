@@ -43,8 +43,8 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
     "@react-spa-scaffold/tsconfig": "*",
+    "@types/node": "^22.15.0",
     "typescript": "~5.9.0",
     "vitest": "^4.0.16"
   },

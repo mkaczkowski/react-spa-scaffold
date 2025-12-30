@@ -9,7 +9,9 @@
 import { z } from 'zod';
 import { FEATURE_IDS, FEATURES } from '../features/index.js';
 import { computeScaffold, resolveFeatureDependencies, getFeatureExamples, type CodeExample } from '../utils/index.js';
+import type { ToolDefinition } from './types.js';
 
+/** Zod schema for get_scaffold input - single source of truth. */
 export const getScaffoldSchema = z.object({
   features: z
     .array(z.string())
@@ -104,7 +106,8 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 Templates are written for ALL features. Remove imports, providers, and code for features not in \`resolvedFeatures\`.`;
 }
 
-export const getScaffoldToolDefinition = {
+/** Tool definition derived from Zod schema - single source of truth (Zod v4 native). */
+export const getScaffoldToolDefinition: ToolDefinition = {
   name: 'get_scaffold',
   description: `Get complete scaffold information for a new react-spa-scaffold project.
 
@@ -115,23 +118,5 @@ IMPORTANT: Templates contain code for ALL features. Strip imports and code for f
 Feature dependencies: theming → state (auto-included)
 
 Example: features: ["routing", "ui", "theming"] → resolvedFeatures: ["core", "routing", "ui", "theming", "state"]`,
-  inputSchema: {
-    type: 'object' as const,
-    properties: {
-      features: {
-        type: 'array' as const,
-        items: { type: 'string' as const },
-        description: 'List of feature IDs to include',
-      },
-      projectName: {
-        type: 'string' as const,
-        description: 'Name for the new project',
-      },
-      includeExamples: {
-        type: 'boolean' as const,
-        description: 'Include code examples for patterns',
-      },
-    },
-    required: ['features'],
-  },
+  inputSchema: z.toJSONSchema(getScaffoldSchema) as ToolDefinition['inputSchema'],
 };

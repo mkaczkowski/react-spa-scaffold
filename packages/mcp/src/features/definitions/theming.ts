@@ -2,8 +2,9 @@ import type { Feature } from '../types.js';
 
 export const theming: Feature = {
   name: 'Theming',
-  description: 'Light/dark/system theme toggle with CSS variables (requires state feature)',
+  description: 'Light/dark/system theme toggle with CSS variables',
   required: false,
+  requires: ['state'], // Needs Zustand for persistence
   includes: [
     'Light/dark/system theme modes',
     'useThemeEffect hook (applies .dark class to document)',

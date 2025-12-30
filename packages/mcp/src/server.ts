@@ -10,8 +10,9 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { TOOL_REGISTRY, getToolDefinitions } from './tools/index.js';
-import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
+// Direct imports - flattened for faster startup
+import { TOOL_REGISTRY, getToolDefinitions } from './tools/registry.js';
+import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/docs.js';
 import { VERSION } from './version.js';
 
 function jsonResponse(data: unknown) {

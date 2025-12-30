@@ -1,11 +1,62 @@
 /**
  * Code examples - provides real code patterns from the react-spa-scaffold repository.
+ * Uses lazy loading to improve startup performance.
  */
 
 import { readFile } from 'fs/promises';
 
+import { createSingletonCache } from '../cache.js';
 import { resolveTemplatePath } from '../paths.js';
 import type { CodeExample, PatternMap } from './types.js';
+
+export type { CodeExample } from './types.js';
+
+// Lazy-loaded pattern map cache
+const patternMapCache = createSingletonCache<PatternMap>();
+
+/** Lazy-loads all pattern definitions. */
+async function getPatternMap(): Promise<PatternMap> {
+  return patternMapCache.getOrSet(async () => {
+    const [
+      { componentPatterns },
+      { hookPatterns },
+      { mobilePatterns },
+      { storePatterns },
+      { pagePatterns },
+      { contextPatterns },
+      { apiPatterns },
+      { testPatterns },
+      { i18nPatterns },
+      { utilityPatterns },
+    ] = await Promise.all([
+      import('./component-patterns.js'),
+      import('./hook-patterns.js'),
+      import('./mobile-patterns.js'),
+      import('./store-patterns.js'),
+      import('./page-patterns.js'),
+      import('./context-patterns.js'),
+      import('./api-patterns.js'),
+      import('./test-patterns.js'),
+      import('./i18n-patterns.js'),
+      import('./utility-patterns.js'),
+    ]);
+
+    return {
+      ...componentPatterns,
+      ...hookPatterns,
+      ...mobilePatterns,
+      ...storePatterns,
+      ...pagePatterns,
+      ...contextPatterns,
+      ...apiPatterns,
+      ...testPatterns,
+      ...i18nPatterns,
+      ...utilityPatterns,
+    };
+  });
+}
+
+// Pre-computed pattern names (sync for startup - just the keys, not content)
 import { componentPatterns } from './component-patterns.js';
 import { hookPatterns } from './hook-patterns.js';
 import { mobilePatterns } from './mobile-patterns.js';
@@ -17,10 +68,7 @@ import { testPatterns } from './test-patterns.js';
 import { i18nPatterns } from './i18n-patterns.js';
 import { utilityPatterns } from './utility-patterns.js';
 
-export type { CodeExample } from './types.js';
-
-/** All pattern definitions merged. */
-const PATTERN_MAP: PatternMap = {
+const ALL_PATTERN_NAMES = Object.keys({
   ...componentPatterns,
   ...hookPatterns,
   ...mobilePatterns,
@@ -31,16 +79,17 @@ const PATTERN_MAP: PatternMap = {
   ...testPatterns,
   ...i18nPatterns,
   ...utilityPatterns,
-};
+}).sort();
 
-/** Get all available pattern names. */
+/** Get all available pattern names (sync). */
 export function getAvailablePatterns(): string[] {
-  return Object.keys(PATTERN_MAP).sort();
+  return ALL_PATTERN_NAMES;
 }
 
 /** Get code example for a pattern. */
 export async function getCodeExample(pattern: string): Promise<CodeExample | null> {
-  const mapping = PATTERN_MAP[pattern];
+  const patternMap = await getPatternMap();
+  const mapping = patternMap[pattern];
   if (!mapping) return null;
 
   const fullPath = resolveTemplatePath(mapping.file);
@@ -65,12 +114,8 @@ export async function getCodeExample(pattern: string): Promise<CodeExample | nul
   }
 }
 
-/** Get all examples for a list of patterns. */
+/** Get all examples for a list of patterns (parallel). */
 export async function getFeatureExamples(patterns: string[]): Promise<CodeExample[]> {
-  const examples: CodeExample[] = [];
-  for (const pattern of patterns) {
-    const example = await getCodeExample(pattern);
-    if (example) examples.push(example);
-  }
-  return examples;
+  const examples = await Promise.all(patterns.map(getCodeExample));
+  return examples.filter((e): e is CodeExample => e !== null);
 }
