@@ -1,5 +1,11 @@
 # @react-spa-scaffold/mcp
 
+## 2.1.1
+
+### Patch Changes
+
+- [#23](https://github.com/mkaczkowski/react-spa-scaffold/pull/23) [`3b87787`](https://github.com/mkaczkowski/react-spa-scaffold/commit/3b87787f0b0e6e0eeb0d14fea759b751fb444f63) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - fix: ensure fileStructure and configFiles arrays are non-overlapping in get_scaffold tool
+
 ## 2.1.0
 
 ### Minor Changes
