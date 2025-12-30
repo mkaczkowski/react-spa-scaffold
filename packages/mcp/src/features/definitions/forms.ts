@@ -4,15 +4,7 @@ export const forms: Feature = {
   name: 'Form Handling',
   description: 'React Hook Form + Zod validation + working demo form',
   required: false,
-  includes: [
-    'React Hook Form with Zod validation',
-    '@hookform/resolvers for schema integration',
-    'RegisterForm component with validation demo (displayed on HomePage)',
-    'Form error components (FieldErrorMessage, FormErrorSummary, RootFormError)',
-    'useRegisterForm custom hook pattern',
-    'Zod schema with refine() for cross-field validation',
-  ],
-  dependencyNames: ['@hookform/resolvers', 'react-hook-form'],
+  dependencies: ['@hookform/resolvers', 'react-hook-form'],
   files: [
     'src/lib/validations.ts',
     'src/hooks/useRegisterForm.ts',

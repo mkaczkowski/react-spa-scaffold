@@ -31,8 +31,14 @@ describe('get_features tool', () => {
       expect(feature).toHaveProperty('name');
       expect(feature).toHaveProperty('description');
       expect(feature).toHaveProperty('required');
-      expect(feature).toHaveProperty('includes');
-      expect(Array.isArray(feature.includes)).toBe(true);
+    }
+  });
+
+  it('does not include redundant includes property', () => {
+    const features = getFeatures();
+
+    for (const feature of features) {
+      expect(feature).not.toHaveProperty('includes');
     }
   });
 

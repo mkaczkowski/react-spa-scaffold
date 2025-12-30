@@ -84,18 +84,46 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 
   return `## Setup Instructions
 
-1. Create project with \`packageJson\`
-2. Use generated content: \`claudeMd\`, \`viteEnvDts\`, \`envTs\`${hasRouting ? ', `routesTs`' : ''}
-3. Fetch ALL files via \`get_file({ path: "..." })\`:
-   - \`configFiles\`: config file paths
-   - \`docs\`: documentation paths
-   - \`fileStructure\`: ALL source file paths
-4. Strip imports/code for features NOT in \`resolvedFeatures\`
-5. Run: ${setupCommands.join(' && ')}
+1. Create project directory and \`package.json\`
+2. Write generated content directly:
+   - \`CLAUDE.md\` ← from \`claudeMd\`
+   - \`src/vite-env.d.ts\` ← from \`viteEnvDts\`
+   - \`src/lib/env.ts\` ← from \`envTs\`${hasRouting ? '\n   - `src/lib/routes.ts` ← from `routesTs`' : ''}
+
+3. **Create progress tracking file** at project root:
+
+\`\`\`markdown
+# scaffold-progress.md
+
+## Source Files
+- [ ] src/App.tsx
+- [ ] src/index.css
+... (list EVERY file from \`fileStructure\`)
+
+## Config Files
+- [ ] vite.config.ts
+... (list EVERY file from \`configFiles\`)
+
+## Documentation
+- [ ] docs/ARCHITECTURE.md
+... (list EVERY file from \`docs\`)
+\`\`\`
+
+4. For EACH file in the tracking list:
+   - Fetch content via \`get_file({ path: "..." })\`
+   - Write file to project
+   - Mark \`[x]\` in scaffold-progress.md
+
+5. **Before running setup commands**, scan scaffold-progress.md for any unchecked boxes
+6. Delete scaffold-progress.md
+7. Run: ${setupCommands.join(' && ')}
 
 ## CRITICAL
 
-Do NOT generate file content. Fetch via \`get_file\`, then adapt for selected features.`;
+- Create scaffold-progress.md BEFORE fetching any files
+- Mark each file [x] IMMEDIATELY after creating it
+- Do NOT run setup commands until ALL boxes are checked
+- Do NOT generate file content - fetch via \`get_file\``;
 }
 
 /** Tool definition derived from Zod schema - single source of truth (Zod v4 native). */
@@ -106,16 +134,24 @@ export const getScaffoldToolDefinition: ToolDefinition = {
 Returns package.json, file structure paths, setup commands, and generated files.
 
 **Lazy Loading** - fetch ALL content via \`get_file({ path: "..." })\`:
+- \`fileStructure\`: ALL source files (includes test files)
 - \`configFiles\`: config file paths
 - \`docs\`: documentation paths
-- \`fileStructure\`: ALL source file paths
 
-**Generated Content** (included directly):
+**Generated Content** (included directly - write these first):
 - \`claudeMd\`: CLAUDE.md content
 - \`viteEnvDts\`, \`envTs\`: TypeScript declarations
 - \`routesTs\`: Route constants (if routing feature selected)
 
-CRITICAL: Do NOT generate file content. Fetch via \`get_file\`, then strip imports/code for features NOT in \`resolvedFeatures\`.
+## File Tracking Protocol (MUST FOLLOW)
+
+After receiving this response, create \`scaffold-progress.md\` at project root:
+1. List ALL files from fileStructure, configFiles, and docs as unchecked boxes (\`- [ ]\`)
+2. Fetch each file via get_file and mark [x] after creation
+3. Before running setup commands, scan for any unchecked boxes
+4. Delete scaffold-progress.md, then run setup commands
+
+CRITICAL: Do NOT skip test files or documentation. ALL files must be created.
 
 Feature dependencies: theming → state (auto-included)
 

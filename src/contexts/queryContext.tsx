@@ -3,8 +3,7 @@ import { type ReactNode, useState } from 'react';
 
 /**
  * Create QueryClient with optimized defaults.
- * Using a function ensures each provider instance gets its own client,
- * which is important for SSR and testing.
+ * Using a function ensures each provider instance gets its own client
  */
 function createQueryClient() {
   return new QueryClient({

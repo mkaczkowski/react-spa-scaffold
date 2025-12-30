@@ -15,13 +15,12 @@ export interface FeatureSummary {
   name: string;
   description: string;
   required: boolean;
-  includes: string[];
 }
 
 /**
  * Lists all available features for scaffolding.
  *
- * @returns Array of feature summaries with id, name, description, required flag, and includes
+ * @returns Array of feature summaries with id, name, description, and required flag
  *
  * @example
  * ```typescript
@@ -37,7 +36,6 @@ export function getFeatures(): FeatureSummary[] {
       name: feature.name,
       description: feature.description,
       required: feature.required,
-      includes: feature.includes,
     };
   });
 }

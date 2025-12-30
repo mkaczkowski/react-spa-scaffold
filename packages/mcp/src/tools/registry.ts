@@ -7,6 +7,7 @@
  */
 
 import type { ToolRegistry, ToolDefinition, ToolConfigNoSchema, ToolConfigWithSchema } from './types.js';
+import { addFeatures, addFeaturesSchema, addFeaturesToolDefinition } from './add-features.js';
 import { getFeatures, getFeaturesToolDefinition } from './get-features.js';
 import { getScaffold, getScaffoldSchema, getScaffoldToolDefinition } from './get-scaffold.js';
 import { getFile, getFileSchema, getFileToolDefinition } from './get-file.js';
@@ -32,11 +33,19 @@ const getFileConfig: ToolConfigWithSchema<typeof getFileSchema> = {
   handler: getFile,
 };
 
+/** Tool: add_features - requires features array input */
+const addFeaturesConfig: ToolConfigWithSchema<typeof addFeaturesSchema> = {
+  definition: addFeaturesToolDefinition,
+  schema: addFeaturesSchema,
+  handler: addFeatures,
+};
+
 /** All registered MCP tools. */
 export const TOOL_REGISTRY: ToolRegistry = {
   get_features: getFeaturesConfig,
   get_scaffold: getScaffoldConfig,
   get_file: getFileConfig,
+  add_features: addFeaturesConfig,
 };
 
 /** Get all tool definitions for ListToolsRequest. */

@@ -1,5 +1,5 @@
 /**
- * Type-safe localStorage abstraction with SSR safety and error handling.
+ * Type-safe localStorage abstraction with error handling.
  */
 
 import { STORAGE_KEYS } from './storageKeys';

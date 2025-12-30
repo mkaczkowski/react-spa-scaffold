@@ -1,3 +1,4 @@
+export { addFeatures, addFeaturesSchema, addFeaturesToolDefinition, type AddFeaturesInput } from './add-features.js';
 export { getFeatures, getFeaturesToolDefinition, type FeatureSummary } from './get-features.js';
 export { getScaffold, getScaffoldSchema, getScaffoldToolDefinition, type GetScaffoldInput } from './get-scaffold.js';
 export { getFile, getFileSchema, getFileToolDefinition, type GetFileInput } from './get-file.js';

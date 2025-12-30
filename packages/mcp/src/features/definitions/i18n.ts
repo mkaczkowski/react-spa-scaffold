@@ -4,20 +4,8 @@ export const i18n: Feature = {
   name: 'Internationalization',
   description: 'LinguiJS with dynamic loading and language detection',
   required: false,
-  includes: [
-    'LinguiJS (core + react + macro)',
-    'Trans component for JSX text',
-    't() function for programmatic text',
-    'Dynamic catalog loading (code splitting per locale)',
-    'Browser language detection',
-    'Language switcher component',
-    'ESLint rule for translator comments (enforced)',
-    'Locale files (.po format) for en, es, de',
-    'Vite plugin for compilation',
-    'useLanguage hook',
-  ],
-  dependencyNames: ['@lingui/core', '@lingui/react'],
-  devDependencyNames: [
+  dependencies: ['@lingui/core', '@lingui/react'],
+  devDependencies: [
     '@lingui/babel-plugin-lingui-macro',
     '@lingui/cli',
     '@lingui/vite-plugin',

@@ -260,11 +260,26 @@ describe('get_scaffold tool', () => {
     expect(result.fileStructure).not.toContain('docs/TESTING.md');
   });
 
-  it('instructions reference get_file for lazy loading', async () => {
+  it('instructions reference tracking protocol', async () => {
     const result = await getScaffold({ features: [] });
 
     expect(result.instructions).toContain('get_file');
-    expect(result.instructions).toContain('configFiles');
-    expect(result.instructions).toContain('docs');
+    expect(result.instructions).toContain('scaffold-progress.md');
+    expect(result.instructions).toContain('- [ ]');
+    expect(result.instructions).toContain('Mark');
+  });
+
+  it('instructions include explicit checklist template', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.instructions).toContain('## Source Files');
+    expect(result.instructions).toContain('## Config Files');
+    expect(result.instructions).toContain('## Documentation');
+  });
+
+  it('does not return fileCounts', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result).not.toHaveProperty('fileCounts');
   });
 });

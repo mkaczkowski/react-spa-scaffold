@@ -4,15 +4,7 @@ export const routing: Feature = {
   name: 'Routing',
   description: 'React Router 7 with lazy loading and route constants',
   required: false,
-  includes: [
-    'React Router 7',
-    'Lazy-loaded pages with React.lazy()',
-    'Route constants with TypeScript types (generated based on features)',
-    '404 Not Found page',
-    'App.tsx with Suspense fallback',
-    'PageLoading component for transitions',
-  ],
-  dependencyNames: ['react-router'],
+  dependencies: ['react-router'],
   files: [
     'src/pages/Home.tsx',
     'src/pages/NotFound.tsx',

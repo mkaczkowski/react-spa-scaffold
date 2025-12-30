@@ -4,20 +4,8 @@ export const core: Feature = {
   name: 'Core',
   description: 'React 19 + TypeScript + Vite 7 + Tailwind CSS v4',
   required: true,
-  includes: [
-    'React 19 with TypeScript (~5.9.0)',
-    'Vite 7 build system',
-    'Tailwind CSS v4 with Vite plugin',
-    'Inter variable font (@fontsource-variable/inter)',
-    'Environment validation with Zod (src/lib/env.ts)',
-    'cn() class merge utility (clsx + tailwind-merge)',
-    'Basic SEO component (React 19 native head hoisting)',
-    'App configuration (src/lib/config.ts)',
-    'Type definitions',
-    'ErrorBoundary component with reset functionality',
-  ],
-  dependencyNames: ['@fontsource-variable/inter', 'clsx', 'react', 'react-dom', 'tailwind-merge', 'zod'],
-  devDependencyNames: [
+  dependencies: ['@fontsource-variable/inter', 'clsx', 'react', 'react-dom', 'tailwind-merge', 'zod'],
+  devDependencies: [
     '@tailwindcss/vite',
     '@types/node',
     '@types/react',

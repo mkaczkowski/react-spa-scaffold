@@ -4,20 +4,7 @@ export const ui: Feature = {
   name: 'UI Components',
   description: 'Shadcn/UI + icons + animations + toasts',
   required: false,
-  includes: [
-    'Shadcn/UI component system (radix-nova style)',
-    'Radix UI primitives',
-    'CVA (class-variance-authority) for variants',
-    'Lucide React icons',
-    'tw-animate-css for animations',
-    'Sonner toast notifications',
-    'Button with variants (default, destructive, outline, etc.)',
-    'DropdownMenu component',
-    'Loading, Skeleton, Spinner components',
-    'VisuallyHidden and SkipLink (accessibility)',
-    'components.json for shadcn CLI',
-  ],
-  dependencyNames: [
+  dependencies: [
     '@radix-ui/react-slot',
     'class-variance-authority',
     'lucide-react',
@@ -25,7 +12,7 @@ export const ui: Feature = {
     'sonner',
     'tw-animate-css',
   ],
-  devDependencyNames: ['shadcn'],
+  devDependencies: ['shadcn'],
   files: [
     'src/components/ui/button.tsx',
     'src/components/ui/dropdown-menu.tsx',

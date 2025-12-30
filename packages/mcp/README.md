@@ -130,7 +130,7 @@ List all available feature modules.
 
 ```typescript
 const result = await client.callTool('get_features', {});
-// Returns: { id, name, description, required, includes }[]
+// Returns: { id, name, description, required }[]
 ```
 
 ### `get_scaffold`
@@ -311,9 +311,8 @@ export const myFeature: Feature = {
   name: 'My Feature',
   description: 'Description shown to users',
   required: false,
-  includes: ['Thing 1', 'Thing 2'],
-  dependencyNames: ['some-package'],
-  devDependencyNames: ['some-dev-package'],
+  dependencies: ['some-package'],
+  devDependencies: ['some-dev-package'],
   files: ['src/lib/myFeature.ts'],
   scripts: { 'my-script': 'some-command' },
 };

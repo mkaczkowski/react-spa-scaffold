@@ -40,6 +40,42 @@ export function computeFileStructure(featureIds: FeatureId[]): string[] {
   return Array.from(files).sort();
 }
 
+/** Result of collecting feature files */
+export interface CollectFeatureFilesResult {
+  /** Source files from all features */
+  files: string[];
+  /** Test files from all features */
+  testFiles: string[];
+}
+
+/**
+ * Collect files and testFiles separately from selected features.
+ * Useful for add_features where files and tests are returned separately.
+ */
+export function collectFeatureFiles(featureIds: FeatureId[]): CollectFeatureFilesResult {
+  const files = new Set<string>();
+  const testFiles = new Set<string>();
+
+  for (const featureId of featureIds) {
+    const feature = FEATURES[featureId];
+
+    for (const file of feature.files) {
+      files.add(file);
+    }
+
+    if (feature.testFiles) {
+      for (const file of feature.testFiles) {
+        testFiles.add(file);
+      }
+    }
+  }
+
+  return {
+    files: Array.from(files).sort(),
+    testFiles: Array.from(testFiles).sort(),
+  };
+}
+
 /**
  * Get config files needed for selected features
  */

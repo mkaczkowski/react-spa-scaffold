@@ -25,7 +25,8 @@ test.describe('Language Switcher', () => {
     // Wait for dropdown to fully appear before clicking
     const menuItem = page.getByRole('menuitem', { name: 'Español' });
     await expect(menuItem).toBeVisible();
-    await menuItem.click();
+    // Use force:true because language change triggers re-render during click
+    await menuItem.click({ force: true });
 
     // Dropdown should close - other options not visible
     await expect(page.getByRole('menuitem', { name: 'Deutsch' })).not.toBeVisible();

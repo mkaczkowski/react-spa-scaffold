@@ -19,12 +19,11 @@ export interface Feature {
   name: string;
   description: string;
   required: boolean;
-  includes: string[];
   /** Other features this feature depends on (auto-included when this feature is selected). */
   requires?: FeatureId[];
   /** Dependency package names - versions resolved from package.json at runtime. */
-  dependencyNames?: string[];
-  devDependencyNames?: string[];
+  dependencies?: string[];
+  devDependencies?: string[];
   files: string[];
   /** Test files - only included when 'testing' feature is also selected. */
   testFiles?: string[];

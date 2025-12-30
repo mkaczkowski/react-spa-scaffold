@@ -14,6 +14,7 @@ export { generateClaudeMd } from './claude-md/index.js';
 export function generateViteEnvDts(featureIds: FeatureId[]): string {
   const sections: string[] = [];
 
+  // Module declaration for i18n .po files
   if (featureIds.includes(FEATURE.I18N)) {
     sections.push(`declare module '*.po' {
   import type { Messages } from '@lingui/core';
@@ -21,6 +22,7 @@ export function generateViteEnvDts(featureIds: FeatureId[]): string {
 }`);
   }
 
+  // Custom app environment variables
   const envVars: string[] = ['  readonly VITE_APP_NAME: string;', '  readonly VITE_APP_URL: string;'];
 
   if (featureIds.includes(FEATURE.API)) {
@@ -32,6 +34,15 @@ export function generateViteEnvDts(featureIds: FeatureId[]): string {
     envVars.push('  readonly VITE_SENTRY_ENABLED: string;');
   }
 
+  if (featureIds.includes(FEATURE.PERFORMANCE)) {
+    envVars.push('  readonly VITE_PERF_TEST: string;');
+  }
+
+  // Vite built-in env vars (always required for TypeScript)
+  envVars.push("  readonly MODE: 'development' | 'production' | 'test';");
+  envVars.push('  readonly DEV: boolean;');
+  envVars.push('  readonly PROD: boolean;');
+
   sections.push(`/// <reference types="vite/client" />
 
 interface ImportMetaEnv {
@@ -40,6 +51,7 @@ ${envVars.join('\n')}
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+  readonly hot?: import('vite/types/hot.d.ts').ViteHotContext;
 }`);
 
   return sections.join('\n\n') + '\n';

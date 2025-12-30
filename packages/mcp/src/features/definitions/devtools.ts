@@ -4,20 +4,7 @@ export const devtools: Feature = {
   name: 'Developer Tooling',
   description: 'ESLint + Prettier + Husky + Commitlint (using @react-spa-scaffold shared configs)',
   required: false,
-  includes: [
-    '@react-spa-scaffold/eslint-config (React + TypeScript + LinguiJS)',
-    '@react-spa-scaffold/prettier-config (with Tailwind plugin)',
-    'ESLint with TypeScript and React Hooks plugins',
-    'eslint-plugin-react-refresh for HMR',
-    'Prettier with Tailwind CSS plugin',
-    'Husky for git hooks',
-    'lint-staged for pre-commit linting',
-    'Commitlint for conventional commits',
-    '.nvmrc for Node.js version (22)',
-    'Pre-commit hook: typecheck + lint-staged',
-    'Commit-msg hook: commitlint',
-  ],
-  devDependencyNames: [
+  devDependencies: [
     '@commitlint/config-conventional',
     '@eslint/js',
     '@react-spa-scaffold/eslint-config',

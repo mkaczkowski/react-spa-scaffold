@@ -4,20 +4,7 @@ export const testing: Feature = {
   name: 'Testing',
   description: 'Vitest + Testing Library + Playwright + MSW',
   required: false,
-  includes: [
-    'Vitest for unit testing',
-    'React Testing Library',
-    '@testing-library/user-event for interactions',
-    'Playwright for E2E testing (Chromium)',
-    'MSW (Mock Service Worker) for API mocking',
-    'Test utilities (render, providers, mocks)',
-    '80% coverage threshold (lines, functions, statements, branches)',
-    'jsdom environment',
-    'Example tests for components, hooks, stores, utilities',
-    'MSW handlers for API endpoints',
-    'Test fixtures for mock data',
-  ],
-  devDependencyNames: [
+  devDependencies: [
     '@playwright/test',
     '@testing-library/jest-dom',
     '@testing-library/react',

@@ -29,11 +29,29 @@ async function getSourceDependencies(): Promise<SourceDeps> {
   });
 }
 
+/** Options for resolving feature dependencies */
+export interface ResolveFeatureDependenciesOptions {
+  /**
+   * Whether to auto-include the 'core' feature.
+   * - true (default): For new projects (get_scaffold)
+   * - false: For extending existing projects (add_features)
+   */
+  includeCore?: boolean;
+}
+
 /**
  * Resolves feature dependencies and auto-includes required features.
- * Core is always included. Dependencies declared via `requires` field are resolved recursively.
+ * Dependencies declared via `requires` field are resolved recursively.
+ *
+ * @param selectedFeatures - Features to include
+ * @param options - Configuration options
+ * @param options.includeCore - Whether to auto-include 'core' feature (default: true)
  */
-export function resolveFeatureDependencies(selectedFeatures: string[]): FeatureId[] {
+export function resolveFeatureDependencies(
+  selectedFeatures: string[],
+  options: ResolveFeatureDependenciesOptions = {},
+): FeatureId[] {
+  const { includeCore = true } = options;
   const resolved = new Set<FeatureId>();
 
   function addWithDeps(featureId: FeatureId): void {
@@ -49,8 +67,10 @@ export function resolveFeatureDependencies(selectedFeatures: string[]): FeatureI
     }
   }
 
-  // Always include core first
-  resolved.add('core');
+  // Include core first (for new project scaffolding)
+  if (includeCore) {
+    resolved.add('core');
+  }
 
   // Add selected features with their dependencies
   for (const featureId of selectedFeatures) {
@@ -83,8 +103,8 @@ export async function mergeDependencies(featureIds: FeatureId[]): Promise<MergeD
   for (const featureId of featureIds) {
     const feature = FEATURES[featureId];
 
-    if (feature.dependencyNames) {
-      for (const name of feature.dependencyNames) {
+    if (feature.dependencies) {
+      for (const name of feature.dependencies) {
         if (sourcePkg.dependencies[name]) {
           dependencies[name] = sourcePkg.dependencies[name];
         } else {
@@ -93,8 +113,8 @@ export async function mergeDependencies(featureIds: FeatureId[]): Promise<MergeD
       }
     }
 
-    if (feature.devDependencyNames) {
-      for (const name of feature.devDependencyNames) {
+    if (feature.devDependencies) {
+      for (const name of feature.devDependencies) {
         if (sourcePkg.devDependencies[name]) {
           devDependencies[name] = sourcePkg.devDependencies[name];
         } else {
