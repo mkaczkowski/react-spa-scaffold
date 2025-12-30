@@ -1,11 +1,10 @@
 /**
- * Scaffold computation orchestrator
- *
- * Coordinates all scaffold components to produce the final scaffold result.
+ * Scaffold computation orchestrator - coordinates all components.
  */
 
 import { readFile } from 'fs/promises';
 
+import { FEATURE } from '../../constants.js';
 import type { ScaffoldResult } from '../../features/types.js';
 import { computeDocsContent, computeDocsForFeatures } from '../docs.js';
 import { resolveTemplatePath } from '../paths.js';
@@ -63,7 +62,7 @@ export async function computeScaffold(
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
   const viteEnvDts = generateViteEnvDts(resolvedFeatures);
   const envTs = generateEnvTs(resolvedFeatures);
-  const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs() : undefined;
+  const routesTs = resolvedFeatures.includes(FEATURE.ROUTING) ? generateRoutesTs() : undefined;
 
   return {
     packageJson: { name: projectName, dependencies, devDependencies, scripts, engines },

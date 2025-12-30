@@ -4,51 +4,46 @@
 
 import { readFile } from 'fs/promises';
 
+import { DOCS_URI } from '../constants.js';
 import { createCache } from '../utils/cache.js';
 import { resolveTemplatePath } from '../utils/paths.js';
 
 const docsCache = createCache<string>();
 
-/**
- * Documentation file mapping
- *
- * Maps resource URIs to actual files in the repository.
- * Add new entries here to expose additional documentation.
- */
-const DOCS_MAP: Record<
-  string,
-  {
-    files: string[]; // Files to concatenate (in order)
-    name: string;
-    description: string;
-  }
-> = {
-  'docs://conventions': {
+interface DocConfig {
+  files: string[];
+  name: string;
+  description: string;
+}
+
+/** Documentation file mapping - maps URIs to repository files. */
+const DOCS_MAP: Record<string, DocConfig> = {
+  [DOCS_URI.CONVENTIONS]: {
     files: ['docs/CODING_STANDARDS.md', 'docs/COMPONENT_GUIDELINES.md'],
     name: 'Coding Conventions',
-    description: 'Coding standards, naming conventions, and component patterns for react-spa-scaffold projects',
+    description: 'Coding standards, naming conventions, and component patterns',
   },
-  'docs://architecture': {
+  [DOCS_URI.ARCHITECTURE]: {
     files: ['docs/ARCHITECTURE.md'],
     name: 'Architecture Overview',
-    description: 'Technology stack, data flow, and architectural decisions for react-spa-scaffold',
+    description: 'Technology stack, data flow, and architectural decisions',
   },
-  'docs://testing': {
+  [DOCS_URI.TESTING]: {
     files: ['docs/TESTING.md', 'docs/E2E_TESTING.md'],
     name: 'Testing Guide',
     description: 'Unit testing with Vitest and E2E testing with Playwright',
   },
-  'docs://i18n': {
+  [DOCS_URI.I18N]: {
     files: ['docs/INTERNATIONALIZATION.md'],
     name: 'Internationalization',
     description: 'LinguiJS setup, Trans component usage, and translation workflow',
   },
-  'docs://api': {
+  [DOCS_URI.API]: {
     files: ['docs/API_REFERENCE.md'],
     name: 'API Reference',
     description: 'API client utilities, hooks, and data fetching patterns',
   },
-  'docs://claude': {
+  [DOCS_URI.CLAUDE]: {
     files: ['CLAUDE.md'],
     name: 'Claude AI Guidance',
     description: 'AI assistant instructions and project-specific guidance',
@@ -67,24 +62,22 @@ export function getDocumentationResources() {
   }));
 }
 
-/** Read documentation content for a resource URI (cached). */
+/** Read documentation content for a resource URI (cached, parallel). */
 export async function readDocumentation(uri: string): Promise<string | null> {
   const doc = DOCS_MAP[uri];
   if (!doc) return null;
 
   return docsCache.getOrSet(uri, async () => {
-    const contents: string[] = [];
-
-    for (const file of doc.files) {
-      const fullPath = resolveTemplatePath(file);
-      try {
-        const content = await readFile(fullPath, 'utf-8');
-        contents.push(content);
-      } catch {
-        contents.push(`<!-- File not found: ${file} -->\n`);
-      }
-    }
-
+    const contents = await Promise.all(
+      doc.files.map(async (file) => {
+        const fullPath = resolveTemplatePath(file);
+        try {
+          return await readFile(fullPath, 'utf-8');
+        } catch {
+          return `<!-- File not found: ${file} -->\n`;
+        }
+      }),
+    );
     return contents.length > 1 ? contents.join('\n\n---\n\n') : (contents[0] ?? '');
   });
 }

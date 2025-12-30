@@ -5,39 +5,29 @@
  * CLAUDE.md generation moved to ./claude-md/
  */
 
+import { FEATURE } from '../../constants.js';
 import type { FeatureId } from '../../features/types.js';
 
-// Re-export CLAUDE.md generator from dedicated module
 export { generateClaudeMd } from './claude-md/index.js';
 
-/**
- * Generate vite-env.d.ts content based on selected features
- */
+/** Generate vite-env.d.ts content based on selected features. */
 export function generateViteEnvDts(featureIds: FeatureId[]): string {
   const sections: string[] = [];
 
-  // Add .po module declaration if i18n feature is selected (LinguiJS uses .po files)
-  if (featureIds.includes('i18n')) {
+  if (featureIds.includes(FEATURE.I18N)) {
     sections.push(`declare module '*.po' {
   import type { Messages } from '@lingui/core';
   export const messages: Messages;
 }`);
   }
 
-  // Build env vars section
-  const envVars: string[] = [];
+  const envVars: string[] = ['  readonly VITE_APP_NAME: string;', '  readonly VITE_APP_URL: string;'];
 
-  // Core env vars (always included)
-  envVars.push('  readonly VITE_APP_NAME: string;');
-  envVars.push('  readonly VITE_APP_URL: string;');
-
-  // API feature env vars
-  if (featureIds.includes('api')) {
+  if (featureIds.includes(FEATURE.API)) {
     envVars.push('  readonly VITE_API_URL: string;');
   }
 
-  // Observability feature env vars
-  if (featureIds.includes('observability')) {
+  if (featureIds.includes(FEATURE.OBSERVABILITY)) {
     envVars.push('  readonly VITE_SENTRY_DSN: string;');
     envVars.push('  readonly VITE_SENTRY_ENABLED: string;');
   }
@@ -55,27 +45,23 @@ interface ImportMeta {
   return sections.join('\n\n') + '\n';
 }
 
-/**
- * Generate env.ts content based on selected features
- */
+/** Generate env.ts content based on selected features. */
 export function generateEnvTs(featureIds: FeatureId[]): string {
-  const schemaFields: string[] = [];
-  const envFields: string[] = [];
+  const schemaFields: string[] = [
+    '  VITE_APP_NAME: z.string().min(1).optional(),',
+    '  VITE_APP_URL: z.string().url().optional(),',
+  ];
+  const envFields: string[] = [
+    '    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,',
+    '    VITE_APP_URL: import.meta.env.VITE_APP_URL,',
+  ];
 
-  // Core env vars (always included)
-  schemaFields.push('  VITE_APP_NAME: z.string().min(1).optional(),');
-  schemaFields.push('  VITE_APP_URL: z.string().url().optional(),');
-  envFields.push('    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,');
-  envFields.push('    VITE_APP_URL: import.meta.env.VITE_APP_URL,');
-
-  // API feature env vars
-  if (featureIds.includes('api')) {
+  if (featureIds.includes(FEATURE.API)) {
     schemaFields.push('  VITE_API_URL: z.string().url().optional(),');
     envFields.push('    VITE_API_URL: import.meta.env.VITE_API_URL,');
   }
 
-  // Observability feature env vars
-  if (featureIds.includes('observability')) {
+  if (featureIds.includes(FEATURE.OBSERVABILITY)) {
     schemaFields.push('  VITE_SENTRY_DSN: z.string().url().optional(),');
     schemaFields.push('  VITE_SENTRY_ENABLED: z.string().optional(),');
     envFields.push('    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,');

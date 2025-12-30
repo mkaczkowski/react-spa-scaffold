@@ -2,33 +2,17 @@
  * Type definitions for feature modules
  */
 
-/**
- * All valid feature IDs as a const tuple.
- * Used for compile-time type safety when referencing features.
- */
-export const FEATURE_IDS = [
-  'core',
-  'mobile',
-  'routing',
-  'ui',
-  'forms',
-  'state',
-  'api',
-  'i18n',
-  'testing',
-  'performance',
-  'devtools',
-  'ci',
-  'observability',
-  'theming',
-] as const;
+import { FEATURE } from '../constants.js';
 
-/** Type-safe feature identifier */
-export type FeatureId = (typeof FEATURE_IDS)[number];
+/** All valid feature IDs derived from FEATURE constant (single source of truth). */
+export const FEATURE_IDS = Object.values(FEATURE) as readonly FeatureId[];
 
-/** Type guard to check if a string is a valid FeatureId */
+/** Type-safe feature identifier. */
+export type FeatureId = (typeof FEATURE)[keyof typeof FEATURE];
+
+/** Type guard to check if a string is a valid FeatureId. */
 export function isFeatureId(value: string): value is FeatureId {
-  return FEATURE_IDS.includes(value as FeatureId);
+  return (FEATURE_IDS as readonly string[]).includes(value);
 }
 
 export interface Feature {
