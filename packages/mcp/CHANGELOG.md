@@ -1,5 +1,11 @@
 # @react-spa-scaffold/mcp
 
+## 2.1.0
+
+### Minor Changes
+
+- [`845bc82`](https://github.com/mkaczkowski/react-spa-scaffold/commit/845bc8253d23225ffa9ec2a1a7d88165d539e619) - Add `add_features` tool for extending existing projects with new features. Refactor Feature schema to remove redundant `includes` property and rename `dependencyNames`/`devDependencyNames` to `dependencies`/`devDependencies`. Enhance file structure utilities with `collectFeatureFiles` function for separate file/test file handling. Update scaffold instructions with progress tracking protocol.
+
 ## 2.0.0
 
 ### Major Changes
