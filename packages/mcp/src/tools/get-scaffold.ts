@@ -97,11 +97,12 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 
 ## Source Files
 - [ ] src/App.tsx
-- [ ] src/index.css
+- [ ] src/main.tsx
 ... (list EVERY file from \`fileStructure\`)
 
 ## Config Files
 - [ ] vite.config.ts
+- [ ] src/index.css
 ... (list EVERY file from \`configFiles\`)
 
 ## Documentation
@@ -134,9 +135,11 @@ export const getScaffoldToolDefinition: ToolDefinition = {
 Returns package.json, file structure paths, setup commands, and generated files.
 
 **Lazy Loading** - fetch ALL content via \`get_file({ path: "..." })\`:
-- \`fileStructure\`: ALL source files (includes test files)
-- \`configFiles\`: config file paths
+- \`fileStructure\`: source files (includes test files, excludes configs)
+- \`configFiles\`: config file paths (vite.config.ts, tsconfig.json, etc.)
 - \`docs\`: documentation paths
+
+These three lists are **non-overlapping** - concatenate them for complete file list.
 
 **Generated Content** (included directly - write these first):
 - \`claudeMd\`: CLAUDE.md content
