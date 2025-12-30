@@ -16,44 +16,47 @@ npm run inspect    # Test with MCP Inspector
 
 ```
 src/
-├── index.ts           # Entry point (STDIO transport, graceful shutdown)
-├── server.ts          # MCP server setup, tool handlers, Zod validation
+├── index.ts           # Entry point (STDIO transport)
+├── server.ts          # MCP server setup
 ├── version.ts         # Dynamic version from package.json
-├── features/          # Feature registry and types
-│   ├── registry.ts    # All 10 features defined here
-│   └── versions.ts    # Config package versions
-├── tools/             # MCP tool implementations
-│   ├── get-features.ts
-│   ├── get-scaffold.ts  # Uses Zod schema with .refine()
-│   └── get-example.ts   # Uses z.enum() for patterns
-├── resources/         # MCP resources (docs)
-│   └── docs.ts        # Reads from docs/, caches results
-└── utils/             # Helpers
-    ├── examples.ts    # PATTERN_MAP definitions
-    ├── scaffold.ts    # Dependency resolution
-    └── paths.ts       # Monorepo vs published path detection
+├── features/
+│   ├── types.ts       # Feature interface, FeatureId type
+│   ├── registry.ts    # Aggregates all features
+│   ├── versions.ts    # Config package versions
+│   └── definitions/   # Individual feature definitions
+│       ├── core.ts, mobile.ts, routing.ts, ui.ts, forms.ts
+│       ├── state.ts, api.ts, i18n.ts, testing.ts
+│       └── performance.ts, devtools.ts, ci.ts, observability.ts, theming.ts
+├── tools/
+│   ├── types.ts       # Tool type definitions
+│   ├── registry.ts    # Tool registry
+│   ├── get-features.ts, get-scaffold.ts, get-example.ts
+├── resources/
+│   └── docs.ts        # Documentation resources
+└── utils/
+    ├── paths.ts       # isPublishedMode, CONTENT_ROOT, resolveTemplatePath
+    ├── cache.ts       # createCache, createSingletonCache
+    ├── errors.ts      # readWithFallback, getErrorMessage
+    ├── docs.ts        # Doc selection by feature
+    ├── examples/      # Pattern definitions by category
+    │   ├── component-patterns.ts, hook-patterns.ts, mobile-patterns.ts
+    │   ├── store-patterns.ts, page-patterns.ts, context-patterns.ts
+    │   ├── api-patterns.ts, test-patterns.ts, i18n-patterns.ts
+    │   └── utility-patterns.ts
+    └── scaffold/
+        ├── dependencies.ts, file-structure.ts, generators.ts
+        ├── commands.ts, compute.ts
 ```
 
 ## Code Patterns
 
-**Validation**: Use Zod schemas in tool files, validate with `.safeParse()` in server.ts
+**Adding features**: Create file in `src/features/definitions/`, export from index.ts, add to registry.ts
 
-```typescript
-// In tools/get-scaffold.ts
-export const getScaffoldSchema = z.object({
-  features: z.array(z.string()).refine(...),
-});
+**Adding patterns**: Create or edit file in `src/utils/examples/`, add to the category's PatternMap
 
-// In server.ts
-const result = getScaffoldSchema.safeParse(args);
-if (!result.success) return errorResponse(result.error.message);
-```
+**Adding tools**: Add to `src/tools/registry.ts` with definition, handler, and schema
 
-**Caching**: Resources use in-memory Map cache for file reads
-
-**Adding features**: Edit `src/features/registry.ts`, add patterns to `src/utils/examples.ts`
-
-**Adding resources**: Edit `src/resources/docs.ts` DOCS_MAP, create doc in `docs/`
+**Adding resources**: Edit `src/resources/docs.ts` DOCS_MAP
 
 ## Testing
 
@@ -62,9 +65,8 @@ npm test              # Run all tests
 npm run test:watch    # Watch mode
 ```
 
-Tests in `tests/tools.test.ts` verify:
+Tests co-located with source:
 
-- Feature listing and metadata
-- Scaffold generation with dependency resolution
-- Example retrieval for all patterns
-- Zod schema validation (invalid inputs)
+- `src/tools/*.test.ts` - Tool tests
+- `src/utils/*.test.ts` - Utility tests
+- `src/server.test.ts` - Server integration

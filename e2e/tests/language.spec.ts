@@ -21,16 +21,20 @@ test.describe('Language Switcher', () => {
 
   test('closes dropdown after selection', async ({ page }) => {
     await page.getByRole('button', { name: /change language/i }).click();
-    await page.getByText('Español').click();
+
+    // Wait for dropdown to fully appear before clicking
+    const menuItem = page.getByRole('menuitem', { name: 'Español' });
+    await expect(menuItem).toBeVisible();
+    await menuItem.click();
 
     // Dropdown should close - other options not visible
-    await expect(page.getByText('Deutsch')).not.toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Deutsch' })).not.toBeVisible();
   });
 
   test('persists language preference across reload', async ({ page }) => {
     // Change to Spanish
     await page.getByRole('button', { name: /change language/i }).click();
-    await page.getByText('Español').click();
+    await page.getByRole('menuitem', { name: 'Español' }).click();
 
     // Wait for language change to apply
     await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();

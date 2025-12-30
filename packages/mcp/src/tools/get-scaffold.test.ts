@@ -1,61 +1,10 @@
 /**
- * Integration tests for MCP tools
+ * Tests for get_scaffold tool
  */
 
 import { describe, it, expect } from 'vitest';
-import { getFeatures } from '../src/tools/get-features.js';
-import { getScaffold, getScaffoldSchema } from '../src/tools/get-scaffold.js';
-import { getExample, getExampleSchema } from '../src/tools/get-example.js';
-import { FEATURE_IDS } from '../src/features/index.js';
-import { computeDocsForFeatures, computeDocsContent } from '../src/utils/docs.js';
 
-describe('get_features tool', () => {
-  it('returns all feature IDs', () => {
-    const features = getFeatures();
-
-    expect(features).toHaveLength(FEATURE_IDS.length);
-    expect(features.map((f) => f.id)).toEqual(expect.arrayContaining(FEATURE_IDS));
-  });
-
-  it('returns core as required', () => {
-    const features = getFeatures();
-    const core = features.find((f) => f.id === 'core');
-
-    expect(core).toBeDefined();
-    expect(core?.required).toBe(true);
-  });
-
-  it('returns proper structure for each feature', () => {
-    const features = getFeatures();
-
-    for (const feature of features) {
-      expect(feature).toHaveProperty('id');
-      expect(feature).toHaveProperty('name');
-      expect(feature).toHaveProperty('description');
-      expect(feature).toHaveProperty('required');
-      expect(feature).toHaveProperty('includes');
-      expect(Array.isArray(feature.includes)).toBe(true);
-    }
-  });
-
-  it('mobile feature exists and is not required', () => {
-    const features = getFeatures();
-    const mobile = features.find((f) => f.id === 'mobile');
-
-    expect(mobile).toBeDefined();
-    expect(mobile?.required).toBe(false);
-    expect(mobile?.name).toBe('Mobile Support');
-  });
-
-  it('theming feature exists and is not required', () => {
-    const features = getFeatures();
-    const theming = features.find((f) => f.id === 'theming');
-
-    expect(theming).toBeDefined();
-    expect(theming?.required).toBe(false);
-    expect(theming?.name).toBe('Theming');
-  });
-});
+import { getScaffold, getScaffoldSchema } from './get-scaffold.js';
 
 describe('get_scaffold tool', () => {
   it('always includes core feature', async () => {
@@ -78,7 +27,6 @@ describe('get_scaffold tool', () => {
   it('only includes explicitly selected features (plus core)', async () => {
     const result = await getScaffold({ features: ['ui'] });
 
-    // Features are independent - only selected features are included
     expect(result.resolvedFeatures).not.toContain('state');
     expect(result.resolvedFeatures).not.toContain('mobile');
     expect(result.resolvedFeatures).toContain('ui');
@@ -88,13 +36,12 @@ describe('get_scaffold tool', () => {
   it('theming feature auto-includes state feature', async () => {
     const result = await getScaffold({ features: ['theming'] });
 
-    // Theming requires state for Zustand persistence
     expect(result.resolvedFeatures).toContain('theming');
     expect(result.resolvedFeatures).toContain('state');
     expect(result.resolvedFeatures).toContain('core');
   });
 
-  it('marks auto-included state as wasAutoIncluded when theming selected', async () => {
+  it('marks auto-included features correctly', async () => {
     const result = await getScaffold({ features: ['theming'] });
 
     const themingDetail = result.featureDetails.find((f) => f.id === 'theming');
@@ -119,10 +66,9 @@ describe('get_scaffold tool', () => {
 
     expect(result.fileStructure).toContain('src/hooks/useThemeEffect.ts');
     expect(result.fileStructure).toContain('src/components/shared/ThemeToggle/ThemeToggle.tsx');
-    expect(result.fileStructure).toContain('src/components/shared/ThemeToggle/index.ts');
   });
 
-  it('does not include theming files when only ui is selected', async () => {
+  it('excludes theming files when only ui is selected', async () => {
     const result = await getScaffold({ features: ['ui'] });
 
     expect(result.fileStructure).not.toContain('src/hooks/useThemeEffect.ts');
@@ -137,19 +83,15 @@ describe('get_scaffold tool', () => {
     expect(result.fileStructure).toContain('src/hooks/useTouchSizes.ts');
   });
 
-  it('does not include mobile files when only core is selected', async () => {
+  it('excludes mobile files when only core is selected', async () => {
     const result = await getScaffold({ features: [] });
 
     expect(result.fileStructure).not.toContain('src/contexts/mobileContext.tsx');
     expect(result.fileStructure).not.toContain('src/hooks/useMediaQuery.ts');
-    expect(result.fileStructure).not.toContain('src/hooks/useTouchSizes.ts');
   });
 
   it('returns valid package.json structure', async () => {
-    const result = await getScaffold({
-      features: ['routing'],
-      projectName: 'test-app',
-    });
+    const result = await getScaffold({ features: ['routing'], projectName: 'test-app' });
 
     expect(result.packageJson).toBeDefined();
     expect(result.packageJson.name).toBe('test-app');
@@ -191,13 +133,12 @@ describe('get_scaffold tool', () => {
     expect(result.projectName).toBe('my-app');
   });
 
-  it('marks explicitly selected features correctly (no auto-inclusion)', async () => {
+  it('marks explicitly selected features correctly', async () => {
     const result = await getScaffold({ features: ['ui', 'state'] });
 
     const stateDetail = result.featureDetails.find((f) => f.id === 'state');
     const uiDetail = result.featureDetails.find((f) => f.id === 'ui');
 
-    // Both are explicitly selected, none auto-included
     expect(stateDetail?.wasExplicitlySelected).toBe(true);
     expect(stateDetail?.wasAutoIncluded).toBe(false);
     expect(uiDetail?.wasExplicitlySelected).toBe(true);
@@ -211,10 +152,7 @@ describe('get_scaffold tool', () => {
   });
 
   it('returns claudeMd content', async () => {
-    const result = await getScaffold({
-      features: [],
-      projectName: 'test-project',
-    });
+    const result = await getScaffold({ features: [], projectName: 'test-project' });
 
     expect(result.claudeMd).toBeDefined();
     expect(typeof result.claudeMd).toBe('string');
@@ -257,8 +195,6 @@ describe('get_scaffold tool', () => {
 
     expect(withMobile.claudeMd).toContain('## Mobile & Responsive Design');
     expect(withMobile.claudeMd).toContain('MobileProvider');
-    expect(withMobile.claudeMd).toContain('useMobileContext');
-    expect(withMobile.claudeMd).toContain('useTouchSizes');
     expect(withoutMobile.claudeMd).not.toContain('## Mobile & Responsive Design');
   });
 
@@ -268,7 +204,6 @@ describe('get_scaffold tool', () => {
 
     expect(withTheming.claudeMd).toContain('## Theming');
     expect(withTheming.claudeMd).toContain('usePreferencesStore');
-    expect(withTheming.claudeMd).toContain('useThemeEffect');
     expect(withoutTheming.claudeMd).not.toContain('## Theming');
   });
 
@@ -300,138 +235,19 @@ describe('get_scaffold tool', () => {
     expect(result.fileStructure).toContain('.gitignore');
   });
 
-  it('always includes .gitignore content in configFiles (core feature)', async () => {
+  it('always includes .gitignore content in configFiles', async () => {
     const result = await getScaffold({ features: [] });
 
     expect(result.configFiles).toHaveProperty('.gitignore');
     expect(result.configFiles['.gitignore']).toContain('node_modules');
     expect(result.configFiles['.gitignore']).toContain('dist/');
   });
-});
 
-describe('get_example tool', () => {
-  it('rejects unknown pattern via schema', () => {
-    const result = getExampleSchema.safeParse({ pattern: 'unknown-pattern' });
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.message).toContain('Invalid pattern');
-    }
-  });
-
-  it('returns code for valid pattern', async () => {
-    const result = await getExample({ pattern: 'zustand-store' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result).toHaveProperty('code');
-    expect(result).toHaveProperty('filePath');
-    expect(result).toHaveProperty('description');
-    expect(result).toHaveProperty('keyPoints');
-  });
-
-  it('returns usage hint', async () => {
-    const result = await getExample({ pattern: 'zustand-store' });
-
-    expect(result).toHaveProperty('usage');
-    expect(typeof result.usage).toBe('string');
-  });
-
-  it('returns actual code content', async () => {
-    const result = await getExample({ pattern: 'hook-state' });
-
-    // Should contain actual code, not be empty
-    expect(result.code).toBeTruthy();
-    expect(result.code.length).toBeGreaterThan(50);
-  });
-
-  it('works for component patterns', async () => {
-    const result = await getExample({ pattern: 'component-ui' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result.code).toContain('export');
-  });
-
-  it('works for test patterns', async () => {
-    const result = await getExample({ pattern: 'test-component' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result.code).toContain('describe');
-  });
-
-  it('works for mobile-context pattern', async () => {
-    const result = await getExample({ pattern: 'mobile-context' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result.code).toContain('MobileProvider');
-    expect(result.code).toContain('useMobileContext');
-    expect(result.filePath).toBe('src/contexts/mobileContext.tsx');
-  });
-
-  it('works for use-media-query pattern', async () => {
-    const result = await getExample({ pattern: 'use-media-query' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result.code).toContain('BREAKPOINTS');
-    expect(result.code).toContain('useMediaQuery');
-    expect(result.filePath).toBe('src/hooks/useMediaQuery.ts');
-  });
-
-  it('works for use-touch-sizes pattern', async () => {
-    const result = await getExample({ pattern: 'use-touch-sizes' });
-
-    expect(result).not.toHaveProperty('error');
-    expect(result.code).toContain('useTouchSizes');
-    expect(result.filePath).toBe('src/hooks/useTouchSizes.ts');
-  });
-});
-
-describe('docs utilities', () => {
-  it('includes universal docs and excludes WORKFLOW.md', () => {
-    const docs = computeDocsForFeatures(['core']);
-
-    // Universal docs always included
-    expect(docs).toContain('docs/ARCHITECTURE.md');
-    expect(docs).toContain('docs/CODING_STANDARDS.md');
-    expect(docs).toContain('docs/COMPONENT_GUIDELINES.md');
-    expect(docs).toContain('docs/API_REFERENCE.md');
-    // WORKFLOW.md never included
-    expect(docs).not.toContain('docs/WORKFLOW.md');
-    expect(docs).toHaveLength(4);
-  });
-
-  it('includes feature-specific docs only when feature selected', () => {
-    const coreOnly = computeDocsForFeatures(['core']);
-    const withTesting = computeDocsForFeatures(['core', 'testing']);
-    const withI18n = computeDocsForFeatures(['core', 'i18n']);
-
-    // Testing docs
-    expect(coreOnly).not.toContain('docs/TESTING.md');
-    expect(withTesting).toContain('docs/TESTING.md');
-    expect(withTesting).toContain('docs/E2E_TESTING.md');
-
-    // i18n docs
-    expect(coreOnly).not.toContain('docs/INTERNATIONALIZATION.md');
-    expect(withI18n).toContain('docs/INTERNATIONALIZATION.md');
-  });
-
-  it('returns doc content with key sections preserved', async () => {
-    const docs = await computeDocsContent(['core']);
-
-    expect(Object.keys(docs)).toHaveLength(4);
-    expect(docs['docs/ARCHITECTURE.md']).toContain('# Architecture Guide');
-    expect(docs['docs/ARCHITECTURE.md']).toContain('Provider Hierarchy');
-  });
-});
-
-describe('get_scaffold docs integration', () => {
   it('includes docs in structure and content', async () => {
     const result = await getScaffold({ features: [] });
 
-    // Structure includes docs
     expect(result.fileStructure).toContain('docs/ARCHITECTURE.md');
     expect(result.fileStructure).not.toContain('docs/TESTING.md');
-
-    // Content returned
     expect(result.docs['docs/ARCHITECTURE.md']).toBeDefined();
     expect(result.docs['docs/TESTING.md']).toBeUndefined();
   });

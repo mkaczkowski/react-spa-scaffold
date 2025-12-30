@@ -1,5 +1,5 @@
 export { getFeatures, getFeaturesToolDefinition, type FeatureSummary } from './get-features.js';
-
 export { getScaffold, getScaffoldSchema, getScaffoldToolDefinition, type GetScaffoldInput } from './get-scaffold.js';
-
 export { getExample, getExampleSchema, getExampleToolDefinition, type GetExampleInput } from './get-example.js';
+export { TOOL_REGISTRY, getToolDefinitions } from './registry.js';
+export type { ToolDefinition, ToolConfig, ToolRegistry } from './types.js';

@@ -2,9 +2,33 @@
  * Type definitions for feature modules
  */
 
-export interface FeatureOption {
-  description: string;
-  default: boolean;
+/**
+ * All valid feature IDs as a const tuple.
+ * Used for compile-time type safety when referencing features.
+ */
+export const FEATURE_IDS = [
+  'core',
+  'mobile',
+  'routing',
+  'ui',
+  'forms',
+  'state',
+  'api',
+  'i18n',
+  'testing',
+  'performance',
+  'devtools',
+  'ci',
+  'observability',
+  'theming',
+] as const;
+
+/** Type-safe feature identifier */
+export type FeatureId = (typeof FEATURE_IDS)[number];
+
+/** Type guard to check if a string is a valid FeatureId */
+export function isFeatureId(value: string): value is FeatureId {
+  return FEATURE_IDS.includes(value as FeatureId);
 }
 
 export interface Feature {
@@ -26,18 +50,15 @@ export interface Feature {
    */
   testFiles?: string[];
   patterns: string[];
-  options?: Record<string, FeatureOption>;
   scripts?: Record<string, string>;
   configFiles?: string[];
 }
 
-export interface FeatureRegistry {
-  [key: string]: Feature;
-}
+/** Type-safe feature registry mapping FeatureId to Feature */
+export type FeatureRegistry = Record<FeatureId, Feature>;
 
 export interface ScaffoldOptions {
   features: string[];
-  options?: Record<string, boolean>;
   projectName?: string;
 }
 

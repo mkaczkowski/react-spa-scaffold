@@ -16,8 +16,8 @@ test.describe('Home Page', () => {
     // Main content area
     await expect(page.getByRole('main')).toBeVisible();
 
-    // App title in header
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // App title in header (specific to header to avoid conflict with page heading)
+    await expect(page.getByRole('banner').getByRole('heading', { level: 1 })).toBeVisible();
   });
 
   test('skip link navigates to main content', async ({ page }) => {

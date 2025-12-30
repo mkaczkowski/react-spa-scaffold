@@ -1,0 +1,51 @@
+import type { Feature } from '../types.js';
+
+export const i18n: Feature = {
+  name: 'Internationalization',
+  description: 'LinguiJS with dynamic loading and language detection',
+  required: false,
+  includes: [
+    'LinguiJS (core + react + macro)',
+    'Trans component for JSX text',
+    't() function for programmatic text',
+    'Dynamic catalog loading (code splitting per locale)',
+    'Browser language detection',
+    'Language switcher component',
+    'ESLint rule for translator comments (enforced)',
+    'Locale files (.po format) for en, es, de',
+    'Vite plugin for compilation',
+    'useLanguage hook',
+  ],
+  dependencyNames: ['@lingui/core', '@lingui/react'],
+  devDependencyNames: [
+    '@lingui/babel-plugin-lingui-macro',
+    '@lingui/cli',
+    '@lingui/vite-plugin',
+    'babel-plugin-macros',
+    'eslint-plugin-lingui',
+  ],
+  files: [
+    'src/i18n/config.ts',
+    'src/i18n/detectLanguage.ts',
+    'src/i18n/loadCatalog.ts',
+    'src/i18n/index.ts',
+    'src/locales/en.po',
+    'src/locales/es.po',
+    'src/locales/de.po',
+    'src/hooks/useLanguage.ts',
+    'src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx',
+    'src/components/shared/LanguageSwitcher/index.ts',
+    'lingui.config.js',
+  ],
+  testFiles: [
+    'src/i18n/detectLanguage.test.ts',
+    'src/i18n/loadCatalog.test.ts',
+    'src/hooks/useLanguage.test.tsx',
+    'src/components/shared/LanguageSwitcher/LanguageSwitcher.test.tsx',
+    'e2e/tests/language.spec.ts',
+  ],
+  patterns: ['i18n-index', 'trans-component', 't-function', 'language-switcher', 'use-language-hook'],
+  scripts: {
+    'i18n:extract': 'lingui extract',
+  },
+};

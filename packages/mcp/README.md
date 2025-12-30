@@ -103,7 +103,7 @@ Or point directly to the built file:
 
 ## Available Features
 
-13 feature modules that can be combined:
+14 feature modules that can be combined:
 
 | Feature         | Description                                   | Required |
 | --------------- | --------------------------------------------- | -------- |
@@ -349,10 +349,9 @@ The server supports two modes:
 - Templates copied at publish time via `npm run bundle`
 
 ```typescript
-// Automatically detects which mode
-const TEMPLATES_ROOT = existsSync(BUNDLED_TEMPLATES)
-  ? BUNDLED_TEMPLATES // npx mode
-  : MONOREPO_ROOT; // development mode
+// Automatically detects which mode via .bundled marker file
+export const isPublishedMode = existsSync(BUNDLE_MARKER);
+export const CONTENT_ROOT = isPublishedMode ? BUNDLED_PATH : MONOREPO_ROOT;
 ```
 
 </details>
@@ -378,26 +377,31 @@ npm publish
 <details>
 <summary>Adding a New Feature</summary>
 
-1. **Define in** `src/features/registry.ts`:
+1. **Create feature file** in `src/features/definitions/my-feature.ts`:
 
 ```typescript
-const myFeature: Feature = {
+import type { Feature } from '../types.js';
+
+export const myFeature: Feature = {
   name: 'My Feature',
   description: 'Description shown to users',
   required: false,
   includes: ['Thing 1', 'Thing 2'],
-  dependencies: { 'some-package': '^1.0.0' },
-  devDependencies: { 'some-dev-package': '^2.0.0' },
+  dependencyNames: ['some-package'],
+  devDependencyNames: ['some-dev-package'],
   files: ['src/lib/myFeature.ts'],
   patterns: ['my-feature-pattern'],
   scripts: { 'my-script': 'some-command' },
-  configFiles: ['my-feature.config.js'],
 };
 ```
 
-2. **Add patterns** in `src/utils/examples.ts`:
+2. **Export from** `src/features/definitions/index.ts`
 
-```typescript
+3. **Add to** `src/features/registry.ts` FEATURES object
+
+4. **Add patterns** in `src/utils/examples/utility-patterns.ts` (or appropriate category):
+
+```
 'my-feature-pattern': {
   file: 'src/lib/myFeature.ts',
   description: 'My feature implementation',
@@ -405,9 +409,9 @@ const myFeature: Feature = {
 },
 ```
 
-3. **Create actual files** in react-spa-scaffold's `src/`
+5. **Create actual files** in react-spa-scaffold's `src/`
 
-4. **Rebuild**: `npm run build`
+6. **Rebuild**: `npm run build`
 
 </details>
 
@@ -416,7 +420,7 @@ const myFeature: Feature = {
 
 1. **Add to** `src/resources/docs.ts`:
 
-```typescript
+```
 'docs://my-topic': {
   files: ['docs/MY_TOPIC.md'],
   name: 'My Topic',
