@@ -16,50 +16,47 @@ npm run inspect    # Test with MCP Inspector
 
 ```
 src/
-├── index.ts           # Entry point (STDIO transport, graceful shutdown)
-├── server.ts          # MCP server setup, uses tool registry
+├── index.ts           # Entry point (STDIO transport)
+├── server.ts          # MCP server setup
 ├── version.ts         # Dynamic version from package.json
-├── features/          # Feature registry and types
-│   ├── types.ts       # Feature interface, FeatureId type, FEATURE_IDS
-│   └── registry.ts    # All 14 features defined here
-├── tools/             # MCP tool implementations
-│   ├── get-features.ts
-│   ├── get-scaffold.ts
-│   ├── get-example.ts
-│   └── registry.ts    # Tool registry (single source of truth)
-├── resources/         # MCP resources (docs)
-│   └── docs.ts        # Reads from docs/, caches results
-└── utils/             # Helpers
-    ├── examples.ts    # PATTERN_MAP definitions
-    ├── paths.ts       # Monorepo vs published path detection
+├── features/
+│   ├── types.ts       # Feature interface, FeatureId type
+│   ├── registry.ts    # Aggregates all features
+│   ├── versions.ts    # Config package versions
+│   └── definitions/   # Individual feature definitions
+│       ├── core.ts, mobile.ts, routing.ts, ui.ts, forms.ts
+│       ├── state.ts, api.ts, i18n.ts, testing.ts
+│       └── performance.ts, devtools.ts, ci.ts, observability.ts, theming.ts
+├── tools/
+│   ├── types.ts       # Tool type definitions
+│   ├── registry.ts    # Tool registry
+│   ├── get-features.ts, get-scaffold.ts, get-example.ts
+├── resources/
+│   └── docs.ts        # Documentation resources
+└── utils/
+    ├── paths.ts       # isPublishedMode, CONTENT_ROOT, resolveTemplatePath
+    ├── cache.ts       # createCache, createSingletonCache
+    ├── errors.ts      # readWithFallback, getErrorMessage
     ├── docs.ts        # Doc selection by feature
-    └── scaffold/      # Scaffold computation (split for readability)
-        ├── dependencies.ts   # Dependency resolution
-        ├── file-structure.ts # File list computation
-        ├── generators.ts     # Content generators (CLAUDE.md, env.ts, etc.)
-        ├── commands.ts       # Setup commands
-        └── compute.ts        # Orchestrator
+    ├── examples/      # Pattern definitions by category
+    │   ├── component-patterns.ts, hook-patterns.ts, mobile-patterns.ts
+    │   ├── store-patterns.ts, page-patterns.ts, context-patterns.ts
+    │   ├── api-patterns.ts, test-patterns.ts, i18n-patterns.ts
+    │   └── utility-patterns.ts
+    └── scaffold/
+        ├── dependencies.ts, file-structure.ts, generators.ts
+        ├── commands.ts, compute.ts
 ```
 
 ## Code Patterns
 
-**Tool Registration**: Add new tools to `src/tools/registry.ts`:
+**Adding features**: Create file in `src/features/definitions/`, export from index.ts, add to registry.ts
 
-```typescript
-export const TOOL_REGISTRY: Record<string, ToolConfig> = {
-  get_features: { definition, handler, schema: null },
-  get_scaffold: { definition, handler, schema: getScaffoldSchema },
-  // Add new tools here
-};
-```
+**Adding patterns**: Create or edit file in `src/utils/examples/`, add to the category's PatternMap
 
-**Type-safe Features**: Use `FeatureId` type and `isFeatureId()` guard from `features/types.ts`
+**Adding tools**: Add to `src/tools/registry.ts` with definition, handler, and schema
 
-**Caching**: Resources use in-memory Map cache for file reads
-
-**Adding features**: Edit `src/features/registry.ts`, add patterns to `src/utils/examples.ts`
-
-**Adding resources**: Edit `src/resources/docs.ts` DOCS_MAP, create doc in `docs/`
+**Adding resources**: Edit `src/resources/docs.ts` DOCS_MAP
 
 ## Testing
 
@@ -68,9 +65,8 @@ npm test              # Run all tests
 npm run test:watch    # Watch mode
 ```
 
-Tests are co-located with source files:
+Tests co-located with source:
 
-- `src/tools/get-features.test.ts` - Feature listing
-- `src/tools/get-scaffold.test.ts` - Scaffold generation
-- `src/tools/get-example.test.ts` - Example retrieval
-- `src/utils/docs.test.ts` - Doc utilities
+- `src/tools/*.test.ts` - Tool tests
+- `src/utils/*.test.ts` - Utility tests
+- `src/server.test.ts` - Server integration
