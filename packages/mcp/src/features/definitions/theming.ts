@@ -23,6 +23,5 @@ export const theming: Feature = {
     'src/components/shared/ThemeToggle/ThemeToggle.test.tsx',
     'e2e/tests/theme.spec.ts',
   ],
-  patterns: ['theme-toggle', 'hook-effect'],
   scripts: {},
 };

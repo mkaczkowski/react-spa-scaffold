@@ -23,6 +23,5 @@ export const state: Feature = {
     'src/types/preferences.ts',
   ],
   testFiles: ['src/lib/storage.test.ts', 'src/stores/preferencesStore.test.ts'],
-  patterns: ['zustand-store', 'store-persistence', 'multi-tab-sync', 'storage-utility'],
   scripts: {},
 };

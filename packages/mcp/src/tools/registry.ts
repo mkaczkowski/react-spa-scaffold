@@ -9,7 +9,6 @@
 import type { ToolRegistry, ToolDefinition, ToolConfigNoSchema, ToolConfigWithSchema } from './types.js';
 import { getFeatures, getFeaturesToolDefinition } from './get-features.js';
 import { getScaffold, getScaffoldSchema, getScaffoldToolDefinition } from './get-scaffold.js';
-import { getExample, getExampleSchema, getExampleToolDefinition } from './get-example.js';
 import { getFile, getFileSchema, getFileToolDefinition } from './get-file.js';
 
 /** Tool: get_features - no input required */
@@ -26,13 +25,6 @@ const getScaffoldConfig: ToolConfigWithSchema<typeof getScaffoldSchema> = {
   handler: getScaffold,
 };
 
-/** Tool: get_example - requires pattern input */
-const getExampleConfig: ToolConfigWithSchema<typeof getExampleSchema> = {
-  definition: getExampleToolDefinition,
-  schema: getExampleSchema,
-  handler: getExample,
-};
-
 /** Tool: get_file - requires path input */
 const getFileConfig: ToolConfigWithSchema<typeof getFileSchema> = {
   definition: getFileToolDefinition,
@@ -44,7 +36,6 @@ const getFileConfig: ToolConfigWithSchema<typeof getFileSchema> = {
 export const TOOL_REGISTRY: ToolRegistry = {
   get_features: getFeaturesConfig,
   get_scaffold: getScaffoldConfig,
-  get_example: getExampleConfig,
   get_file: getFileConfig,
 };
 

@@ -45,7 +45,6 @@ export const testing: Feature = {
     'docs/TESTING.md',
     'docs/E2E_TESTING.md',
   ],
-  patterns: ['test-component', 'test-hook', 'test-store', 'test-utility', 'msw-handler', 'test-fixture'],
   scripts: {
     test: 'vitest run',
     'test:watch': 'vitest',

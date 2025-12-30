@@ -12,6 +12,4 @@ export {
   computeScaffold,
 } from './scaffold/index.js';
 
-export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples/index.js';
-
 export { computeDocsForFeatures, computeDocsContent } from './docs.js';

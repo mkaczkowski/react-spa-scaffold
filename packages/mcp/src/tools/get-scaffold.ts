@@ -5,8 +5,8 @@
  * This includes dependencies, file structure, config files,
  * and setup commands needed to create a new project.
  *
- * Uses lazy loading - config files, docs, and examples are
- * fetched on demand via get_file and get_example tools.
+ * Uses lazy loading - all file content is fetched on demand
+ * via get_file tool.
  */
 
 import { z } from 'zod';
@@ -50,7 +50,7 @@ export async function getScaffold(input: GetScaffoldInput) {
   // Get scaffold result
   const scaffold = await computeScaffold(features, projectName);
 
-  // Build feature details with patterns (for use with get_example)
+  // Build feature details
   const featureDetails = resolvedFeatures.map((id) => {
     const feature = FEATURES[id];
     return {
@@ -58,7 +58,6 @@ export async function getScaffold(input: GetScaffoldInput) {
       name: feature.name,
       wasExplicitlySelected: features.includes(id),
       wasAutoIncluded: !features.includes(id),
-      patterns: feature.patterns,
     };
   });
 
@@ -87,14 +86,16 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 
 1. Create project with \`packageJson\`
 2. Use generated content: \`claudeMd\`, \`viteEnvDts\`, \`envTs\`${hasRouting ? ', `routesTs`' : ''}
-3. Fetch config files: \`get_file({ path: "..." })\` for each in \`configFiles\`
-4. Fetch docs: \`get_file({ path: "..." })\` for each in \`docs\`
-5. Create source files: \`get_example({ pattern: "..." })\`
-6. Run: ${setupCommands.join(' && ')}
+3. Fetch ALL files via \`get_file({ path: "..." })\`:
+   - \`configFiles\`: config file paths
+   - \`docs\`: documentation paths
+   - \`fileStructure\`: ALL source file paths
+4. Strip imports/code for features NOT in \`resolvedFeatures\`
+5. Run: ${setupCommands.join(' && ')}
 
-## IMPORTANT
+## CRITICAL
 
-Templates are written for ALL features. Remove imports, providers, and code for features not in \`resolvedFeatures\`.`;
+Do NOT generate file content. Fetch via \`get_file\`, then adapt for selected features.`;
 }
 
 /** Tool definition derived from Zod schema - single source of truth (Zod v4 native). */
@@ -104,17 +105,17 @@ export const getScaffoldToolDefinition: ToolDefinition = {
 
 Returns package.json, file structure paths, setup commands, and generated files.
 
-**Lazy Loading** (reduces response from ~50K to ~15K tokens):
-- \`configFiles\`: paths only → use \`get_file({ path: "..." })\`
-- \`docs\`: paths only → use \`get_file({ path: "..." })\`
-- \`featureDetails[].patterns\`: pattern names → use \`get_example({ pattern: "..." })\`
+**Lazy Loading** - fetch ALL content via \`get_file({ path: "..." })\`:
+- \`configFiles\`: config file paths
+- \`docs\`: documentation paths
+- \`fileStructure\`: ALL source file paths
 
 **Generated Content** (included directly):
 - \`claudeMd\`: CLAUDE.md content
 - \`viteEnvDts\`, \`envTs\`: TypeScript declarations
 - \`routesTs\`: Route constants (if routing feature selected)
 
-IMPORTANT: Templates contain code for ALL features. Strip imports and code for features not in \`resolvedFeatures\`.
+CRITICAL: Do NOT generate file content. Fetch via \`get_file\`, then strip imports/code for features NOT in \`resolvedFeatures\`.
 
 Feature dependencies: theming → state (auto-included)
 

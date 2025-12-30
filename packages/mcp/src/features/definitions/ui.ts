@@ -39,7 +39,6 @@ export const ui: Feature = {
     'components.json',
   ],
   testFiles: ['src/components/ui/loading.test.tsx', 'src/components/layout/Header.test.tsx'],
-  patterns: ['component-ui', 'button-variants', 'forward-ref-component'],
   scripts: {},
   configFiles: ['components.json'],
 };

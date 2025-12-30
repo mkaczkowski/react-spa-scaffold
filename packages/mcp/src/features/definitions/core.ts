@@ -59,7 +59,6 @@ export const core: Feature = {
     'src/components/shared/ErrorBoundary/ErrorBoundary.test.tsx',
     'e2e/tests/home.spec.ts',
   ],
-  patterns: ['component-shared', 'hook-effect', 'error-boundary', 'seo-component'],
   scripts: {
     dev: 'vite',
     build: 'tsc -b && vite build',

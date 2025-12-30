@@ -28,6 +28,5 @@ export const forms: Feature = {
     'src/hooks/useRegisterForm.test.tsx',
     'src/components/shared/RegisterForm/RegisterForm.test.tsx',
   ],
-  patterns: ['zod-schema', 'hook-form', 'form-error-component', 'register-form'],
   scripts: {},
 };

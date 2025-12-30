@@ -19,7 +19,6 @@ export const performance: Feature = {
   devDependencyNames: ['chrome-launcher', 'lighthouse'],
   files: ['src/contexts/performanceContext.tsx', 'e2e/performance/setup.ts'],
   testFiles: ['e2e/performance/home.spec.ts', 'src/contexts/performanceContext.test.tsx'],
-  patterns: ['performance-context', 'performance-e2e', 'profiler-wrapper'],
   scripts: {
     'e2e:perf': 'PERF_TEST=true playwright test --project=performance',
     'e2e:perf:ui': 'PERF_TEST=true playwright test --project=performance --ui',

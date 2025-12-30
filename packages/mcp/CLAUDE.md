@@ -30,7 +30,7 @@ src/
 ├── tools/
 │   ├── types.ts       # Tool type definitions
 │   ├── registry.ts    # Tool registry
-│   ├── get-features.ts, get-scaffold.ts, get-example.ts
+│   ├── get-features.ts, get-scaffold.ts, get-file.ts
 ├── resources/
 │   └── docs.ts        # Documentation resources
 └── utils/
@@ -38,11 +38,6 @@ src/
     ├── cache.ts       # createCache, createSingletonCache
     ├── errors.ts      # readWithFallback, getErrorMessage
     ├── docs.ts        # Doc selection by feature
-    ├── examples/      # Pattern definitions by category
-    │   ├── component-patterns.ts, hook-patterns.ts, mobile-patterns.ts
-    │   ├── store-patterns.ts, page-patterns.ts, context-patterns.ts
-    │   ├── api-patterns.ts, test-patterns.ts, i18n-patterns.ts
-    │   └── utility-patterns.ts
     └── scaffold/
         ├── dependencies.ts, file-structure.ts, generators.ts
         ├── commands.ts, compute.ts
@@ -51,8 +46,6 @@ src/
 ## Code Patterns
 
 **Adding features**: Create file in `src/features/definitions/`, export from index.ts, add to registry.ts
-
-**Adding patterns**: Create or edit file in `src/utils/examples/`, add to the category's PatternMap
 
 **Adding tools**: Add to `src/tools/registry.ts` with definition, handler, and schema
 

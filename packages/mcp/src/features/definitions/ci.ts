@@ -20,7 +20,6 @@ export const ci: Feature = {
     '.github/dependabot.yml',
     '.github/PULL_REQUEST_TEMPLATE.md',
   ],
-  patterns: [],
   scripts: {},
   configFiles: [],
 };

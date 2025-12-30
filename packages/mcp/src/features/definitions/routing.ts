@@ -21,6 +21,5 @@ export const routing: Feature = {
     'src/components/ui/visually-hidden.tsx',
   ],
   testFiles: ['e2e/tests/navigation.spec.ts'],
-  patterns: ['lazy-page', 'route-constants', 'page-component'],
   scripts: {},
 };

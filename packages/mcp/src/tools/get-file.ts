@@ -1,7 +1,7 @@
 /**
  * get_file tool
  *
- * Fetches content of config or documentation files.
+ * Fetches content of ANY file from react-spa-scaffold templates.
  * Used for lazy loading after get_scaffold returns paths.
  */
 
@@ -50,14 +50,18 @@ export async function getFile(input: GetFileInput) {
 /** Tool definition derived from Zod schema (Zod v4 native). */
 export const getFileToolDefinition: ToolDefinition = {
   name: 'get_file',
-  description: `Fetch content of a config or documentation file.
+  description: `Fetch file content from react-spa-scaffold templates.
 
-Use paths from \`get_scaffold\` response:
-- \`configFiles\`: config file paths (e.g., "vite.config.ts")
-- \`docs\`: documentation paths (e.g., "docs/ARCHITECTURE.md")
+Use with paths from \`get_scaffold\` response:
+- \`configFiles\`: config file paths
+- \`docs\`: documentation paths
+- \`fileStructure\`: ALL source file paths
+
+IMPORTANT: Fetch content for EVERY file in fileStructure, then strip code for unselected features.
 
 Examples:
 - \`{ path: "vite.config.ts" }\`
-- \`{ path: "docs/TESTING.md" }\``,
+- \`{ path: "docs/TESTING.md" }\`
+- \`{ path: "src/App.tsx" }\``,
   inputSchema: z.toJSONSchema(getFileSchema) as ToolDefinition['inputSchema'],
 };

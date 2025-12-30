@@ -16,6 +16,5 @@ export const api: Feature = {
   dependencyNames: ['@tanstack/react-query'],
   files: ['src/lib/api.ts', 'src/contexts/queryContext.tsx', 'src/hooks/useExampleQuery.ts', 'src/types/api.ts'],
   testFiles: ['src/lib/api.test.ts', 'src/hooks/useExampleQuery.test.tsx'],
-  patterns: ['query-provider', 'use-query-hook', 'api-client'],
   scripts: {},
 };

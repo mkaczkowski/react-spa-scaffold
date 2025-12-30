@@ -28,7 +28,6 @@ export interface Feature {
   files: string[];
   /** Test files - only included when 'testing' feature is also selected. */
   testFiles?: string[];
-  patterns: string[];
   scripts?: Record<string, string>;
   configFiles?: string[];
 }

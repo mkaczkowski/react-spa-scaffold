@@ -4,25 +4,24 @@
 ![MCP](https://img.shields.io/badge/MCP-1.0-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)
 
-> **TL;DR:** An MCP server that provides knowledge and patterns for AI agents to scaffold React projects. The AI asks what you need, this server provides the info, and the AI generates your project.
+> **TL;DR:** An MCP server that provides knowledge for AI agents to scaffold React projects. The AI asks what you need, this server provides the info, and the AI generates your project.
 
-**4 Tools:**
+**3 Tools:**
 
 - `get_features` — List available feature modules
 - `get_scaffold` — Get dependencies and file structure for selected features
-- `get_file` — Fetch config or documentation file content (lazy loading)
-- `get_example` — Get real code patterns from react-spa-scaffold
+- `get_file` — Fetch ANY file content (config, docs, source files)
 
 ## Philosophy
 
 **MCP provides knowledge, AI provides execution.**
 
-| MCP Server Does          | AI Agent Does            |
-| ------------------------ | ------------------------ |
-| Lists available features | Decides which to include |
-| Reports dependencies     | Writes package.json      |
-| Provides code patterns   | Generates actual files   |
-| Documents conventions    | Follows the patterns     |
+| MCP Server Does          | AI Agent Does                |
+| ------------------------ | ---------------------------- |
+| Lists available features | Decides which to include     |
+| Reports dependencies     | Writes package.json          |
+| Provides file content    | Adapts for selected features |
+| Documents conventions    | Follows the patterns         |
 
 ## Quick Start
 
@@ -144,117 +143,27 @@ const result = await client.callTool('get_scaffold', {
   projectName: 'my-app',
 });
 // Returns: { packageJson, fileStructure, configFiles, docs, setupCommands, instructions }
-// Note: configFiles and docs are paths only (lazy loading)
+// Note: All paths are lazy-loaded via get_file
 ```
 
 ### `get_file`
 
-Fetch content of config or documentation files (lazy loading).
+Fetch content of ANY file from templates.
 
 ```typescript
 const result = await client.callTool('get_file', {
-  path: 'vite.config.ts', // or 'docs/ARCHITECTURE.md'
+  path: 'src/App.tsx', // or 'vite.config.ts', 'docs/ARCHITECTURE.md'
 });
 // Returns: { path, content }
 ```
 
-Use paths from `get_scaffold` response (`configFiles` or `docs` arrays).
+Use paths from `get_scaffold` response:
 
-### `get_example`
+- `configFiles`: config file paths
+- `docs`: documentation paths
+- `fileStructure`: ALL source file paths
 
-Get real code from react-spa-scaffold for a specific pattern.
-
-```typescript
-const result = await client.callTool('get_example', {
-  pattern: 'component-shared',
-});
-// Returns: { pattern, description, filePath, keyPoints, code, usage }
-```
-
-## Available Patterns
-
-| Category   | Patterns                                                   |
-| ---------- | ---------------------------------------------------------- |
-| Components | `component-ui`, `component-shared`, `component-layout`     |
-| Hooks      | `hook-state`, `hook-query`, `hook-form`, `hook-effect`     |
-| State      | `zustand-store`                                            |
-| Pages      | `page-component`, `lazy-page`                              |
-| Context    | `context-provider`, `query-provider`                       |
-| API        | `api-client`                                               |
-| Testing    | `test-component`, `test-hook`, `test-store`, `msw-handler` |
-| i18n       | `trans-component`, `t-function`, `use-language-hook`       |
-| Utilities  | `zod-schema`, `storage-utility`                            |
-| Mobile     | `mobile-context`, `use-media-query`, `use-touch-sizes`     |
-| UI         | `seo-component`                                            |
-| Theming    | `theme-toggle`                                             |
-
-<details>
-<summary>Full Pattern Reference</summary>
-
-**Components:**
-
-- `component-ui` — Shadcn/UI component with CVA variants
-- `component-shared` — Feature component with store integration
-- `component-layout` — Layout component for page structure
-
-**Hooks:**
-
-- `hook-state` — State hook with browser API
-- `hook-query` — TanStack Query data fetching
-- `hook-form` — React Hook Form + Zod
-- `hook-effect` — Effect-only hook
-- `use-language-hook` — Language/locale management
-
-**State:**
-
-- `zustand-store` — Store with persistence and devtools
-
-**Pages:**
-
-- `page-component` — Page with i18n
-- `lazy-page` — Lazy loading pattern
-
-**Context:**
-
-- `context-provider` — React Context with provider
-- `query-provider` — TanStack Query setup
-
-**API:**
-
-- `api-client` — Typed API client
-
-**Testing:**
-
-- `test-component` — Component test
-- `test-hook` — Hook test with renderHook
-- `test-store` — Zustand store test
-- `msw-handler` — MSW request handler
-
-**i18n:**
-
-- `trans-component` — i18n Trans usage
-- `t-function` — i18n t() usage
-
-**Utilities:**
-
-- `zod-schema` — Validation schema
-- `storage-utility` — localStorage utilities
-
-**Mobile:**
-
-- `mobile-context` — Viewport detection context
-- `use-media-query` — Media query hook with breakpoints
-- `use-touch-sizes` — Touch-aware sizing hook
-
-**UI:**
-
-- `seo-component` — SEO meta tags
-
-**Theming:**
-
-- `theme-toggle` — Theme toggle component
-
-</details>
+**IMPORTANT**: Fetch content for EVERY file, then strip code for unselected features.
 
 ## Resources
 
@@ -272,7 +181,7 @@ Documentation resources read from actual files (auto-synced):
 ## Example Workflow
 
 ```
-User Request → get_features() → Select → get_scaffold() → Create → get_example() → Generate
+get_features() → choose features → get_scaffold() → get_file() for each path → write project
 ```
 
 **Step 1: Query features**
@@ -289,22 +198,24 @@ const scaffold = await mcp.callTool('get_scaffold', {
   features: ['routing', 'ui', 'forms'],
   projectName: 'my-app',
 });
-// Returns: dependencies, file structure, setup commands
+// Returns: packageJson, fileStructure paths, configFiles paths, docs paths
 ```
 
-**Step 3: Get patterns**
+**Step 3: Fetch each file**
 
 ```typescript
-const example = await mcp.callTool('get_example', { pattern: 'hook-form' });
-// Returns: actual code from react-spa-scaffold
+// Fetch ALL files from fileStructure, configFiles, and docs
+const appContent = await mcp.callTool('get_file', { path: 'src/App.tsx' });
+const viteConfig = await mcp.callTool('get_file', { path: 'vite.config.ts' });
+// ... fetch every file path
 ```
 
-**Step 4: AI generates project**
+**Step 4: AI writes project**
 
 ```
 mkdir my-app && cd my-app
 → Write package.json from scaffold.packageJson
-→ Generate files following patterns
+→ Write each file (strip code for unselected features)
 → npm install && npm run build
 ```
 
@@ -404,7 +315,6 @@ export const myFeature: Feature = {
   dependencyNames: ['some-package'],
   devDependencyNames: ['some-dev-package'],
   files: ['src/lib/myFeature.ts'],
-  patterns: ['my-feature-pattern'],
   scripts: { 'my-script': 'some-command' },
 };
 ```
@@ -413,19 +323,9 @@ export const myFeature: Feature = {
 
 3. **Add to** `src/features/registry.ts` FEATURES object
 
-4. **Add patterns** in `src/utils/examples/utility-patterns.ts` (or appropriate category):
+4. **Create actual files** in react-spa-scaffold's `src/`
 
-```
-'my-feature-pattern': {
-  file: 'src/lib/myFeature.ts',
-  description: 'My feature implementation',
-  keyPoints: ['Key point 1', 'Key point 2'],
-},
-```
-
-5. **Create actual files** in react-spa-scaffold's `src/`
-
-6. **Rebuild**: `npm run build`
+5. **Rebuild**: `npm run build`
 
 </details>
 
@@ -452,12 +352,11 @@ Resources read files at runtime — content updates without rebuilding.
 
 ## Troubleshooting
 
-| Problem                      | Solution                                                  |
-| ---------------------------- | --------------------------------------------------------- |
-| "File not found" in examples | Run from monorepo: `cd packages/mcp && npm start`         |
-| Tools not appearing          | Check config path, run `npm run build`, check stderr logs |
-| Type errors after changes    | Run `npm run typecheck`, then rebuild                     |
-| Patterns returning empty     | Ensure referenced file exists in `src/` or `tests/`       |
+| Problem                   | Solution                                                  |
+| ------------------------- | --------------------------------------------------------- |
+| "File not found"          | Run from monorepo: `cd packages/mcp && npm start`         |
+| Tools not appearing       | Check config path, run `npm run build`, check stderr logs |
+| Type errors after changes | Run `npm run typecheck`, then rebuild                     |
 
 ## License
 

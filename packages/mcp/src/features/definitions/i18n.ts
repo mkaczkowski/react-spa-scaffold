@@ -44,7 +44,6 @@ export const i18n: Feature = {
     'src/components/shared/LanguageSwitcher/LanguageSwitcher.test.tsx',
     'e2e/tests/language.spec.ts',
   ],
-  patterns: ['i18n-index', 'trans-component', 't-function', 'language-switcher', 'use-language-hook'],
   scripts: {
     'i18n:extract': 'lingui extract',
   },

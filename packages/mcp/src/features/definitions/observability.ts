@@ -17,6 +17,5 @@ export const observability: Feature = {
   dependencyNames: ['@sentry/react'],
   devDependencyNames: ['@sentry/vite-plugin'],
   files: ['src/lib/config.ts'],
-  patterns: ['main-entry', 'lib-config'],
   scripts: {},
 };

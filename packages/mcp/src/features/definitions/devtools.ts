@@ -42,7 +42,6 @@ export const devtools: Feature = {
     '.husky/commit-msg',
     '.nvmrc',
   ],
-  patterns: [],
   scripts: {
     lint: 'eslint .',
     'lint:fix': 'eslint . --fix',

@@ -15,6 +15,5 @@ export const mobile: Feature = {
   ],
   files: ['src/contexts/mobileContext.tsx', 'src/hooks/useMediaQuery.ts', 'src/hooks/useTouchSizes.ts'],
   testFiles: ['src/contexts/mobileContext.test.tsx', 'src/hooks/useMediaQuery.test.ts'],
-  patterns: ['mobile-context', 'use-media-query', 'use-touch-sizes'],
   scripts: {},
 };
