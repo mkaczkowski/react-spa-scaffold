@@ -224,10 +224,13 @@ describe('get_scaffold tool', () => {
     expect(result.configFiles).toContain('components.json');
   });
 
-  it('always includes .gitignore in fileStructure (core feature)', async () => {
+  it('does NOT include config files in fileStructure (separate configFiles array)', async () => {
     const result = await getScaffold({ features: [] });
 
-    expect(result.fileStructure).toContain('.gitignore');
+    // Config files should only appear in configFiles, not in fileStructure
+    for (const configFile of result.configFiles) {
+      expect(result.fileStructure).not.toContain(configFile);
+    }
   });
 
   it('always includes .gitignore in configFiles array', async () => {

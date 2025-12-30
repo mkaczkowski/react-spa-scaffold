@@ -52,11 +52,14 @@ export async function computeScaffold(
   // Sync operations
   const scripts = mergeScripts(resolvedFeatures);
   const docs = computeDocsForFeatures(resolvedFeatures);
-  const structure = computeFileStructure(resolvedFeatures); // Source files only (no CLAUDE.md, no docs)
   const setupCommands = getSetupCommands(resolvedFeatures);
 
   // Config files: paths only (lazy loading)
   const configFiles = getConfigFiles(resolvedFeatures);
+
+  // Source files: exclude config files to avoid duplication in output
+  const configSet = new Set(configFiles);
+  const structure = computeFileStructure(resolvedFeatures).filter((f) => !configSet.has(f));
 
   // Generate content (sync)
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
