@@ -10,6 +10,7 @@ import type { ToolRegistry, ToolDefinition, ToolConfigNoSchema, ToolConfigWithSc
 import { getFeatures, getFeaturesToolDefinition } from './get-features.js';
 import { getScaffold, getScaffoldSchema, getScaffoldToolDefinition } from './get-scaffold.js';
 import { getExample, getExampleSchema, getExampleToolDefinition } from './get-example.js';
+import { getFile, getFileSchema, getFileToolDefinition } from './get-file.js';
 
 /** Tool: get_features - no input required */
 const getFeaturesConfig: ToolConfigNoSchema = {
@@ -32,11 +33,19 @@ const getExampleConfig: ToolConfigWithSchema<typeof getExampleSchema> = {
   handler: getExample,
 };
 
+/** Tool: get_file - requires path input */
+const getFileConfig: ToolConfigWithSchema<typeof getFileSchema> = {
+  definition: getFileToolDefinition,
+  schema: getFileSchema,
+  handler: getFile,
+};
+
 /** All registered MCP tools. */
 export const TOOL_REGISTRY: ToolRegistry = {
   get_features: getFeaturesConfig,
   get_scaffold: getScaffoldConfig,
   get_example: getExampleConfig,
+  get_file: getFileConfig,
 };
 
 /** Get all tool definitions for ListToolsRequest. */

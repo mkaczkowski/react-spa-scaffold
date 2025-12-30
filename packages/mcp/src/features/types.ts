@@ -50,11 +50,13 @@ export interface ScaffoldResult {
     engines: Record<string, string>;
   };
   structure: string[];
-  configFiles: Record<string, string>;
+  /** Config file paths (use get_file to fetch content) */
+  configFiles: string[];
   setupCommands: string[];
   claudeMd: string;
   viteEnvDts: string;
   envTs: string;
   routesTs?: string; // Only when routing feature is selected
-  docs: Record<string, string>;
+  /** Documentation file paths (use get_file to fetch content) */
+  docs: string[];
 }

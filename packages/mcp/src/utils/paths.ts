@@ -3,7 +3,7 @@
  */
 
 import { existsSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, isAbsolute, join, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -28,4 +28,25 @@ export function resolveTemplatePath(relativePath: string): string {
     isPublishedMode && RENAMED_DOTFILES[relativePath] ? RENAMED_DOTFILES[relativePath] : relativePath;
 
   return join(CONTENT_ROOT, resolvedPath);
+}
+
+/**
+ * Check if resolved path is within CONTENT_ROOT (prevent path traversal).
+ *
+ * @example
+ * isPathWithinRoot('vite.config.ts')           // true
+ * isPathWithinRoot('../../../etc/passwd')      // false
+ * isPathWithinRoot('/etc/passwd')              // false
+ */
+export function isPathWithinRoot(relativePath: string): boolean {
+  // Reject absolute paths - they bypass CONTENT_ROOT
+  if (isAbsolute(relativePath)) {
+    return false;
+  }
+
+  const fullPath = join(CONTENT_ROOT, relativePath);
+  const normalizedPath = normalize(fullPath);
+  const normalizedRoot = normalize(CONTENT_ROOT);
+
+  return normalizedPath.startsWith(normalizedRoot + '/') || normalizedPath === normalizedRoot;
 }

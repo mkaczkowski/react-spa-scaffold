@@ -1,16 +1,19 @@
 /**
  * Scaffold computation orchestrator - coordinates all components.
+ *
+ * Returns paths only for configFiles and docs (lazy loading).
+ * Use get_file tool to fetch actual content.
  */
 
 import { readFile } from 'fs/promises';
 
 import { FEATURE } from '../../constants.js';
 import type { ScaffoldResult } from '../../features/types.js';
-import { computeDocsContent, computeDocsForFeatures } from '../docs.js';
+import { computeDocsForFeatures } from '../docs.js';
 import { resolveTemplatePath } from '../paths.js';
 
 import { resolveFeatureDependencies, mergeDependencies, mergeScripts } from './dependencies.js';
-import { computeFileStructure, getConfigFiles, readConfigFileContent } from './file-structure.js';
+import { computeFileStructure, getConfigFiles } from './file-structure.js';
 import { getSetupCommands } from './commands.js';
 import { generateClaudeMd, generateViteEnvDts, generateEnvTs, generateRoutesTs } from './generators.js';
 
@@ -22,7 +25,9 @@ async function readSourcePackageJson(): Promise<Record<string, unknown>> {
 
 /**
  * Computes complete scaffold for selected features.
- * Uses parallel I/O where possible for better performance.
+ *
+ * Returns paths only for configFiles and docs (lazy loading).
+ * Use get_file tool to fetch actual content when needed.
  */
 export async function computeScaffold(
   selectedFeatures: string[],
@@ -31,11 +36,10 @@ export async function computeScaffold(
   // Resolve all dependencies (sync)
   const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
 
-  // Parallel async operations: package.json, dependencies, and docs
-  const [sourcePackageJson, depsResult, docs] = await Promise.all([
+  // Parallel async operations: package.json and dependencies
+  const [sourcePackageJson, depsResult] = await Promise.all([
     readSourcePackageJson(),
     mergeDependencies(resolvedFeatures),
-    computeDocsContent(resolvedFeatures),
   ]);
 
   const engines = (sourcePackageJson.engines as Record<string, string>) || {};
@@ -47,16 +51,12 @@ export async function computeScaffold(
 
   // Sync operations
   const scripts = mergeScripts(resolvedFeatures);
-  const docPaths = computeDocsForFeatures(resolvedFeatures);
-  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docPaths];
+  const docs = computeDocsForFeatures(resolvedFeatures);
+  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docs];
   const setupCommands = getSetupCommands(resolvedFeatures);
 
-  // Read config files in parallel
-  const configPaths = getConfigFiles(resolvedFeatures);
-  const configContents = await Promise.all(configPaths.map(readConfigFileContent));
-  const configFiles: Record<string, string> = Object.fromEntries(
-    configPaths.map((path, i) => [path, configContents[i]]),
-  );
+  // Config files: paths only (lazy loading)
+  const configFiles = getConfigFiles(resolvedFeatures);
 
   // Generate content (sync)
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);

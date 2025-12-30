@@ -96,10 +96,12 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 
   return `## Setup Instructions
 
-1. Create project directory and initialize with provided \`packageJson\`
-2. Create files from \`fileStructure\` using \`get_example\` patterns
-3. Use provided content directly for: \`viteEnvDts\`, \`envTs\`${hasRouting ? ', `routesTs`' : ''}, \`claudeMd\`, \`docs\`
-4. Run: ${setupCommands.join(' && ')}
+1. Create project with \`packageJson\`
+2. Use generated content: \`claudeMd\`, \`viteEnvDts\`, \`envTs\`${hasRouting ? ', `routesTs`' : ''}
+3. Fetch config files: \`get_file({ path: "..." })\` for each in \`configFiles\`
+4. Fetch docs: \`get_file({ path: "..." })\` for each in \`docs\`
+5. Create source files: \`get_example({ pattern: "..." })\`
+6. Run: ${setupCommands.join(' && ')}
 
 ## IMPORTANT
 
@@ -111,7 +113,15 @@ export const getScaffoldToolDefinition: ToolDefinition = {
   name: 'get_scaffold',
   description: `Get complete scaffold information for a new react-spa-scaffold project.
 
-Returns package.json, file structure, config files, generated content (env.ts, routes.ts, CLAUDE.md), and setup commands.
+Returns package.json, file structure paths, setup commands, and generated files.
+
+**Lazy Loading**: \`configFiles\` and \`docs\` contain paths only.
+Use \`get_file({ path: "..." })\` to fetch individual file content.
+
+**Generated Content** (included directly):
+- \`claudeMd\`: CLAUDE.md content
+- \`viteEnvDts\`, \`envTs\`: TypeScript declarations
+- \`routesTs\`: Route constants (if routing feature selected)
 
 IMPORTANT: Templates contain code for ALL features. Strip imports and code for features not in \`resolvedFeatures\`.
 

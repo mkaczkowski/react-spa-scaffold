@@ -215,18 +215,11 @@ describe('get_scaffold tool', () => {
     expect(withoutMobile.claudeMd).not.toContain('contexts/');
   });
 
-  it('returns config files with content', async () => {
+  it('returns config files as paths array (lazy loading)', async () => {
     const result = await getScaffold({ features: ['ui'] });
 
-    expect(typeof result.configFiles).toBe('object');
-    expect(result.configFiles).toHaveProperty('components.json');
-  });
-
-  it('includes radix-nova style in components.json', async () => {
-    const result = await getScaffold({ features: ['ui'] });
-
-    const componentsJson = JSON.parse(result.configFiles['components.json']);
-    expect(componentsJson.style).toBe('radix-nova');
+    expect(Array.isArray(result.configFiles)).toBe(true);
+    expect(result.configFiles).toContain('components.json');
   });
 
   it('always includes .gitignore in fileStructure (core feature)', async () => {
@@ -235,27 +228,39 @@ describe('get_scaffold tool', () => {
     expect(result.fileStructure).toContain('.gitignore');
   });
 
-  it('always includes .gitignore content in configFiles', async () => {
+  it('always includes .gitignore in configFiles array', async () => {
     const result = await getScaffold({ features: [] });
 
-    expect(result.configFiles).toHaveProperty('.gitignore');
-    expect(result.configFiles['.gitignore']).toContain('node_modules');
-    expect(result.configFiles['.gitignore']).toContain('dist/');
+    expect(result.configFiles).toContain('.gitignore');
   });
 
-  it('includes docs in structure and content', async () => {
+  it('returns docs as paths array (lazy loading)', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(Array.isArray(result.docs)).toBe(true);
+    expect(result.docs).toContain('docs/ARCHITECTURE.md');
+    expect(result.docs).not.toContain('docs/TESTING.md');
+  });
+
+  it('includes docs paths in structure', async () => {
     const result = await getScaffold({ features: [] });
 
     expect(result.fileStructure).toContain('docs/ARCHITECTURE.md');
     expect(result.fileStructure).not.toContain('docs/TESTING.md');
-    expect(result.docs['docs/ARCHITECTURE.md']).toBeDefined();
-    expect(result.docs['docs/TESTING.md']).toBeUndefined();
   });
 
   it('adds feature-specific docs when feature selected', async () => {
     const result = await getScaffold({ features: ['testing'] });
 
     expect(result.fileStructure).toContain('docs/TESTING.md');
-    expect(result.docs['docs/TESTING.md']).toContain('# Testing Guidelines');
+    expect(result.docs).toContain('docs/TESTING.md');
+  });
+
+  it('instructions reference get_file for lazy loading', async () => {
+    const result = await getScaffold({ features: [] });
+
+    expect(result.instructions).toContain('get_file');
+    expect(result.instructions).toContain('configFiles');
+    expect(result.instructions).toContain('docs');
   });
 });
