@@ -17,7 +17,7 @@ const fileCache = createCache<{ path: string; content: string }>();
 
 /** Zod schema for get_file input - single source of truth. */
 export const getFileSchema = z.object({
-  path: z.string().describe('File path from get_scaffold (configFiles or docs array)'),
+  path: z.string().describe('File path from get_scaffold (fileStructure, configFiles, or docs)'),
 });
 
 export type GetFileInput = z.infer<typeof getFileSchema>;
@@ -29,7 +29,7 @@ export async function getFile(input: GetFileInput) {
   if (!isPathWithinRoot(filePath)) {
     return {
       error: 'Invalid path: must be within template directory',
-      hint: 'Use paths from get_scaffold configFiles or docs arrays',
+      hint: 'Use paths from get_scaffold (fileStructure, configFiles, or docs)',
     };
   }
 

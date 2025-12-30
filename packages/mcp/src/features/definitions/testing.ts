@@ -42,8 +42,6 @@ export const testing: Feature = {
     'e2e/tests/',
     'vitest.config.ts',
     'playwright.config.ts',
-    'docs/TESTING.md',
-    'docs/E2E_TESTING.md',
   ],
   scripts: {
     test: 'vitest run',

@@ -145,10 +145,12 @@ describe('get_scaffold tool', () => {
     expect(uiDetail?.wasAutoIncluded).toBe(false);
   });
 
-  it('includes CLAUDE.md in file structure', async () => {
+  it('does NOT include CLAUDE.md in file structure (generated content)', async () => {
     const result = await getScaffold({ features: [] });
 
-    expect(result.fileStructure).toContain('CLAUDE.md');
+    // CLAUDE.md content is in claudeMd field, not fetched via get_file
+    expect(result.fileStructure).not.toContain('CLAUDE.md');
+    expect(result.claudeMd).toContain('# CLAUDE.md');
   });
 
   it('returns claudeMd content', async () => {
@@ -242,18 +244,20 @@ describe('get_scaffold tool', () => {
     expect(result.docs).not.toContain('docs/TESTING.md');
   });
 
-  it('includes docs paths in structure', async () => {
+  it('does NOT include docs in fileStructure (separate docs array)', async () => {
     const result = await getScaffold({ features: [] });
 
-    expect(result.fileStructure).toContain('docs/ARCHITECTURE.md');
-    expect(result.fileStructure).not.toContain('docs/TESTING.md');
+    // Docs are in separate docs array, not in fileStructure
+    expect(result.fileStructure).not.toContain('docs/ARCHITECTURE.md');
+    expect(result.docs).toContain('docs/ARCHITECTURE.md');
   });
 
-  it('adds feature-specific docs when feature selected', async () => {
+  it('adds feature-specific docs to docs array when feature selected', async () => {
     const result = await getScaffold({ features: ['testing'] });
 
-    expect(result.fileStructure).toContain('docs/TESTING.md');
+    // Testing docs in docs array, not fileStructure
     expect(result.docs).toContain('docs/TESTING.md');
+    expect(result.fileStructure).not.toContain('docs/TESTING.md');
   });
 
   it('instructions reference get_file for lazy loading', async () => {
