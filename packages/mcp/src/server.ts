@@ -13,17 +13,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import {
-  getFeatures,
-  getFeaturesToolDefinition,
-  getScaffold,
-  getScaffoldSchema,
-  getScaffoldToolDefinition,
-  getExample,
-  getExampleSchema,
-  getExampleToolDefinition,
-} from './tools/index.js';
-
+import { TOOL_REGISTRY, getToolDefinitions } from './tools/index.js';
 import { getDocumentationResources, readDocumentation, isValidDocumentationUri } from './resources/index.js';
 import { VERSION } from './version.js';
 
@@ -87,38 +77,29 @@ export function createServer(): Server {
   // ═══════════════════════════════════════════════════════════════════════
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: [getFeaturesToolDefinition, getScaffoldToolDefinition, getExampleToolDefinition],
-    };
+    return { tools: getToolDefinitions() };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
+    const toolConfig = TOOL_REGISTRY[name];
+    if (!toolConfig) {
+      return errorResponse(`Unknown tool: ${name}`);
+    }
+
     try {
-      switch (name) {
-        case 'get_features':
-          return jsonResponse(getFeatures());
-
-        case 'get_scaffold': {
-          const parsed = getScaffoldSchema.safeParse(args);
-          if (!parsed.success) {
-            return errorResponse(`Invalid input: ${parsed.error.message}`);
-          }
-          return jsonResponse(await getScaffold(parsed.data));
+      // If tool has a schema, validate input first
+      if (toolConfig.schema) {
+        const parsed = toolConfig.schema.safeParse(args);
+        if (!parsed.success) {
+          return errorResponse(`Invalid input: ${parsed.error.message}`);
         }
-
-        case 'get_example': {
-          const parsed = getExampleSchema.safeParse(args);
-          if (!parsed.success) {
-            return errorResponse(`Invalid input: ${parsed.error.message}`);
-          }
-          return jsonResponse(await getExample(parsed.data));
-        }
-
-        default:
-          return errorResponse(`Unknown tool: ${name}`);
+        return jsonResponse(await toolConfig.handler(parsed.data));
       }
+
+      // Tool without schema - call directly
+      return jsonResponse(toolConfig.handler());
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return errorResponse(`Error executing ${name}: ${message}`);

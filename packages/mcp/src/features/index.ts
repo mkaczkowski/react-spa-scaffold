@@ -1,3 +1,4 @@
-export { FEATURES, FEATURE_IDS } from './registry.js';
+export { FEATURES } from './registry.js';
 export type { FeatureId } from './registry.js';
-export type { Feature, FeatureRegistry, FeatureOption, ScaffoldOptions, ScaffoldResult } from './types.js';
+export { FEATURE_IDS, isFeatureId } from './types.js';
+export type { Feature, FeatureRegistry, ScaffoldOptions, ScaffoldResult } from './types.js';

@@ -6,7 +6,7 @@
  * get up-to-date dependency versions.
  */
 
-import type { Feature, FeatureRegistry } from './types.js';
+import type { Feature, FeatureRegistry, FeatureId } from './types.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CORE FEATURE (Always included)
@@ -541,12 +541,6 @@ const observability: Feature = {
   files: ['src/lib/config.ts'],
   patterns: ['main-entry', 'lib-config'],
   scripts: {},
-  options: {
-    enabled: {
-      description: 'Enable/disable Sentry at runtime via VITE_SENTRY_ENABLED env var',
-      default: true,
-    },
-  },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -601,8 +595,5 @@ export const FEATURES: FeatureRegistry = {
   theming,
 };
 
-/** All valid feature IDs */
-export const FEATURE_IDS = Object.keys(FEATURES) as (keyof typeof FEATURES)[];
-
-/** Type representing a valid feature identifier */
-export type FeatureId = (typeof FEATURE_IDS)[number];
+// Re-export FeatureId from types for convenience
+export type { FeatureId };
