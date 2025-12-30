@@ -34,13 +34,15 @@ react-spa-scaffold MCP Server - Project Scaffolding Assistant
 Usage:
 1. Call get_features to see available feature modules
 2. Call get_scaffold with desired features to get project structure
-3. Call get_example to get code patterns for specific file types
-4. Read docs:// resources for conventions and best practices
+3. Call get_file to fetch config or doc content (lazy loading)
+4. Call get_example to get code patterns for specific file types
+5. Read docs:// resources for conventions and best practices
 
 Tips:
 - Core feature is always included automatically
 - Features are mostly independent - select only what you need
 - Theming feature automatically includes state (requires Zustand)
+- get_scaffold returns paths only for configFiles and docs (use get_file to fetch)
 - Check docs://conventions before generating code
 `.trim();
 

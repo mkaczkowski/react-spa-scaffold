@@ -4,11 +4,14 @@
  * Returns complete scaffold information for selected features.
  * This includes dependencies, file structure, config files,
  * and setup commands needed to create a new project.
+ *
+ * Uses lazy loading - config files, docs, and examples are
+ * fetched on demand via get_file and get_example tools.
  */
 
 import { z } from 'zod';
 import { FEATURE_IDS, FEATURES } from '../features/index.js';
-import { computeScaffold, resolveFeatureDependencies, getFeatureExamples, type CodeExample } from '../utils/index.js';
+import { computeScaffold, resolveFeatureDependencies } from '../utils/index.js';
 import type { ToolDefinition } from './types.js';
 
 /** Zod schema for get_scaffold input - single source of truth. */
@@ -34,13 +37,12 @@ export const getScaffoldSchema = z.object({
     .regex(/^[a-z0-9-]*$/, 'Project name must be lowercase letters, numbers, and hyphens only')
     .optional()
     .describe('Name for the new project (defaults to "my-app")'),
-  includeExamples: z.boolean().optional().describe('Include code examples for each feature pattern (default: false)'),
 });
 
 export type GetScaffoldInput = z.infer<typeof getScaffoldSchema>;
 
 export async function getScaffold(input: GetScaffoldInput) {
-  const { features, projectName = 'my-app', includeExamples = false } = input;
+  const { features, projectName = 'my-app' } = input;
 
   // Resolve dependencies
   const resolvedFeatures = resolveFeatureDependencies(features);
@@ -48,7 +50,7 @@ export async function getScaffold(input: GetScaffoldInput) {
   // Get scaffold result
   const scaffold = await computeScaffold(features, projectName);
 
-  // Build feature details
+  // Build feature details with patterns (for use with get_example)
   const featureDetails = resolvedFeatures.map((id) => {
     const feature = FEATURES[id];
     return {
@@ -59,18 +61,6 @@ export async function getScaffold(input: GetScaffoldInput) {
       patterns: feature.patterns,
     };
   });
-
-  // Optionally include examples
-  let examples: Record<string, CodeExample[]> | undefined;
-  if (includeExamples) {
-    examples = {};
-    for (const id of resolvedFeatures) {
-      const feature = FEATURES[id];
-      if (feature.patterns.length > 0) {
-        examples[id] = await getFeatureExamples(feature.patterns);
-      }
-    }
-  }
 
   return {
     projectName,
@@ -84,9 +74,8 @@ export async function getScaffold(input: GetScaffoldInput) {
     claudeMd: scaffold.claudeMd,
     viteEnvDts: scaffold.viteEnvDts,
     envTs: scaffold.envTs,
-    routesTs: scaffold.routesTs, // Only present when routing feature is selected
+    routesTs: scaffold.routesTs,
     docs: scaffold.docs,
-    examples,
     instructions: generateInstructions(scaffold.setupCommands, resolvedFeatures),
   };
 }
@@ -115,8 +104,10 @@ export const getScaffoldToolDefinition: ToolDefinition = {
 
 Returns package.json, file structure paths, setup commands, and generated files.
 
-**Lazy Loading**: \`configFiles\` and \`docs\` contain paths only.
-Use \`get_file({ path: "..." })\` to fetch individual file content.
+**Lazy Loading** (reduces response from ~50K to ~15K tokens):
+- \`configFiles\`: paths only → use \`get_file({ path: "..." })\`
+- \`docs\`: paths only → use \`get_file({ path: "..." })\`
+- \`featureDetails[].patterns\`: pattern names → use \`get_example({ pattern: "..." })\`
 
 **Generated Content** (included directly):
 - \`claudeMd\`: CLAUDE.md content

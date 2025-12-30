@@ -6,10 +6,11 @@
 
 > **TL;DR:** An MCP server that provides knowledge and patterns for AI agents to scaffold React projects. The AI asks what you need, this server provides the info, and the AI generates your project.
 
-**3 Tools:**
+**4 Tools:**
 
 - `get_features` — List available feature modules
 - `get_scaffold` — Get dependencies and file structure for selected features
+- `get_file` — Fetch config or documentation file content (lazy loading)
 - `get_example` — Get real code patterns from react-spa-scaffold
 
 ## Philosophy
@@ -141,10 +142,23 @@ Get complete scaffold information for selected features.
 const result = await client.callTool('get_scaffold', {
   features: ['routing', 'ui', 'forms', 'testing'],
   projectName: 'my-app',
-  includeExamples: false,
 });
-// Returns: { packageJson, fileStructure, configFiles, setupCommands, instructions }
+// Returns: { packageJson, fileStructure, configFiles, docs, setupCommands, instructions }
+// Note: configFiles and docs are paths only (lazy loading)
 ```
+
+### `get_file`
+
+Fetch content of config or documentation files (lazy loading).
+
+```typescript
+const result = await client.callTool('get_file', {
+  path: 'vite.config.ts', // or 'docs/ARCHITECTURE.md'
+});
+// Returns: { path, content }
+```
+
+Use paths from `get_scaffold` response (`configFiles` or `docs` arrays).
 
 ### `get_example`
 
