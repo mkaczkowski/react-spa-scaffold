@@ -1,5 +1,11 @@
 # @react-spa-scaffold/mcp
 
+## 1.2.1
+
+### Patch Changes
+
+- [`469d3dc`](https://github.com/mkaczkowski/react-spa-scaffold/commit/469d3dc82160279f0b985882653fc7d13067ef55) - clean up
+
 ## 1.2.0
 
 ### Minor Changes
