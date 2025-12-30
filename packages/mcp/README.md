@@ -103,7 +103,7 @@ Or point directly to the built file:
 
 ## Available Features
 
-13 feature modules that can be combined:
+14 feature modules that can be combined:
 
 | Feature         | Description                                   | Required |
 | --------------- | --------------------------------------------- | -------- |
@@ -397,7 +397,7 @@ const myFeature: Feature = {
 
 2. **Add patterns** in `src/utils/examples.ts`:
 
-```typescript
+```
 'my-feature-pattern': {
   file: 'src/lib/myFeature.ts',
   description: 'My feature implementation',
@@ -416,7 +416,7 @@ const myFeature: Feature = {
 
 1. **Add to** `src/resources/docs.ts`:
 
-```typescript
+```
 'docs://my-topic': {
   files: ['docs/MY_TOPIC.md'],
   name: 'My Topic',

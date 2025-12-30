@@ -14,8 +14,6 @@ export interface FeatureSummary {
   description: string;
   required: boolean;
   includes: string[];
-  hasOptions: boolean;
-  options?: Record<string, { description: string; default: boolean }>;
 }
 
 export function getFeatures(): FeatureSummary[] {
@@ -27,8 +25,6 @@ export function getFeatures(): FeatureSummary[] {
       description: feature.description,
       required: feature.required,
       includes: feature.includes,
-      hasOptions: !!feature.options,
-      options: feature.options,
     };
   });
 }

@@ -17,37 +17,43 @@ npm run inspect    # Test with MCP Inspector
 ```
 src/
 ├── index.ts           # Entry point (STDIO transport, graceful shutdown)
-├── server.ts          # MCP server setup, tool handlers, Zod validation
+├── server.ts          # MCP server setup, uses tool registry
 ├── version.ts         # Dynamic version from package.json
 ├── features/          # Feature registry and types
-│   ├── registry.ts    # All 10 features defined here
-│   └── versions.ts    # Config package versions
+│   ├── types.ts       # Feature interface, FeatureId type, FEATURE_IDS
+│   └── registry.ts    # All 14 features defined here
 ├── tools/             # MCP tool implementations
 │   ├── get-features.ts
-│   ├── get-scaffold.ts  # Uses Zod schema with .refine()
-│   └── get-example.ts   # Uses z.enum() for patterns
+│   ├── get-scaffold.ts
+│   ├── get-example.ts
+│   └── registry.ts    # Tool registry (single source of truth)
 ├── resources/         # MCP resources (docs)
 │   └── docs.ts        # Reads from docs/, caches results
 └── utils/             # Helpers
     ├── examples.ts    # PATTERN_MAP definitions
-    ├── scaffold.ts    # Dependency resolution
-    └── paths.ts       # Monorepo vs published path detection
+    ├── paths.ts       # Monorepo vs published path detection
+    ├── docs.ts        # Doc selection by feature
+    └── scaffold/      # Scaffold computation (split for readability)
+        ├── dependencies.ts   # Dependency resolution
+        ├── file-structure.ts # File list computation
+        ├── generators.ts     # Content generators (CLAUDE.md, env.ts, etc.)
+        ├── commands.ts       # Setup commands
+        └── compute.ts        # Orchestrator
 ```
 
 ## Code Patterns
 
-**Validation**: Use Zod schemas in tool files, validate with `.safeParse()` in server.ts
+**Tool Registration**: Add new tools to `src/tools/registry.ts`:
 
 ```typescript
-// In tools/get-scaffold.ts
-export const getScaffoldSchema = z.object({
-  features: z.array(z.string()).refine(...),
-});
-
-// In server.ts
-const result = getScaffoldSchema.safeParse(args);
-if (!result.success) return errorResponse(result.error.message);
+export const TOOL_REGISTRY: Record<string, ToolConfig> = {
+  get_features: { definition, handler, schema: null },
+  get_scaffold: { definition, handler, schema: getScaffoldSchema },
+  // Add new tools here
+};
 ```
+
+**Type-safe Features**: Use `FeatureId` type and `isFeatureId()` guard from `features/types.ts`
 
 **Caching**: Resources use in-memory Map cache for file reads
 
@@ -62,9 +68,9 @@ npm test              # Run all tests
 npm run test:watch    # Watch mode
 ```
 
-Tests in `tests/tools.test.ts` verify:
+Tests are co-located with source files:
 
-- Feature listing and metadata
-- Scaffold generation with dependency resolution
-- Example retrieval for all patterns
-- Zod schema validation (invalid inputs)
+- `src/tools/get-features.test.ts` - Feature listing
+- `src/tools/get-scaffold.test.ts` - Scaffold generation
+- `src/tools/get-example.test.ts` - Example retrieval
+- `src/utils/docs.test.ts` - Doc utilities

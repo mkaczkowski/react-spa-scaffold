@@ -1,226 +1,22 @@
 // noinspection JSUnresolvedReference
 
 /**
- * Scaffold computation utilities
- */
-
-import { readFile } from 'fs/promises';
-
-import { FEATURES } from '../features/index.js';
-import type { ScaffoldResult } from '../features/types.js';
-import { computeDocsContent, computeDocsForFeatures } from './docs.js';
-import { resolveTemplatePath } from './paths.js';
-
-/**
- * Resolve selected features (always includes core)
+ * Content generators
  *
- * Features are mostly independent, with one exception:
- * - theming requires state feature (for Zustand persistence)
+ * Generates dynamic content files (CLAUDE.md, env.ts, routes.ts, etc.)
+ * based on selected features.
  */
-export function resolveFeatureDependencies(selectedFeatures: string[]): string[] {
-  const resolved = new Set<string>();
 
-  // Always include core
-  resolved.add('core');
-
-  // Add all selected features (no recursive dependency resolution)
-  for (const featureId of selectedFeatures) {
-    const feature = FEATURES[featureId];
-    if (feature) {
-      resolved.add(featureId);
-    }
-  }
-
-  // Theming requires state feature for Zustand persistence
-  if (resolved.has('theming') && !resolved.has('state')) {
-    resolved.add('state');
-  }
-
-  return Array.from(resolved);
-}
-
-// Cache for source package.json to avoid repeated file reads
-let cachedSourcePackageJson: {
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-} | null = null;
-
-/**
- * Read and cache the source package.json dependencies
- */
-async function getSourceDependencies(): Promise<{
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-}> {
-  if (!cachedSourcePackageJson) {
-    const path = resolveTemplatePath('package.json');
-    const content = await readFile(path, 'utf-8');
-    const pkg = JSON.parse(content);
-    cachedSourcePackageJson = {
-      dependencies: (pkg.dependencies || {}) as Record<string, string>,
-      devDependencies: (pkg.devDependencies || {}) as Record<string, string>,
-    };
-  }
-  return cachedSourcePackageJson;
-}
-
-/**
- * Merge dependencies from multiple features
- *
- * Resolves package versions from the source package.json at runtime.
- * This ensures scaffolded projects always use up-to-date dependency versions.
- */
-export async function mergeDependencies(featureIds: string[]): Promise<{
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-}> {
-  const dependencies: Record<string, string> = {};
-  const devDependencies: Record<string, string> = {};
-
-  // Get source package.json for version lookup
-  const sourcePkg = await getSourceDependencies();
-
-  for (const featureId of featureIds) {
-    const feature = FEATURES[featureId];
-    if (!feature) continue;
-
-    // Look up dependency versions from source package.json
-    if (feature.dependencyNames) {
-      for (const name of feature.dependencyNames) {
-        if (sourcePkg.dependencies[name]) {
-          dependencies[name] = sourcePkg.dependencies[name];
-        } else {
-          console.warn(`Dependency "${name}" not found in source package.json`);
-        }
-      }
-    }
-
-    if (feature.devDependencyNames) {
-      for (const name of feature.devDependencyNames) {
-        if (sourcePkg.devDependencies[name]) {
-          devDependencies[name] = sourcePkg.devDependencies[name];
-        } else {
-          console.warn(`DevDependency "${name}" not found in source package.json`);
-        }
-      }
-    }
-  }
-
-  // Sort alphabetically
-  const sortObject = (obj: Record<string, string>) =>
-    Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
-
-  return {
-    dependencies: sortObject(dependencies),
-    devDependencies: sortObject(devDependencies),
-  };
-}
-
-/**
- * Merge scripts from multiple features
- */
-export function mergeScripts(featureIds: string[]): Record<string, string> {
-  const scripts: Record<string, string> = {};
-
-  for (const featureId of featureIds) {
-    const feature = FEATURES[featureId];
-    if (!feature?.scripts) continue;
-    Object.assign(scripts, feature.scripts);
-  }
-
-  return scripts;
-}
-
-/**
- * Compute file structure for selected features
- *
- * When the 'testing' feature is selected, testFiles from all selected features
- * are also included. This ensures scaffolded projects get tests that match
- * their source files.
- */
-export function computeFileStructure(featureIds: string[]): string[] {
-  const files = new Set<string>();
-  const includeTests = featureIds.includes('testing');
-
-  for (const featureId of featureIds) {
-    const feature = FEATURES[featureId];
-    if (!feature) continue;
-
-    // Always include source files
-    if (feature.files) {
-      for (const file of feature.files) {
-        files.add(file);
-      }
-    }
-
-    // Include test files only when testing feature is selected
-    if (includeTests && feature.testFiles) {
-      for (const file of feature.testFiles) {
-        files.add(file);
-      }
-    }
-  }
-
-  return Array.from(files).sort();
-}
-
-/**
- * Get config files needed for selected features
- */
-export function getConfigFiles(featureIds: string[]): string[] {
-  const configs = new Set<string>();
-
-  for (const featureId of featureIds) {
-    const feature = FEATURES[featureId];
-    if (!feature?.configFiles) continue;
-
-    for (const config of feature.configFiles) {
-      configs.add(config);
-    }
-  }
-
-  return Array.from(configs).sort();
-}
-
-/**
- * Read config file content from template
- */
-async function readConfigFileContent(configPath: string): Promise<string> {
-  const fullPath = resolveTemplatePath(configPath);
-
-  try {
-    return await readFile(fullPath, 'utf-8');
-  } catch {
-    // File might not exist if running outside react-spa-scaffold
-    return `// File not found: ${configPath}\n// Run MCP server from within react-spa-scaffold repository`;
-  }
-}
-
-/**
- * Generate setup commands based on selected features
- */
-export function getSetupCommands(featureIds: string[]): string[] {
-  const commands: string[] = ['npm install'];
-
-  if (featureIds.includes('devtools')) {
-    commands.push('npm run prepare'); // Initialize husky
-  }
-
-  if (featureIds.includes('testing')) {
-    commands.push('npx playwright install chromium'); // Install Playwright browser
-  }
-
-  if (featureIds.includes('i18n')) {
-    commands.push('npm run i18n:extract'); // Extract initial translations
-  }
-
-  return commands;
-}
+import type { FeatureId } from '../../features/types.js';
 
 /**
  * Generate CLAUDE.md content based on selected features
  */
-export function generateClaudeMd(featureIds: string[], projectName: string, scripts: Record<string, string>): string {
+export function generateClaudeMd(
+  featureIds: FeatureId[],
+  projectName: string,
+  scripts: Record<string, string>,
+): string {
   const sections: string[] = [];
 
   // Header
@@ -507,7 +303,7 @@ ${gotchas.map((g, i) => `${i + 1}. ${g}`).join('\n')}
 /**
  * Generate vite-env.d.ts content based on selected features
  */
-export function generateViteEnvDts(featureIds: string[]): string {
+export function generateViteEnvDts(featureIds: FeatureId[]): string {
   const sections: string[] = [];
 
   // Add .po module declaration if i18n feature is selected (LinguiJS uses .po files)
@@ -552,7 +348,7 @@ interface ImportMeta {
 /**
  * Generate env.ts content based on selected features
  */
-export function generateEnvTs(featureIds: string[]): string {
+export function generateEnvTs(featureIds: FeatureId[]): string {
   const schemaFields: string[] = [];
   const envFields: string[] = [];
 
@@ -631,7 +427,7 @@ export const env = validateEnv();
 /**
  * Generate routes.ts content based on selected features
  */
-export function generateRoutesTs(_featureIds: string[]): string {
+export function generateRoutesTs(_featureIds: FeatureId[]): string {
   const routes: string[] = [];
 
   // Core routes (always included when routing feature is selected)
@@ -654,82 +450,4 @@ ${routes.join('\n')}
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
 `;
-}
-
-/**
- * Read and parse the source package.json
- */
-async function readSourcePackageJson(): Promise<Record<string, unknown>> {
-  const path = resolveTemplatePath('package.json');
-  const content = await readFile(path, 'utf-8');
-  return JSON.parse(content);
-}
-
-/**
- * Compute complete scaffold for selected features
- */
-export async function computeScaffold(
-  selectedFeatures: string[],
-  projectName: string = 'my-app',
-): Promise<ScaffoldResult> {
-  // Resolve all dependencies
-  const resolvedFeatures = resolveFeatureDependencies(selectedFeatures);
-
-  // Read engines from source package.json
-  const sourcePackageJson = await readSourcePackageJson();
-  const engines = (sourcePackageJson.engines as Record<string, string>) || {};
-
-  // Merge all dependencies (async to read versions from source package.json)
-  const { dependencies, devDependencies } = await mergeDependencies(resolvedFeatures);
-
-  // Merge all scripts
-  const scripts = mergeScripts(resolvedFeatures);
-
-  // Get file structure (add CLAUDE.md which is generated, not from patterns)
-  // Also add docs based on selected features
-  const docPaths = computeDocsForFeatures(resolvedFeatures);
-  const structure = [...computeFileStructure(resolvedFeatures), 'CLAUDE.md', ...docPaths];
-
-  // Get config files with actual content read from templates
-  const configFiles: Record<string, string> = {};
-  const configPaths = getConfigFiles(resolvedFeatures);
-  for (const config of configPaths) {
-    configFiles[config] = await readConfigFileContent(config);
-  }
-
-  // Get setup commands
-  const setupCommands = getSetupCommands(resolvedFeatures);
-
-  // Generate CLAUDE.md content
-  const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
-
-  // Generate vite-env.d.ts content
-  const viteEnvDts = generateViteEnvDts(resolvedFeatures);
-
-  // Generate env.ts content
-  const envTs = generateEnvTs(resolvedFeatures);
-
-  // Generate routes.ts content (only if routing feature is selected)
-  const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs(resolvedFeatures) : undefined;
-
-  // Get docs with content filtered by features
-  const docs = await computeDocsContent(resolvedFeatures);
-
-  return {
-    packageJson: {
-      name: projectName,
-      dependencies,
-      devDependencies,
-      scripts,
-      engines,
-    },
-    structure,
-    configFiles,
-    setupCommands,
-    claudeMd,
-    viteEnvDts,
-    envTs,
-    routesTs,
-    docs,
-  };
 }

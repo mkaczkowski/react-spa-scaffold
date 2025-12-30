@@ -8,7 +8,7 @@ export {
   getConfigFiles,
   getSetupCommands,
   computeScaffold,
-} from './scaffold.js';
+} from './scaffold/index.js';
 
 export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples.js';
 
