@@ -1,4 +1,6 @@
-export { isNpxMode, TEMPLATES_ROOT, resolveTemplatePath } from './paths.js';
+export { isPublishedMode, CONTENT_ROOT, resolveTemplatePath } from './paths.js';
+export { createCache, createSingletonCache } from './cache.js';
+export { readWithFallback, getErrorMessage } from './errors.js';
 
 export {
   resolveFeatureDependencies,
@@ -10,6 +12,6 @@ export {
   computeScaffold,
 } from './scaffold/index.js';
 
-export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples.js';
+export { getAvailablePatterns, getCodeExample, getFeatureExamples, type CodeExample } from './examples/index.js';
 
 export { computeDocsForFeatures, computeDocsContent } from './docs.js';

@@ -73,7 +73,7 @@ export async function computeScaffold(
   const envTs = generateEnvTs(resolvedFeatures);
 
   // Generate routes.ts content (only if routing feature is selected)
-  const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs(resolvedFeatures) : undefined;
+  const routesTs = resolvedFeatures.includes('routing') ? generateRoutesTs() : undefined;
 
   // Get docs with content filtered by features
   const docs = await computeDocsContent(resolvedFeatures);

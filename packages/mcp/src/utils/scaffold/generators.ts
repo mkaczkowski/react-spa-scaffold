@@ -1,17 +1,12 @@
 // noinspection JSUnresolvedReference
 
 /**
- * Content generators
- *
- * Generates dynamic content files (CLAUDE.md, env.ts, routes.ts, etc.)
- * based on selected features.
+ * Content generators for CLAUDE.md, env.ts, routes.ts, etc.
  */
 
 import type { FeatureId } from '../../features/types.js';
 
-/**
- * Generate CLAUDE.md content based on selected features
- */
+/** Generates CLAUDE.md content based on selected features. */
 export function generateClaudeMd(
   featureIds: FeatureId[],
   projectName: string,
@@ -424,28 +419,16 @@ export const env = validateEnv();
 `;
 }
 
-/**
- * Generate routes.ts content based on selected features
- */
-export function generateRoutesTs(_featureIds: FeatureId[]): string {
-  const routes: string[] = [];
-
-  // Core routes (always included when routing feature is selected)
-  routes.push("  HOME: '/',");
-
-  // Not found route (always last)
-  routes.push("  NOT_FOUND: '*',");
-
-  // Note: Additional routes can be added here based on features
-  // For now, all demo content displays on HomePage directly
-
+/** Generates routes.ts content. */
+export function generateRoutesTs(): string {
   return `/**
  * Typed route constants.
  * Use these instead of hardcoded strings for type-safe navigation.
  */
 
 export const ROUTES = {
-${routes.join('\n')}
+  HOME: '/',
+  NOT_FOUND: '*',
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

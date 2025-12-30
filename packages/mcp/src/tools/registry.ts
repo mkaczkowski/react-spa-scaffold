@@ -1,70 +1,34 @@
 /**
- * Tool Registry
- *
- * Single source of truth for all MCP tool definitions and handlers.
- * Adding a new tool = add one entry here.
+ * Tool Registry - Single source of truth for all MCP tools.
  */
 
-import type { z } from 'zod';
+import type { ToolRegistry, ToolDefinition } from './types.js';
+import { getFeatures, getFeaturesToolDefinition } from './get-features.js';
+import { getScaffold, getScaffoldSchema, getScaffoldToolDefinition } from './get-scaffold.js';
+import { getExample, getExampleSchema, getExampleToolDefinition } from './get-example.js';
 
-import {
-  getFeatures,
-  getFeaturesToolDefinition,
-  getScaffold,
-  getScaffoldSchema,
-  getScaffoldToolDefinition,
-  getExample,
-  getExampleSchema,
-  getExampleToolDefinition,
-} from './index.js';
-
-/**
- * Tool configuration type
- */
-interface ToolConfig {
-  definition: {
-    name: string;
-    description: string;
-    inputSchema: object;
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handler: (input?: any) => unknown;
-  schema: z.ZodType | null;
-}
-
-/**
- * All registered MCP tools
- *
- * To add a new tool:
- * 1. Create the tool in its own file (e.g., get-my-tool.ts)
- * 2. Export definition, schema, and handler from that file
- * 3. Add an entry to this registry
- */
-export const TOOL_REGISTRY: Record<string, ToolConfig> = {
+/** All registered MCP tools. */
+export const TOOL_REGISTRY: ToolRegistry = {
   get_features: {
     definition: getFeaturesToolDefinition,
-    handler: getFeatures,
     schema: null,
+    handler: getFeatures,
   },
 
   get_scaffold: {
     definition: getScaffoldToolDefinition,
-    handler: getScaffold,
     schema: getScaffoldSchema,
+    handler: getScaffold,
   },
 
   get_example: {
     definition: getExampleToolDefinition,
-    handler: getExample,
     schema: getExampleSchema,
+    handler: getExample,
   },
 };
 
-export type ToolName = keyof typeof TOOL_REGISTRY;
-
-/**
- * Get all tool definitions for ListToolsRequest
- */
-export function getToolDefinitions() {
+/** Get all tool definitions for ListToolsRequest. */
+export function getToolDefinitions(): ToolDefinition[] {
   return Object.values(TOOL_REGISTRY).map((tool) => tool.definition);
 }

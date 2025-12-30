@@ -1,10 +1,5 @@
 /**
- * Centralized path resolution for MCP server
- *
- * Handles detection of development vs published (npx) mode.
- * Uses a marker file (.bundled) to reliably detect npx mode,
- * avoiding issues where running `npm run bundle` during development
- * would cause the server to read from stale bundled files.
+ * Path resolution for MCP server - handles dev vs published mode.
  */
 
 import { existsSync } from 'fs';
@@ -12,52 +7,25 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Path to bundled templates (for npx distribution)
-const BUNDLED_TEMPLATES = join(__dirname, '..', '..', 'templates');
-
-// Marker file created by bundle script to indicate npx mode
-const BUNDLE_MARKER = join(BUNDLED_TEMPLATES, '.bundled');
-
-// Monorepo root (react-spa-scaffold app lives at root alongside packages/)
+const BUNDLED_PATH = join(__dirname, '..', '..', 'templates');
+const BUNDLE_MARKER = join(BUNDLED_PATH, '.bundled');
 const MONOREPO_ROOT = join(__dirname, '..', '..', '..', '..');
 
-/**
- * Check if running in npx/published mode
- *
- * We check for a .bundled marker file instead of just checking if
- * templates/ exists. This prevents issues where a developer runs
- * `npm run bundle` during development and then gets stale files.
- */
-export const isNpxMode = existsSync(BUNDLE_MARKER);
+/** True when running as published npm package (npx mode). */
+export const isPublishedMode = existsSync(BUNDLE_MARKER);
 
-/**
- * Root directory for reading template files
- *
- * - In development: reads from monorepo root (live files)
- * - In npx mode: reads from bundled templates directory
- */
-export const TEMPLATES_ROOT = isNpxMode ? BUNDLED_TEMPLATES : MONOREPO_ROOT;
+/** Root directory for reading content files. */
+export const CONTENT_ROOT = isPublishedMode ? BUNDLED_PATH : MONOREPO_ROOT;
 
-/**
- * Dotfiles that npm strips during publish, renamed in bundled templates.
- * Maps from original name → bundled name
- */
+/** Dotfiles renamed in bundled templates (npm strips .gitignore). */
 const RENAMED_DOTFILES: Record<string, string> = {
   '.gitignore': 'gitignore',
 };
 
-/**
- * Resolve a path relative to templates root.
- * In npx mode, handles renamed dotfiles (npm strips .gitignore during publish).
- */
+/** Resolves path relative to content root, handling dotfile renames in published mode. */
 export function resolveTemplatePath(relativePath: string): string {
-  let resolvedPath = relativePath;
+  const resolvedPath =
+    isPublishedMode && RENAMED_DOTFILES[relativePath] ? RENAMED_DOTFILES[relativePath] : relativePath;
 
-  // In npx mode, use renamed versions of dotfiles that npm would strip
-  if (isNpxMode && RENAMED_DOTFILES[relativePath]) {
-    resolvedPath = RENAMED_DOTFILES[relativePath];
-  }
-
-  return join(TEMPLATES_ROOT, resolvedPath);
+  return join(CONTENT_ROOT, resolvedPath);
 }
