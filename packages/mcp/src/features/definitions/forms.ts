@@ -8,6 +8,8 @@ export const forms: Feature = {
   files: [
     'src/lib/validations.ts',
     'src/hooks/useRegisterForm.ts',
+    'src/hooks/useSyncedFormData.ts',
+    'src/hooks/useSyncedState.ts',
     'src/components/ui/form-error.tsx',
     'src/components/ui/input.tsx',
     'src/components/ui/label.tsx',
@@ -18,6 +20,8 @@ export const forms: Feature = {
   testFiles: [
     'src/lib/validations.test.ts',
     'src/hooks/useRegisterForm.test.tsx',
+    'src/hooks/useSyncedFormData.test.ts',
+    'src/hooks/useSyncedState.test.ts',
     'src/components/shared/RegisterForm/RegisterForm.test.tsx',
   ],
   scripts: {},

@@ -1,7 +1,10 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { Trans } from '@lingui/react/macro';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
-import { SENTRY_CONFIG } from '@/lib/config';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { captureException } from '@/lib/sentry';
 
 interface Props {
   children: ReactNode;
@@ -13,6 +16,48 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+}
+
+interface ErrorFallbackUIProps {
+  error: Error | null;
+  onRetry: () => void;
+  onReload: () => void;
+}
+
+function ErrorFallbackUI({ error, onRetry, onReload }: ErrorFallbackUIProps) {
+  return (
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <Card className="max-w-md">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="text-destructive size-5" />
+            <CardTitle>
+              <Trans>Something went wrong</Trans>
+            </CardTitle>
+          </div>
+          <CardDescription>
+            <Trans>An unexpected error occurred. You can try again or reload the page.</Trans>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="bg-muted rounded-md p-3">
+              <p className="text-muted-foreground font-mono text-xs break-all">{error.message}</p>
+            </div>
+          )}
+          <div className="flex gap-2">
+            <Button onClick={onRetry} variant="default">
+              <Trans>Try Again</Trans>
+            </Button>
+            <Button onClick={onReload} variant="outline">
+              <RefreshCw className="mr-2 size-4" />
+              <Trans>Reload Page</Trans>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -28,22 +73,11 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
+    // Report error to Sentry with component stack
+    captureException(error, { componentStack: errorInfo.componentStack ?? undefined });
+
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
-
-    // Report to Sentry in production (if enabled and configured)
-    if (import.meta.env.PROD && SENTRY_CONFIG.enabled && SENTRY_CONFIG.dsn) {
-      // eslint-disable-next-line lingui/no-unlocalized-strings
-      import('@sentry/react')
-        .then((Sentry) => {
-          Sentry.captureException(error, {
-            extra: { componentStack: errorInfo.componentStack },
-          });
-        })
-        .catch(() => {
-          // Sentry failed to load, error already logged above
-        });
-    }
   }
 
   /**
@@ -54,49 +88,17 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ hasError: false, error: null });
   };
 
+  handleReload = () => {
+    window.location.reload();
+  };
+
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      return (
-        <div className="flex min-h-screen items-center justify-center p-4">
-          <div className="text-center">
-            <h1 className="text-destructive text-2xl font-bold">
-              <Trans comment="Error boundary - main error heading">Something went wrong</Trans>
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              <Trans comment="Error boundary - error explanation">
-                We're sorry, but something unexpected happened.
-              </Trans>
-            </p>
-            {import.meta.env.DEV && this.state.error && (
-              <details className="bg-muted mt-4 rounded-md p-4 text-left">
-                <summary className="cursor-pointer font-medium">
-                  <Trans comment="Error boundary - debug section heading">Error details</Trans>
-                </summary>
-                <pre className="mt-2 overflow-auto text-sm">{this.state.error.message}</pre>
-                <pre className="mt-1 overflow-auto text-xs opacity-75">{this.state.error.stack}</pre>
-              </details>
-            )}
-            <div className="mt-6 flex justify-center gap-3">
-              <button
-                onClick={this.reset}
-                className="bg-secondary text-secondary-foreground rounded px-4 py-2 transition-colors hover:opacity-90"
-              >
-                <Trans comment="Error boundary - try again button">Try Again</Trans>
-              </button>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-primary text-primary-foreground rounded px-4 py-2 transition-colors hover:opacity-90"
-              >
-                <Trans comment="Error boundary - refresh button">Refresh Page</Trans>
-              </button>
-            </div>
-          </div>
-        </div>
-      );
+      return <ErrorFallbackUI error={this.state.error} onRetry={this.reset} onReload={this.handleReload} />;
     }
 
     return this.props.children;

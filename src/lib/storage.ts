@@ -4,7 +4,8 @@
 
 import { STORAGE_KEYS } from './storageKeys';
 
-type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
+// Extract only string keys (exclude functions if any are added later)
+type StorageKey = Extract<(typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS], string>;
 
 /**
  * Check if we're in a browser environment
@@ -81,7 +82,10 @@ export function clearAppStorage(): boolean {
 
   try {
     Object.values(STORAGE_KEYS).forEach((key) => {
-      localStorage.removeItem(key);
+      // Skip function keys (like prompt()) if any exist
+      if (typeof key === 'string') {
+        localStorage.removeItem(key);
+      }
     });
     return true;
   } catch (error) {

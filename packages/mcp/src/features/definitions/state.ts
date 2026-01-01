@@ -11,7 +11,8 @@ export const state: Feature = {
     'src/lib/storage.ts',
     'src/lib/storageKeys.ts',
     'src/types/preferences.ts',
+    'src/hooks/useLocalStorage.ts',
   ],
-  testFiles: ['src/lib/storage.test.ts', 'src/stores/preferencesStore.test.ts'],
+  testFiles: ['src/lib/storage.test.ts', 'src/stores/preferencesStore.test.ts', 'src/hooks/useLocalStorage.test.ts'],
   scripts: {},
 };

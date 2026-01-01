@@ -50,6 +50,76 @@ e2e/               # Playwright tests
 
 See [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) and [docs/COMPONENT_GUIDELINES.md](docs/COMPONENT_GUIDELINES.md).
 
+## Custom Hooks
+
+### State & Storage
+
+```tsx
+import { useLocalStorage } from '@/hooks';
+
+// localStorage with tab sync and updater functions
+const [value, setValue] = useLocalStorage('key', defaultValue);
+setValue((prev) => newValue);
+```
+
+### Form State Sync
+
+```tsx
+import { useSyncedFormData, useSyncedState } from '@/hooks';
+
+// Sync form data when trigger changes (dialog open, ID changes)
+const [formData, setFormData] = useSyncedFormData(sourceData, syncTrigger);
+
+// Sync state but block when actively editing
+const [localValue, setLocalValue] = useSyncedState(externalValue, isEditing);
+```
+
+### Utilities
+
+```tsx
+import { useCopyFeedback, useDebouncedCallback, useKeyboardShortcut, useDocumentTitle } from '@/hooks';
+
+// Copy feedback with auto-reset
+const { isCopied, triggerCopied } = useCopyFeedback(2000);
+
+// Debounced callbacks
+const debouncedSearch = useDebouncedCallback(handleSearch, 300);
+
+// Keyboard shortcuts
+useKeyboardShortcut('mod+s', handleSave, { preventDefault: true });
+
+// Dynamic page titles
+useDocumentTitle('Dashboard');
+```
+
+### Mobile & iOS
+
+```tsx
+import { useIOSViewportReset, useMobileContext, useTouchSizes } from '@/hooks';
+
+// iOS Safari keyboard viewport fix
+const handleBlur = useIOSViewportReset();
+<input onBlur={handleBlur} />;
+
+// Responsive breakpoints
+const { isMobile, isTablet, isDesktop } = useMobileContext();
+
+// Touch-aware sizes (44px on mobile)
+const sizes = useTouchSizes();
+<Button size={sizes.button}>Click</Button>;
+```
+
+## TIMING Constants
+
+Use centralized timing constants for consistent UX:
+
+```tsx
+import { TIMING } from '@/lib/constants';
+
+// TIMING.DEBOUNCE_DELAY = 300ms
+// TIMING.COPY_FEEDBACK_DURATION = 2000ms
+```
+
 ## UI Components (Shadcn/UI)
 
 This project uses **Shadcn/UI** with radix-nova style. Components live in `src/components/ui/`.

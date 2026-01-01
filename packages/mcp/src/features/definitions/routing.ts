@@ -11,7 +11,8 @@ export const routing: Feature = {
     'src/pages/index.ts',
     'src/components/ui/loading.tsx',
     'src/components/ui/visually-hidden.tsx',
+    'src/hooks/useDocumentTitle.ts',
   ],
-  testFiles: ['e2e/tests/navigation.spec.ts'],
+  testFiles: ['e2e/tests/navigation.spec.ts', 'src/hooks/useDocumentTitle.test.ts'],
   scripts: {},
 };

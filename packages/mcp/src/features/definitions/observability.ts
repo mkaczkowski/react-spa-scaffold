@@ -6,6 +6,6 @@ export const observability: Feature = {
   required: false,
   dependencies: ['@sentry/react'],
   devDependencies: ['@sentry/vite-plugin'],
-  files: ['src/lib/config.ts'],
+  files: ['src/lib/config.ts', 'src/lib/sentry.ts'],
   scripts: {},
 };

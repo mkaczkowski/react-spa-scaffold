@@ -52,14 +52,14 @@ describe('ErrorBoundary', () => {
     expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
   });
 
-  it('shows Refresh Page button', () => {
+  it('shows Reload Page button', () => {
     render(
       <ErrorBoundary>
         <ThrowingComponent />
       </ErrorBoundary>,
     );
 
-    expect(screen.getByRole('button', { name: /refresh page/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reload page/i })).toBeInTheDocument();
   });
 
   it('renders custom fallback when provided', () => {
@@ -103,7 +103,7 @@ describe('ErrorBoundary', () => {
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 
-  it('reloads page when Refresh Page is clicked', () => {
+  it('reloads page when Reload Page is clicked', () => {
     const reloadMock = vi.fn();
     const originalLocation = window.location;
 
@@ -119,7 +119,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /refresh page/i }));
+    fireEvent.click(screen.getByRole('button', { name: /reload page/i }));
 
     expect(reloadMock).toHaveBeenCalledTimes(1);
 
