@@ -17,9 +17,14 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'functional',
+      name: 'desktop',
       testDir: './e2e/tests',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'mobile',
+      testDir: './e2e/tests',
+      use: { ...devices['Pixel 5'] },
     },
     {
       name: 'performance',

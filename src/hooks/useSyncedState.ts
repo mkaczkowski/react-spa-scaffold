@@ -11,14 +11,14 @@ export function useSyncedState<T>(externalValue: T, isActive: boolean): [T, Disp
   const [localValue, setLocalValue] = useState<T>(externalValue);
   const prevIsActiveRef = useRef(isActive);
 
-  // Sync when not active and either:
-  // 1. External value changed, or
-  // 2. Just switched from active to inactive (sync to latest external value)
+  // Sync external value to local state when:
+  // 1. Not active (external updates flow through)
+  // 2. Activity state changed (sync on open/close transitions)
   // This is an intentional pattern for synchronizing external props to local state
   useEffect(() => {
-    const justBecameInactive = prevIsActiveRef.current && !isActive;
+    const activityChanged = prevIsActiveRef.current !== isActive;
 
-    if (!isActive || justBecameInactive) {
+    if (!isActive || activityChanged) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional sync pattern
       setLocalValue(externalValue);
     }
