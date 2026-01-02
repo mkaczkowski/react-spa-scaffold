@@ -1,5 +1,4 @@
 ---
-'react-spa-scaffold': minor
 '@react-spa-scaffold/mcp': minor
 ---
 
