@@ -27,6 +27,7 @@ export default defineConfig({
         'src/types/**',
         'src/components/ui/**',
         'src/mocks/**',
+        'src/test/**', // Test utilities and mocks
         'src/lib/sentry.ts', // Production-only, lazily loaded
       ],
       thresholds: {
