@@ -31,20 +31,21 @@ describe('useSyncedState', () => {
     expect(result.current[0]).toBe('v2');
   });
 
-  it('does not sync with external value when active', () => {
+  it('does not sync with external value while active', () => {
     const { result, rerender } = renderHook(({ externalValue, isActive }) => useSyncedState(externalValue, isActive), {
-      initialProps: { externalValue: 'v1', isActive: false },
+      initialProps: { externalValue: 'v1', isActive: true },
     });
 
-    // Set local value
+    // Initial sync when becoming active
+    expect(result.current[0]).toBe('v1');
+
+    // User makes local edit while active
     act(() => {
       result.current[1]('local-edit');
     });
+    expect(result.current[0]).toBe('local-edit');
 
-    // Become active (editing)
-    rerender({ externalValue: 'v1', isActive: true });
-
-    // External value changes while active - should NOT sync
+    // External value changes while still active - should NOT sync (preserve user edit)
     rerender({ externalValue: 'v2', isActive: true });
     expect(result.current[0]).toBe('local-edit');
   });
@@ -67,6 +68,40 @@ describe('useSyncedState', () => {
     // Switch to inactive - should sync with new external value
     rerender({ externalValue: 'v2', isActive: false });
     expect(result.current[0]).toBe('v2');
+  });
+
+  it('syncs when switching from inactive to active (e.g., opening drawer)', () => {
+    const { result, rerender } = renderHook(({ externalValue, isActive }) => useSyncedState(externalValue, isActive), {
+      initialProps: { externalValue: '', isActive: false },
+    });
+
+    expect(result.current[0]).toBe('');
+
+    // Simulate opening a drawer with new content - external value and isActive change together
+    rerender({ externalValue: 'section content', isActive: true });
+
+    // Should sync with the new external value when becoming active
+    expect(result.current[0]).toBe('section content');
+  });
+
+  it('preserves local edits while active after initial sync', () => {
+    const { result, rerender } = renderHook(({ externalValue, isActive }) => useSyncedState(externalValue, isActive), {
+      initialProps: { externalValue: '', isActive: false },
+    });
+
+    // Open drawer with content
+    rerender({ externalValue: 'initial content', isActive: true });
+    expect(result.current[0]).toBe('initial content');
+
+    // User edits locally
+    act(() => {
+      result.current[1]('user edited content');
+    });
+    expect(result.current[0]).toBe('user edited content');
+
+    // External value changes (e.g., from another source) - should NOT overwrite user edit
+    rerender({ externalValue: 'different content', isActive: true });
+    expect(result.current[0]).toBe('user edited content');
   });
 
   it('works with complex objects', () => {

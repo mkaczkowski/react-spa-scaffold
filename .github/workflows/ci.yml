@@ -84,10 +84,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - type: functional
-            project: functional
-            command: npx playwright test --project=functional
+          - type: desktop
+            project: desktop
+            command: npx playwright test --project=desktop
             report-name: playwright-report
+            upload-on: failure
+          - type: mobile
+            project: mobile
+            command: npx playwright test --project=mobile
+            report-name: playwright-report-mobile
             upload-on: failure
           - type: performance
             project: performance

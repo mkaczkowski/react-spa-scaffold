@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import { createSelectors } from '@/lib/createSelectors';
 import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 export type Theme = 'light' | 'dark' | 'system';
@@ -31,18 +32,25 @@ function getSystemTheme(): 'light' | 'dark' {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export const usePreferencesStore = create<PreferencesState>()(
+/** Current schema version for preferences store persistence */
+const PREFERENCES_STORE_VERSION = 1;
+
+const usePreferencesStoreBase = create<PreferencesState>()(
   devtools(
     persist(
       (set, get) => ({
         ...initialState,
-        setTheme: (theme) => set({ theme }),
+        setTheme: (theme) => set({ theme }, undefined, 'preferences/setTheme'),
         toggleTheme: () =>
-          set((state) => {
-            const resolved = state.theme === 'system' ? getSystemTheme() : state.theme;
-            return { theme: resolved === 'light' ? 'dark' : 'light' };
-          }),
-        reset: () => set(initialState),
+          set(
+            (state) => {
+              const resolved = state.theme === 'system' ? getSystemTheme() : state.theme;
+              return { theme: resolved === 'light' ? 'dark' : 'light' };
+            },
+            undefined,
+            'preferences/toggleTheme',
+          ),
+        reset: () => set(initialState, undefined, 'preferences/reset'),
         getResolvedTheme: () => {
           const { theme } = get();
           return theme === 'system' ? getSystemTheme() : theme;
@@ -50,12 +58,29 @@ export const usePreferencesStore = create<PreferencesState>()(
       }),
       {
         name: STORAGE_KEYS.preferences,
-        partialize: (state) => ({ theme: state.theme }),
+        version: PREFERENCES_STORE_VERSION,
+        partialize: (state): Preferences => ({ theme: state.theme }),
+        migrate: (persisted, version) => {
+          const state = persisted as Preferences;
+          if (version === 0) {
+            // v0 → v1: No changes needed, establishes baseline for future migrations
+            return state;
+          }
+          return state;
+        },
+        onRehydrateStorage: () => (_state, error) => {
+          if (error) {
+            console.error('Failed to hydrate preferences store:', error);
+          }
+        },
       },
     ),
-    { name: 'preferences' },
+    { name: 'preferences', enabled: process.env.NODE_ENV === 'development' },
   ),
 );
+
+/** Preferences store with auto-generated selectors */
+export const usePreferencesStore = createSelectors(usePreferencesStoreBase);
 
 /**
  * Initialize multi-tab sync for preferences.

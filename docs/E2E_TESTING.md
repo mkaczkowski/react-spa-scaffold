@@ -11,7 +11,7 @@
 ```
 e2e/
 ├── fixtures/
-│   └── index.ts           # setupPage, clearAppState
+│   └── index.ts           # setupPage, setupCleanPage, test, expect
 ├── tests/                  # Functional E2E tests
 │   ├── home.spec.ts       # Page structure, accessibility
 │   ├── theme.spec.ts      # Theme toggle, persistence
@@ -26,9 +26,7 @@ e2e/
 
 ```typescript
 import { expect, test } from '@playwright/test';
-
-// For tests that need state clearing
-import { setupPage } from '../fixtures';
+import { setupPage, setupCleanPage } from '../fixtures';
 ```
 
 ## Core Patterns
@@ -107,12 +105,58 @@ await page.waitForTimeout(500);
 ## Running Tests
 
 ```bash
-npm run e2e           # Run functional tests
-npm run e2e:ui        # Functional tests with interactive UI
+npm run e2e           # Run desktop tests
+npm run e2e:mobile    # Run mobile tests (Pixel 5 emulation)
+npm run e2e:all       # Run both desktop and mobile
+npm run e2e:ui        # Interactive UI mode
 npm run e2e:perf      # Run performance tests
 npm run e2e:perf:ui   # Performance tests with interactive UI
-npm run e2e:all       # Run all tests (functional + performance)
 ```
+
+## Mobile Testing
+
+Tests run on both desktop (Chrome) and mobile (Pixel 5) viewports. Use the `isMobile` fixture for device-specific behavior.
+
+### Using isMobile Fixture
+
+```typescript
+import { expect, test } from '@playwright/test';
+
+test('theme toggle works on all devices', async ({ page, isMobile }) => {
+  await page.goto('/');
+
+  // Same test logic works on both platforms
+  await page.getByRole('button', { name: /dark mode/i }).click();
+  await expect(page.locator('html')).toHaveClass(/dark/);
+
+  // Add mobile-specific assertions if needed
+  if (isMobile) {
+    // Verify touch-friendly button size, etc.
+  }
+});
+```
+
+### Skip Tests by Platform
+
+```typescript
+test('hover tooltip shows', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Hover not available on touch devices');
+  // Desktop-only test
+});
+
+test('touch gesture works', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'Touch gesture only on mobile');
+  // Mobile-only test
+});
+```
+
+### Common Patterns
+
+| Pattern        | Desktop   | Mobile          |
+| -------------- | --------- | --------------- |
+| Viewport width | 1280px    | 393px (Pixel 5) |
+| Touch events   | Click     | Tap             |
+| Hover states   | Supported | Not applicable  |
 
 ## Performance Testing
 
@@ -129,3 +173,4 @@ Performance tests use [react-performance-tracking](https://github.com/mkaczkowsk
 - [ ] No arbitrary timeouts
 - [ ] Tests behavior, not implementation
 - [ ] Uses `setupPage` when testing persistence
+- [ ] Considers mobile viewport when relevant

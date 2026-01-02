@@ -34,8 +34,10 @@ export const testing: Feature = {
     test: 'vitest run',
     'test:watch': 'vitest',
     'test:coverage': 'vitest run --coverage',
-    e2e: 'playwright test --project=functional',
-    'e2e:ui': 'playwright test --project=functional --ui',
+    e2e: 'playwright test --project=desktop',
+    'e2e:mobile': 'playwright test --project=mobile',
+    'e2e:all': 'playwright test --project=desktop --project=mobile',
+    'e2e:ui': 'playwright test --ui',
   },
   configFiles: ['vitest.config.ts', 'playwright.config.ts', 'src/test-setup.ts'],
 };
