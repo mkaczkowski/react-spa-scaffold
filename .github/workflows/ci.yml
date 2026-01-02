@@ -96,7 +96,7 @@ jobs:
             upload-on: failure
           - type: performance
             project: performance
-            command: PERF_TEST=true npx playwright test --project=performance
+            command: PERF_TEST=true PERF_CI=true npx playwright test --project=performance
             report-name: performance-report
             upload-on: always
     steps:
@@ -106,6 +106,9 @@ jobs:
         with:
           name: dist
           path: dist/
+      - name: Rebuild with performance tracking
+        if: matrix.type == 'performance'
+        run: VITE_PERF_TEST=true npm run build
       - name: Get Playwright version
         id: playwright-version
         run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT

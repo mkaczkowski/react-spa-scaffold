@@ -1,5 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// CI performance tests use preview server (serves pre-built dist) for faster startup
+// Local dev uses dev server with VITE_PERF_TEST for hot reload
+const isPerfCI = process.env.PERF_CI === 'true';
+const baseURL = isPerfCI ? 'http://localhost:4173' : 'http://localhost:5173';
+
+function getWebServerCommand(): string {
+  if (isPerfCI) return 'npm run preview';
+  if (process.env.PERF_TEST) return 'VITE_PERF_TEST=true npm run dev';
+  return 'npm run dev';
+}
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -8,7 +19,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? 'github' : [['list'], ['html']],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -39,8 +50,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.PERF_TEST ? 'VITE_PERF_TEST=true npm run dev' : 'npm run dev',
-    url: 'http://localhost:5173',
+    command: getWebServerCommand(),
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
