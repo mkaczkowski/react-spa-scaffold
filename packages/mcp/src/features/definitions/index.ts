@@ -12,3 +12,4 @@ export { devtools } from './devtools.js';
 export { ci } from './ci.js';
 export { observability } from './observability.js';
 export { theming } from './theming.js';
+export { auth } from './auth.js';

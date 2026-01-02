@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router';
 import './index.css';
 import { ErrorBoundary } from '@/components/shared';
 import { Toaster } from '@/components/ui/sonner';
+import { ClerkThemeProvider } from '@/contexts/clerkContext';
 import { MobileProvider } from '@/contexts/mobileContext';
 import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 import { QueryProvider } from '@/contexts/queryContext';
@@ -14,6 +15,13 @@ import { SENTRY_CONFIG } from '@/lib/config';
 import { initPreferencesSync } from '@/stores/preferencesStore';
 
 import App from './App';
+
+// Import Clerk Publishable Key (per official docs)
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error('Add your Clerk Publishable Key to the .env.local file');
+}
 
 /**
  * Lazy load Sentry after initial render to avoid blocking web vitals.
@@ -74,14 +82,16 @@ initI18n().then(() => {
       <QueryProvider>
         <I18nProvider i18n={i18n}>
           <BrowserRouter>
-            <MobileProvider>
-              <ErrorBoundary>
-                <PerformanceProviderWrapper>
-                  <App />
-                  <Toaster />
-                </PerformanceProviderWrapper>
-              </ErrorBoundary>
-            </MobileProvider>
+            <ClerkThemeProvider publishableKey={PUBLISHABLE_KEY}>
+              <MobileProvider>
+                <ErrorBoundary>
+                  <PerformanceProviderWrapper>
+                    <App />
+                    <Toaster />
+                  </PerformanceProviderWrapper>
+                </ErrorBoundary>
+              </MobileProvider>
+            </ClerkThemeProvider>
           </BrowserRouter>
         </I18nProvider>
       </QueryProvider>

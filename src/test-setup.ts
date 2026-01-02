@@ -1,7 +1,20 @@
 import '@testing-library/jest-dom/vitest';
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 import { server } from '@/mocks/node';
+import { resetClerkMocks } from '@/test/clerkMock';
+
+// =============================================================================
+// Module Mocks
+// =============================================================================
+
+// Mock @clerk/react-router for testing
+vi.mock('@clerk/react-router', async () => import('@/test/clerkMock'));
+
+// Mock @clerk/themes for testing
+vi.mock('@clerk/themes', () => ({
+  shadcn: { baseTheme: 'shadcn' },
+}));
 
 // =============================================================================
 // MSW Server Setup
@@ -14,9 +27,10 @@ beforeAll(() => {
   });
 });
 
-// Reset handlers after each test to ensure test isolation
+// Reset handlers and mocks after each test to ensure test isolation
 afterEach(() => {
   server.resetHandlers();
+  resetClerkMocks();
 });
 
 // Close MSW server after all tests complete

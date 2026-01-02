@@ -176,6 +176,7 @@ resolve-library-id → get-library-docs
 - `zod` - Schema validation
 - `date-fns` - Date formatting
 - `msw` - Mock service worker setup
+- `@clerk/react-router` - Authentication patterns
 
 ### Decision Flow
 

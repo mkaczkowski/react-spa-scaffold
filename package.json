@@ -56,6 +56,8 @@
     "release": "changeset publish"
   },
   "dependencies": {
+    "@clerk/react-router": "^2.3.7",
+    "@clerk/themes": "^2.4.46",
     "@fontsource-variable/inter": "^5.2.5",
     "@hookform/resolvers": "^5.0.1",
     "@lingui/core": "^5.7.0",
