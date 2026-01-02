@@ -38,6 +38,10 @@ export function generateViteEnvDts(featureIds: FeatureId[]): string {
     envVars.push('  readonly VITE_PERF_TEST: string;');
   }
 
+  if (featureIds.includes(FEATURE.AUTH)) {
+    envVars.push('  readonly VITE_CLERK_PUBLISHABLE_KEY: string;');
+  }
+
   // Vite built-in env vars (always required for TypeScript)
   envVars.push("  readonly MODE: 'development' | 'production' | 'test';");
   envVars.push('  readonly DEV: boolean;');
@@ -78,6 +82,11 @@ export function generateEnvTs(featureIds: FeatureId[]): string {
     schemaFields.push('  VITE_SENTRY_ENABLED: z.string().optional(),');
     envFields.push('    VITE_SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,');
     envFields.push('    VITE_SENTRY_ENABLED: import.meta.env.VITE_SENTRY_ENABLED,');
+  }
+
+  if (featureIds.includes(FEATURE.AUTH)) {
+    schemaFields.push('  VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),');
+    envFields.push('    VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,');
   }
 
   // Vite built-in env vars (always included)

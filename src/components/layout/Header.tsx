@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 
-import { LanguageSwitcher, ThemeToggle } from '@/components/shared';
+import { AccountButton, LanguageSwitcher, ThemeToggle } from '@/components/shared';
 
 export function Header() {
   return (
@@ -12,6 +12,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
+          <AccountButton />
         </div>
       </div>
     </header>

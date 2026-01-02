@@ -71,6 +71,7 @@ See [packages/mcp/README.md](packages/mcp/README.md) for full MCP documentation.
 | State Management | Zustand                    | React state is sufficient              |
 | Server State     | TanStack Query             | Simple REST without caching            |
 | Forms            | React Hook Form + Zod      | Few or simple forms                    |
+| Authentication   | Clerk                      | Using different auth provider          |
 | i18n             | LinguiJS                   | Single language app                    |
 | E2E Testing      | Playwright                 | Unit tests cover enough                |
 | Performance      | react-performance-tracking | No performance regression tests needed |

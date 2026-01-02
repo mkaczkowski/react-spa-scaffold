@@ -103,7 +103,7 @@ Or point directly to the built file:
 
 ## Available Features
 
-14 feature modules that can be combined:
+15 feature modules that can be combined:
 
 | Feature         | Description                                   | Required |
 | --------------- | --------------------------------------------- | -------- |
@@ -121,6 +121,7 @@ Or point directly to the built file:
 | `devtools`      | ESLint + Prettier + Husky                     | Optional |
 | `ci`            | GitHub Actions + Dependabot                   | Optional |
 | `observability` | Sentry error tracking                         | Optional |
+| `auth`          | Clerk authentication with modal sign-in       | Optional |
 
 ## Tools
 

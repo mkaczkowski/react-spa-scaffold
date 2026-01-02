@@ -5,6 +5,7 @@ import { render, type RenderOptions } from '@testing-library/react';
 import { type ReactElement, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router';
 
+import { ClerkThemeProvider } from '@/contexts/clerkContext';
 import { MobileProvider } from '@/contexts/mobileContext';
 import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 
@@ -37,14 +38,16 @@ interface WrapperProps {
 function AllProviders({ children }: WrapperProps) {
   const queryClient = createTestQueryClient();
 
-  // Provider order matches main.tsx: Query > I18n > Router > Mobile > Performance
+  // Provider order matches main.tsx: Query > I18n > Router > Clerk > Mobile > Performance
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider i18n={i18n}>
         <MemoryRouter>
-          <MobileProvider>
-            <PerformanceProviderWrapper>{children}</PerformanceProviderWrapper>
-          </MobileProvider>
+          <ClerkThemeProvider publishableKey="test_key">
+            <MobileProvider>
+              <PerformanceProviderWrapper>{children}</PerformanceProviderWrapper>
+            </MobileProvider>
+          </ClerkThemeProvider>
         </MemoryRouter>
       </I18nProvider>
     </QueryClientProvider>

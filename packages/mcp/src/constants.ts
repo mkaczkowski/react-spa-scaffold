@@ -18,6 +18,7 @@ export const FEATURE = {
   CI: 'ci',
   OBSERVABILITY: 'observability',
   THEMING: 'theming',
+  AUTH: 'auth',
 } as const;
 
 /** Script names for setup commands. */

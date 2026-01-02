@@ -12,6 +12,7 @@ High-level architecture and key decisions. For API details, see [API Reference](
 | Styling        | Tailwind CSS 4           | No runtime cost, scales with team size      |
 | State          | Zustand + TanStack Query | Minimal boilerplate, separation of concerns |
 | Forms          | React Hook Form + Zod    | Minimal re-renders, type-safe validation    |
+| Authentication | Clerk                    | Modal-based auth, shadcn theme integration  |
 | i18n           | Lingui                   | Smaller runtime, compile-time extraction    |
 | Testing        | Vitest + Playwright      | Fast, Vite-native, true cross-browser       |
 | Error Tracking | Sentry                   | Industry standard, lazy-loaded              |
@@ -73,22 +74,21 @@ Providers wrap the app in this specific order:
 ```tsx
 <StrictMode>
   <QueryProvider>
-    {' '}
     {/* TanStack Query - outermost for global cache */}
     <I18nProvider>
-      {' '}
       {/* Lingui - translations available everywhere */}
       <BrowserRouter>
-        {' '}
         {/* React Router - routing context */}
-        <MobileProvider>
-          {' '}
-          {/* Viewport - depends on router for SSR */}
-          <ErrorBoundary>
-            <App />
-            <Toaster />
-          </ErrorBoundary>
-        </MobileProvider>
+        <ClerkThemeProvider>
+          {/* Clerk - auth inside Router for @clerk/react-router */}
+          <MobileProvider>
+            {/* Viewport - depends on router for SSR */}
+            <ErrorBoundary>
+              <App />
+              <Toaster />
+            </ErrorBoundary>
+          </MobileProvider>
+        </ClerkThemeProvider>
       </BrowserRouter>
     </I18nProvider>
   </QueryProvider>
@@ -99,7 +99,8 @@ Providers wrap the app in this specific order:
 
 - QueryProvider outermost so cache persists across route changes
 - I18nProvider before Router so route components can use translations
-- MobileProvider inside Router for potential SSR viewport detection
+- ClerkThemeProvider inside Router (required by @clerk/react-router declarative mode)
+- MobileProvider inside Clerk for potential SSR viewport detection
 - ErrorBoundary innermost to catch errors in App without breaking providers
 
 ### 2. State Management Separation

@@ -16,10 +16,11 @@ describe('FEATURE_IDS', () => {
     expect(FEATURE_IDS).toContain('core');
     expect(FEATURE_IDS).toContain('routing');
     expect(FEATURE_IDS).toContain('testing');
+    expect(FEATURE_IDS).toContain('auth');
   });
 
-  it('has 14 features', () => {
-    expect(FEATURE_IDS).toHaveLength(14);
+  it('has 15 features', () => {
+    expect(FEATURE_IDS).toHaveLength(15);
   });
 });
 
@@ -28,6 +29,7 @@ describe('isFeatureId', () => {
     expect(isFeatureId('core')).toBe(true);
     expect(isFeatureId('routing')).toBe(true);
     expect(isFeatureId('theming')).toBe(true);
+    expect(isFeatureId('auth')).toBe(true);
   });
 
   it('returns false for invalid feature IDs', () => {
