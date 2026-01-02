@@ -1,5 +1,17 @@
 # @react-spa-scaffold/mcp
 
+## 2.2.0
+
+### Minor Changes
+
+- [#27](https://github.com/mkaczkowski/react-spa-scaffold/pull/27) [`a578714`](https://github.com/mkaczkowski/react-spa-scaffold/commit/a578714984c970e9b0ca3d89999ecbbf6c1272c8) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - feat(auth): add Clerk authentication with modal sign-in
+  - Add ClerkThemeProvider with shadcn theme integration and dark mode support
+  - Create AccountButton component for header (sign-in modal / user dropdown)
+  - Create ProtectedRoute wrapper for authenticated routes
+  - Add comprehensive test mocks for @clerk/react-router
+  - Update MCP package with auth feature definition for scaffolding
+  - Update generators for VITE_CLERK_PUBLISHABLE_KEY env variable
+
 ## 2.1.1
 
 ### Patch Changes
