@@ -264,12 +264,12 @@ import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/react-rout
 Clerk is automatically mocked in tests. Use test utilities to control auth state:
 
 ```tsx
-import { setMockSignedIn, resetClerkMocks } from '@/test';
+import { setMockClerkSignedIn, resetClerkMocks } from '@/test';
 
 beforeEach(() => resetClerkMocks());
 
 it('shows sign-in when not authenticated', () => {
-  setMockSignedIn(false);
+  setMockClerkSignedIn(false);
   // ...
 });
 ```

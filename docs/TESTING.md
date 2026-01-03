@@ -75,12 +75,12 @@ import { MOCK_USER, MOCK_SESSION_ID } from '@/test';
 Control authentication state in tests:
 
 ```typescript
-import { setMockSignedIn, setMockLoaded, resetClerkMocks } from '@/test';
+import { setMockClerkSignedIn, setMockClerkLoaded, resetClerkMocks } from '@/test';
 
 beforeEach(() => resetClerkMocks());
 
 it('shows sign-in when not authenticated', () => {
-  setMockSignedIn(false);
+  setMockClerkSignedIn(false);
   render(<ProtectedRoute />);
   expect(screen.getByTestId('sign-in-button')).toBeInTheDocument();
 });

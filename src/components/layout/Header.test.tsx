@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { Header } from '@/components/layout/Header';
-import { render, setMockSignedIn } from '@/test';
+import { render, setMockClerkSignedIn } from '@/test';
 
 describe('Header', () => {
   it('renders the app title', () => {
@@ -32,7 +32,7 @@ describe('Header', () => {
   });
 
   it('renders sign-in button when user is signed out', () => {
-    setMockSignedIn(false);
+    setMockClerkSignedIn(false);
 
     render(<Header />);
 
@@ -40,7 +40,7 @@ describe('Header', () => {
   });
 
   it('renders user button when user is signed in', () => {
-    setMockSignedIn(true);
+    setMockClerkSignedIn(true);
 
     render(<Header />);
 

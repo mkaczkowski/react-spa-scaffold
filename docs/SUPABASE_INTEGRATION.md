@@ -4,22 +4,104 @@ This document provides a comprehensive guide to the Supabase database integratio
 
 ## Table of Contents
 
-1. [Architecture Overview](#architecture-overview)
-2. [File Structure](#file-structure)
-3. [Configuration](#configuration)
-4. [Supabase Dashboard Setup](#supabase-dashboard-setup)
-5. [Database Schema & SQL](#database-schema--sql)
-6. [Authentication Flow](#authentication-flow)
-7. [Database Types](#database-types)
-8. [React Hooks](#react-hooks)
-9. [Provider Hierarchy](#provider-hierarchy)
-10. [Usage Examples](#usage-examples)
-11. [Server-Side Rendering](#server-side-rendering)
-12. [Testing](#testing)
-13. [Security](#security)
-14. [Netlify Deployment](#netlify-deployment)
-15. [Troubleshooting](#troubleshooting)
-16. [Migration Notes](#migration-notes)
+1. [What is Supabase](#what-is-supabase)
+2. [Architecture Overview](#architecture-overview)
+3. [File Structure](#file-structure)
+4. [Configuration](#configuration)
+5. [Supabase Dashboard Setup](#supabase-dashboard-setup)
+6. [Database Schema & SQL](#database-schema--sql)
+7. [Authentication Flow](#authentication-flow)
+8. [Database Types](#database-types)
+9. [React Hooks](#react-hooks)
+10. [Provider Hierarchy](#provider-hierarchy)
+11. [Usage Examples](#usage-examples)
+12. [Server-Side Rendering](#server-side-rendering)
+13. [Testing](#testing)
+14. [Security](#security)
+15. [Netlify Deployment](#netlify-deployment)
+16. [Troubleshooting](#troubleshooting)
+17. [Migration Notes](#migration-notes)
+
+---
+
+## What is Supabase
+
+Supabase is an open-source Firebase alternative built on PostgreSQL. It provides a complete backend platform with:
+
+- **PostgreSQL Database** - Full Postgres with extensions (pg_vector, PostGIS, etc.)
+- **Authentication** - Built-in auth + third-party providers (like Clerk)
+- **Real-time Subscriptions** - WebSocket-based live data updates
+- **Storage** - S3-compatible file storage with CDN
+- **Edge Functions** - Serverless Deno functions
+- **PostgREST API** - Auto-generated REST API from your schema
+
+### Unique Capabilities
+
+| Feature                      | What Makes It Special                                         |
+| ---------------------------- | ------------------------------------------------------------- |
+| **Row Level Security (RLS)** | Security enforced at database level, not application code     |
+| **Real-time built-in**       | `supabase.channel().on('postgres_changes')` - instant updates |
+| **PostgREST**                | Zero backend code for CRUD - your schema becomes your API     |
+| **Full PostgreSQL**          | Extensions, stored procedures, triggers, full SQL power       |
+| **Third-party auth**         | JWT validation without managing users (Clerk integration)     |
+| **Self-hostable**            | Unlike Firebase, you can run it on your own infrastructure    |
+
+### When Supabase Shines
+
+**Ideal use cases:**
+
+- **MVPs and rapid prototyping** - Instant API from schema, no backend code needed
+- **Real-time applications** - Chat, live dashboards, collaborative tools
+- **Teams who know SQL** - Leverage existing PostgreSQL expertise
+- **Complex queries** - Joins, aggregations, full-text search, window functions
+- **Multi-tenant apps** - RLS makes tenant isolation elegant and secure
+
+**This project's approach:** Clerk handles auth complexity, Supabase handles data with RLS policies tied to `auth.uid()`.
+
+### Strengths
+
+| Strength                   | Details                                                          |
+| -------------------------- | ---------------------------------------------------------------- |
+| **PostgreSQL power**       | Real relational database, not NoSQL limitations                  |
+| **RLS security**           | Policies enforced at DB level - impossible to bypass in app code |
+| **Generous free tier**     | 500MB storage, 2GB transfer, unlimited API requests              |
+| **Open source**            | No vendor lock-in, can self-host anytime                         |
+| **TypeScript generation**  | `npm run db:types` provides full type safety                     |
+| **Familiar SQL**           | No proprietary query language to learn                           |
+| **Ecosystem integrations** | Works with Clerk, Netlify, Vercel, and more                      |
+
+### Weaknesses
+
+| Weakness                   | Details                                                  |
+| -------------------------- | -------------------------------------------------------- |
+| **Cold starts**            | Paused projects on free tier take ~1s to wake up         |
+| **Complex RLS**            | Policies can get complicated for multi-role applications |
+| **Limited edge functions** | Less mature than Vercel/Cloudflare Workers               |
+| **No offline support**     | Unlike Firebase, no built-in offline-first capabilities  |
+| **Learning curve**         | RLS and Postgres concepts require understanding          |
+
+### Comparison with Alternatives
+
+| Feature            | Supabase          | Firebase          | PlanetScale | Neon       | Convex     |
+| ------------------ | ----------------- | ----------------- | ----------- | ---------- | ---------- |
+| **Database**       | PostgreSQL        | NoSQL (Firestore) | MySQL       | PostgreSQL | Custom     |
+| **Real-time**      | Built-in          | Built-in          | No          | No         | Built-in   |
+| **Auth**           | Yes + third-party | Built-in          | No          | No         | Built-in   |
+| **Storage**        | Yes               | Yes               | No          | No         | Yes        |
+| **Serverless**     | Edge Functions    | Cloud Functions   | No          | No         | Yes        |
+| **Self-host**      | Yes               | No                | No          | No         | No         |
+| **SQL**            | Full SQL          | NoSQL queries     | Full SQL    | Full SQL   | TypeScript |
+| **Vendor lock-in** | Low               | High              | Medium      | Low        | Medium     |
+
+### Quick Decision Guide
+
+| Choose          | When                                                        |
+| --------------- | ----------------------------------------------------------- |
+| **Supabase**    | Need SQL, real-time, open-source, RLS security              |
+| **Firebase**    | Google ecosystem, mobile-first, offline support needed      |
+| **PlanetScale** | MySQL expertise, branching workflows, pure database only    |
+| **Neon**        | Serverless Postgres only, no extras needed                  |
+| **Convex**      | TypeScript-first, reactive by default, simpler mental model |
 
 ---
 

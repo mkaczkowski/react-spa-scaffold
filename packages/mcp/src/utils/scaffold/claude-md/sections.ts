@@ -231,12 +231,12 @@ import { ProtectedRoute } from '@/components/shared';
 ### Testing
 
 \`\`\`tsx
-import { setMockSignedIn, resetClerkMocks } from '@/test';
+import { setMockClerkSignedIn, resetClerkMocks } from '@/test';
 
 beforeEach(() => resetClerkMocks());
 
 it('shows sign-in when not authenticated', () => {
-  setMockSignedIn(false);
+  setMockClerkSignedIn(false);
   // ...
 });
 \`\`\``;
@@ -290,6 +290,26 @@ import { ProfileSync } from '@/components/shared';
 
 // Add to app to auto-sync Clerk user to Supabase
 <ProfileSync />
+\`\`\`
+
+### Testing
+
+\`\`\`tsx
+import { render, setMockSupabaseData, setMockSupabaseError, createProfile, resetSupabaseMocks } from '@/test';
+
+beforeEach(() => resetSupabaseMocks());
+
+it('displays profile data', async () => {
+  setMockSupabaseData([createProfile({ full_name: 'Test User' })]);
+  render(<ProfileCard />);
+  // Assert profile is displayed
+});
+
+it('handles error', async () => {
+  setMockSupabaseError({ message: 'Failed', code: 'ERROR' });
+  render(<ProfileCard />);
+  // Assert error state
+});
 \`\`\`
 
 See [docs/SUPABASE_INTEGRATION.md](docs/SUPABASE_INTEGRATION.md) for full details.`;

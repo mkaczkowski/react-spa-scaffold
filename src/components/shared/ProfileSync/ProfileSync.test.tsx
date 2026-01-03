@@ -1,8 +1,7 @@
 import { waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { render } from '@/test';
-import { setMockSignedIn, resetClerkMocks } from '@/test/clerkMock';
+import { render, setMockClerkSignedIn, resetClerkMocks } from '@/test';
 
 import { ProfileSync } from './ProfileSync';
 
@@ -24,19 +23,19 @@ describe('ProfileSync', () => {
   });
 
   it('renders nothing (invisible)', () => {
-    setMockSignedIn(true);
+    setMockClerkSignedIn(true);
     const { container } = render(<ProfileSync />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('does not sync when signed out', async () => {
-    setMockSignedIn(false);
+    setMockClerkSignedIn(false);
     render(<ProfileSync />);
     await waitFor(() => expect(mockMutate).not.toHaveBeenCalled());
   });
 
   it('syncs profile when signed in', async () => {
-    setMockSignedIn(true);
+    setMockClerkSignedIn(true);
     render(<ProfileSync />);
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith(expect.objectContaining({ id: 'user_123' }), expect.any(Object));
