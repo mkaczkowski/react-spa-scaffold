@@ -19,6 +19,7 @@ import {
   observability,
   theming,
   auth,
+  database,
 } from './definitions/index.js';
 
 /** All available features for scaffolding. */
@@ -38,6 +39,7 @@ export const FEATURES: FeatureRegistry = {
   observability,
   theming,
   auth,
+  database,
 };
 
 export type { FeatureId } from './types.js';

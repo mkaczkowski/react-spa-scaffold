@@ -42,6 +42,11 @@ export function generateViteEnvDts(featureIds: FeatureId[]): string {
     envVars.push('  readonly VITE_CLERK_PUBLISHABLE_KEY: string;');
   }
 
+  if (featureIds.includes(FEATURE.DATABASE)) {
+    envVars.push('  readonly VITE_SUPABASE_URL: string;');
+    envVars.push('  readonly VITE_SUPABASE_ANON_KEY: string;');
+  }
+
   // Vite built-in env vars (always required for TypeScript)
   envVars.push("  readonly MODE: 'development' | 'production' | 'test';");
   envVars.push('  readonly DEV: boolean;');
@@ -87,6 +92,13 @@ export function generateEnvTs(featureIds: FeatureId[]): string {
   if (featureIds.includes(FEATURE.AUTH)) {
     schemaFields.push('  VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),');
     envFields.push('    VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,');
+  }
+
+  if (featureIds.includes(FEATURE.DATABASE)) {
+    schemaFields.push('  VITE_SUPABASE_URL: z.string().url().optional(),');
+    schemaFields.push('  VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),');
+    envFields.push('    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,');
+    envFields.push('    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,');
   }
 
   // Vite built-in env vars (always included)

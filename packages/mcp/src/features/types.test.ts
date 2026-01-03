@@ -17,10 +17,11 @@ describe('FEATURE_IDS', () => {
     expect(FEATURE_IDS).toContain('routing');
     expect(FEATURE_IDS).toContain('testing');
     expect(FEATURE_IDS).toContain('auth');
+    expect(FEATURE_IDS).toContain('database');
   });
 
-  it('has 15 features', () => {
-    expect(FEATURE_IDS).toHaveLength(15);
+  it('has 16 features', () => {
+    expect(FEATURE_IDS).toHaveLength(16);
   });
 });
 

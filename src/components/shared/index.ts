@@ -1,6 +1,7 @@
 export { AccountButton } from './AccountButton';
 export { ErrorBoundary } from './ErrorBoundary';
 export { LanguageSwitcher } from './LanguageSwitcher';
+export { ProfileSync } from './ProfileSync';
 export { ProtectedRoute } from './ProtectedRoute';
 export { RegisterForm } from './RegisterForm';
 export { SEO } from './SEO';

@@ -13,3 +13,4 @@ export { ci } from './ci.js';
 export { observability } from './observability.js';
 export { theming } from './theming.js';
 export { auth } from './auth.js';
+export { database } from './database.js';

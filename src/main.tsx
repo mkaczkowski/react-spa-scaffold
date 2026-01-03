@@ -10,17 +10,29 @@ import { ClerkThemeProvider } from '@/contexts/clerkContext';
 import { MobileProvider } from '@/contexts/mobileContext';
 import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 import { QueryProvider } from '@/contexts/queryContext';
+import { SupabaseProvider } from '@/contexts/supabaseContext';
 import { i18n, initI18n } from '@/i18n';
+import { env } from '@/lib/env';
 import { SENTRY_CONFIG } from '@/lib/config';
 import { initPreferencesSync } from '@/stores/preferencesStore';
 
 import App from './App';
 
-// Import Clerk Publishable Key (per official docs)
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+// Clerk Publishable Key - required when auth feature is enabled
+const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Add your Clerk Publishable Key to the .env.local file');
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error('Missing VITE_CLERK_PUBLISHABLE_KEY environment variable');
+}
+
+// Supabase - validate that both URL and key are set together
+const SUPABASE_URL = env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY;
+
+if ((SUPABASE_URL && !SUPABASE_ANON_KEY) || (!SUPABASE_URL && SUPABASE_ANON_KEY)) {
+  throw new Error(
+    'Supabase configuration incomplete. Both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
+  );
 }
 
 /**
@@ -82,15 +94,17 @@ initI18n().then(() => {
       <QueryProvider>
         <I18nProvider i18n={i18n}>
           <BrowserRouter>
-            <ClerkThemeProvider publishableKey={PUBLISHABLE_KEY}>
-              <MobileProvider>
-                <ErrorBoundary>
-                  <PerformanceProviderWrapper>
-                    <App />
-                    <Toaster />
-                  </PerformanceProviderWrapper>
-                </ErrorBoundary>
-              </MobileProvider>
+            <ClerkThemeProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+              <SupabaseProvider>
+                <MobileProvider>
+                  <ErrorBoundary>
+                    <PerformanceProviderWrapper>
+                      <App />
+                      <Toaster />
+                    </PerformanceProviderWrapper>
+                  </ErrorBoundary>
+                </MobileProvider>
+              </SupabaseProvider>
             </ClerkThemeProvider>
           </BrowserRouter>
         </I18nProvider>

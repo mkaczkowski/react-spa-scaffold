@@ -3,6 +3,7 @@ import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 import { server } from '@/mocks/node';
 import { resetClerkMocks } from '@/test/clerkMock';
+import { resetSupabaseMocks } from '@/test/supabaseMock';
 
 // =============================================================================
 // Module Mocks
@@ -15,6 +16,9 @@ vi.mock('@clerk/react-router', async () => import('@/test/clerkMock'));
 vi.mock('@clerk/themes', () => ({
   shadcn: { baseTheme: 'shadcn' },
 }));
+
+// Mock Supabase context with test client
+vi.mock('@/contexts/supabaseContext', async () => import('@/test/supabaseMock'));
 
 // =============================================================================
 // MSW Server Setup
@@ -31,6 +35,7 @@ beforeAll(() => {
 afterEach(() => {
   server.resetHandlers();
   resetClerkMocks();
+  resetSupabaseMocks();
 });
 
 // Close MSW server after all tests complete

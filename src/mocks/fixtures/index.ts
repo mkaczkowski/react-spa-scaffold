@@ -1,1 +1,2 @@
-export { mockTodos, createTodo, createTodos, type Todo } from './todos';
+export { createTodo, createTodos, mockTodos, type Todo } from './todos';
+export { createProfile, createProfiles, mockProfiles } from './profiles';

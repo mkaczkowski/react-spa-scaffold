@@ -27,6 +27,7 @@ const DOCS_CONFIG: Record<string, { requiredFeatures?: string[] }> = {
   'docs/TESTING.md': { requiredFeatures: ['testing'] },
   'docs/E2E_TESTING.md': { requiredFeatures: ['testing'] },
   'docs/INTERNATIONALIZATION.md': { requiredFeatures: ['i18n'] },
+  'docs/SUPABASE_INTEGRATION.md': { requiredFeatures: ['database'] },
 };
 
 /**
