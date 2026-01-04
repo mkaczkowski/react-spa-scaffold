@@ -20,6 +20,7 @@ import {
   theming,
   auth,
   database,
+  deployment,
 } from './definitions/index.js';
 
 /** All available features for scaffolding. */
@@ -40,6 +41,7 @@ export const FEATURES: FeatureRegistry = {
   theming,
   auth,
   database,
+  deployment,
 };
 
 export type { FeatureId } from './types.js';
