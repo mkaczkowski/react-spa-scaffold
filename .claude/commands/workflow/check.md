@@ -8,10 +8,10 @@ Run all quality checks before committing.
 
 ## Checks (in order)
 
-1. **Tests**: `npm run test`
 2. **TypeScript**: `npm run typecheck`
 3. **Lint**: `npm run lint`
 4. **Build**: `npm run build`
+5. **Tests**: `npm run test:coverage`
 
 ## Behavior
 
