@@ -211,7 +211,12 @@ Add to `.env`:
 # Supabase Database (required)
 VITE_SUPABASE_DATABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Supabase CLI (required for npm run db:types)
+SUPABASE_PROJECT_ID=your-project-id
 ```
+
+> **Finding your Project ID**: The project ID is the subdomain from your Supabase URL. If your URL is `https://abc123xyz.supabase.co`, then your project ID is `abc123xyz`.
 
 > **CLI Authentication**: The `db:types` command requires Supabase CLI authentication. Run `npx supabase login` first, or set `SUPABASE_ACCESS_TOKEN` environment variable.
 
