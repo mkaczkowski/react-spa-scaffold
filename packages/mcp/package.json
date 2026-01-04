@@ -1,6 +1,6 @@
 {
   "name": "@react-spa-scaffold/mcp",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "MCP server for scaffolding projects based on react-spa-scaffold template",
   "type": "module",
   "main": "dist/index.js",

@@ -1,5 +1,15 @@
 # @react-spa-scaffold/mcp
 
+## 2.3.0
+
+### Minor Changes
+
+- [#30](https://github.com/mkaczkowski/react-spa-scaffold/pull/30) [`6541596`](https://github.com/mkaczkowski/react-spa-scaffold/commit/65415960944c966eb68eab758a4ca25660d55166) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - Add deployment feature with Netlify configuration and GitHub Actions workflow
+
+### Patch Changes
+
+- [`de53568`](https://github.com/mkaczkowski/react-spa-scaffold/commit/de535682eaaaa69724e8f1309301fbd07490befa) - Add Supabase hooks test coverage to meet 80% threshold
+
 ## 2.2.0
 
 ### Minor Changes
