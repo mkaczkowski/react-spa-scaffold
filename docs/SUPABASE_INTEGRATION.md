@@ -272,24 +272,9 @@ For test examples, see [CLAUDE.md](../CLAUDE.md#database-supabase).
 
 ---
 
-## Deployment (Netlify)
+## Deployment
 
-### Supabase Extension Setup
-
-1. Netlify Dashboard → Extensions → Search "Supabase" → Install
-2. Project configuration → General → Supabase → Connect
-3. Authorize with Supabase and select your project
-4. For Vite, select `Other` and enter prefix: `VITE_`
-
-### Auto-Configured Variables
-
-| Variable                     | Description      |
-| ---------------------------- | ---------------- |
-| `VITE_SUPABASE_DATABASE_URL` | Project URL      |
-| `VITE_SUPABASE_ANON_KEY`     | Client API key   |
-| `SUPABASE_SERVICE_ROLE_KEY`  | Server-side only |
-
-Run `netlify dev` locally to inject these automatically.
+For Netlify deployment with Supabase integration, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ---
 

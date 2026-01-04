@@ -20,6 +20,7 @@ export const FEATURE = {
   THEMING: 'theming',
   AUTH: 'auth',
   DATABASE: 'database',
+  DEPLOYMENT: 'deployment',
 } as const;
 
 /** Script names for setup commands. */
