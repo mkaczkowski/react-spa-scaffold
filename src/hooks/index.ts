@@ -38,8 +38,6 @@ export {
   useUpdateProfile,
   useDeleteProfile,
   // Types
-  type TableName,
-  type TableRowType,
   type UseSupabaseQueryOptions,
 } from './supabase';
 

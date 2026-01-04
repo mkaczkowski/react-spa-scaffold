@@ -12,56 +12,20 @@ import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 import { QueryProvider } from '@/contexts/queryContext';
 import { SupabaseProvider } from '@/contexts/supabaseContext';
 import { i18n, initI18n } from '@/i18n';
-import { env } from '@/lib/env';
-import { SENTRY_CONFIG } from '@/lib/config';
+import { CLERK_CONFIG } from '@/lib/config';
+import { initSentry } from '@/lib/sentry';
 import { initPreferencesSync } from '@/stores/preferencesStore';
 
 import App from './App';
 
-// Clerk Publishable Key - required when auth feature is enabled
-const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!CLERK_PUBLISHABLE_KEY) {
-  throw new Error('Missing VITE_CLERK_PUBLISHABLE_KEY environment variable');
-}
-
-// Supabase - validate that both URL and key are set together
-const SUPABASE_URL = env.VITE_SUPABASE_DATABASE_URL;
-const VITE_SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY;
-
-if ((SUPABASE_URL && !VITE_SUPABASE_ANON_KEY) || (!SUPABASE_URL && VITE_SUPABASE_ANON_KEY)) {
-  throw new Error(
-    'Supabase configuration incomplete. Both VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
-  );
-}
-
-/**
- * Lazy load Sentry after initial render to avoid blocking web vitals.
- * Returns the Sentry module for use in global error handlers.
- */
-async function initSentry() {
-  if (import.meta.env.PROD && SENTRY_CONFIG.enabled && SENTRY_CONFIG.dsn) {
-    try {
-      const Sentry = await import('@sentry/react');
-      Sentry.init({
-        dsn: SENTRY_CONFIG.dsn,
-        sendDefaultPii: true,
-        integrations: [Sentry.browserTracingIntegration()],
-        tracesSampleRate: SENTRY_CONFIG.tracesSampleRate,
-      });
-      return Sentry;
-    } catch (error) {
-      console.error('Failed to initialize Sentry:', error);
-    }
-  }
-  return null;
-}
+/** Sentry module type for error handlers */
+type SentryModule = Awaited<ReturnType<typeof initSentry>>;
 
 /**
  * Setup global error handlers for uncaught errors and promise rejections.
  * @param Sentry - The Sentry module or null if not available
  */
-function setupGlobalErrorHandlers(Sentry: Awaited<ReturnType<typeof initSentry>>) {
+function setupGlobalErrorHandlers(Sentry: SentryModule) {
   // Handle uncaught errors
   window.onerror = (message, source, lineno, colno, error) => {
     console.error('Uncaught error:', { message, source, lineno, colno, error });
@@ -94,7 +58,7 @@ initI18n().then(() => {
       <QueryProvider>
         <I18nProvider i18n={i18n}>
           <BrowserRouter>
-            <ClerkThemeProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+            <ClerkThemeProvider publishableKey={CLERK_CONFIG.publishableKey!}>
               <SupabaseProvider>
                 <MobileProvider>
                   <ErrorBoundary>

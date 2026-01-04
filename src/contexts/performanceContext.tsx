@@ -2,6 +2,8 @@ import { lazy, Suspense, type ReactNode } from 'react';
 
 import { usePerformance as useLibPerformance } from 'react-performance-tracking/react';
 
+import { PERFORMANCE_CONFIG } from '@/lib/config';
+
 /**
  * Lazy-load the PerformanceProvider to avoid bundling it in production.
  * This provider is only used during performance testing.
@@ -29,9 +31,7 @@ interface PerformanceProviderWrapperProps {
  * @see https://github.com/mkaczkowski/react-performance-tracking
  */
 export function PerformanceProviderWrapper({ children }: PerformanceProviderWrapperProps) {
-  const isPerformanceEnabled = import.meta.env.DEV || import.meta.env.VITE_PERF_TEST === 'true';
-
-  if (!isPerformanceEnabled) {
+  if (!PERFORMANCE_CONFIG.enabled) {
     return <>{children}</>;
   }
 

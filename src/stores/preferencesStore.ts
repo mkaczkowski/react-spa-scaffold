@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { createSelectors } from '@/lib/createSelectors';
+import { env } from '@/lib/env';
 import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 export type Theme = 'light' | 'dark' | 'system';
@@ -75,7 +76,7 @@ const usePreferencesStoreBase = create<PreferencesState>()(
         },
       },
     ),
-    { name: 'preferences', enabled: process.env.NODE_ENV === 'development' },
+    { name: 'preferences', enabled: env.DEV },
   ),
 );
 

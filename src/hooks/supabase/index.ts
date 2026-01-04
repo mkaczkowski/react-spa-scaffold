@@ -6,7 +6,7 @@
  */
 
 // Generic query hook
-export { useSupabaseQuery, type TableName, type TableRowType, type UseSupabaseQueryOptions } from './useSupabaseQuery';
+export { useSupabaseQuery, type UseSupabaseQueryOptions } from './useSupabaseQuery';
 
 // Domain-specific hooks (type-safe mutations)
 export { useCurrentProfile, useProfile, useUpsertProfile, useUpdateProfile, useDeleteProfile } from './useProfiles';

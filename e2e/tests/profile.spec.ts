@@ -59,59 +59,6 @@ test.describe('Profile Page', () => {
 });
 
 /**
- * Authenticated Profile Tests
- *
- * To test the full profile CRUD flow, set up Clerk E2E testing:
- *
- * 1. Install: npm install -D @clerk/testing
- *
- * 2. Create auth.setup.ts:
- *    ```typescript
- *    import { clerkSetup } from '@clerk/testing/playwright';
- *    import { test as setup } from '@playwright/test';
- *
- *    setup('global setup', async ({}) => {
- *      await clerkSetup();
- *    });
- *    ```
- *
- * 3. Add authenticated tests:
- *    ```typescript
- *    import { clerk } from '@clerk/testing/playwright';
- *
- *    test('view and edit profile', async ({ page }) => {
- *      // Sign in
- *      await clerk.signIn({
- *        page,
- *        signInParams: { strategy: 'password', identifier: 'test@example.com', password: '...' },
- *      });
- *
- *      // Mock Supabase response
- *      await page.route('** /supabase.co/rest/v1/profiles**', async (route) => {
- *        if (route.request().method() === 'GET') {
- *          return route.fulfill({
- *            status: 200,
- *            body: JSON.stringify([{
- *              id: 'user_123',
- *              email: 'test@example.com',
- *              full_name: 'Test User',
- *              avatar_url: null,
- *            }]),
- *          });
- *        }
- *        if (route.request().method() === 'PATCH') {
- *          return route.fulfill({ status: 200, body: JSON.stringify({}) });
- *        }
- *      });
- *
- *      // Navigate and test
- *      await page.goto('/profile');
- *      await expect(page.getByText('Your Profile')).toBeVisible();
- *      await page.getByRole('button', { name: /edit/i }).click();
- *      await page.getByRole('textbox').fill('New Name');
- *      await page.getByRole('button', { name: /save/i }).click();
- *    });
- *    ```
- *
+ * @see profile.auth.spec.ts for authenticated profile tests (edit, update, etc.)
  * @see https://clerk.com/docs/testing/playwright
  */

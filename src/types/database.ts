@@ -16,7 +16,21 @@
 export * from './supabase';
 
 // Re-import for creating aliases
-import type { Tables, TablesInsert, TablesUpdate } from './supabase';
+import type { Database, Tables, TablesInsert, TablesUpdate } from './supabase';
+
+// =============================================================================
+// Generic Table Types
+// =============================================================================
+
+/**
+ * Table names available in the database schema.
+ */
+export type TableName = keyof Database['public']['Tables'];
+
+/**
+ * Row type for a given table.
+ */
+export type TableRowType<T extends TableName> = Database['public']['Tables'][T]['Row'];
 
 // =============================================================================
 // Profile Types

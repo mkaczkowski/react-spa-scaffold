@@ -1,29 +1,32 @@
 import type * as SentryType from '@sentry/react';
 
+import { SENTRY_CONFIG } from './config';
+import { env } from './env';
+
 let sentryInstance: typeof SentryType | null = null;
 
 /**
  * Initialize Sentry error tracking.
- * Only runs in production when VITE_SENTRY_DSN is configured.
+ * Only runs in production when enabled and VITE_SENTRY_DSN is configured.
  */
-export async function initSentry(): Promise<void> {
-  // Skip in development or if already initialized
-  if (import.meta.env.DEV || sentryInstance) return;
-
-  const dsn = import.meta.env.VITE_SENTRY_DSN;
-  if (!dsn) return;
+export async function initSentry(): Promise<typeof SentryType | null> {
+  // Skip if disabled, in development, already initialized, or no DSN
+  if (!SENTRY_CONFIG.enabled || env.DEV || sentryInstance || !SENTRY_CONFIG.dsn) {
+    return sentryInstance;
+  }
 
   const sentry = await import('@sentry/react');
 
   sentry.init({
-    dsn,
-    environment: import.meta.env.MODE,
+    dsn: SENTRY_CONFIG.dsn,
+    environment: SENTRY_CONFIG.environment,
     sendDefaultPii: true,
     integrations: [sentry.browserTracingIntegration()],
-    tracesSampleRate: 0.1,
+    tracesSampleRate: SENTRY_CONFIG.tracesSampleRate,
   });
 
   sentryInstance = sentry;
+  return sentryInstance;
 }
 
 /**

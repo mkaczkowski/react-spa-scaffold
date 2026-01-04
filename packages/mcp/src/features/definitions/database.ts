@@ -4,7 +4,7 @@ export const database: Feature = {
   name: 'Database',
   description: 'Supabase database integration with Clerk authentication, TanStack Query hooks, and Row Level Security',
   required: false,
-  requires: ['auth', 'state'], // Requires Clerk auth and TanStack Query (from state)
+  requires: [],
   dependencies: ['@supabase/supabase-js'],
   devDependencies: ['supabase', 'dotenv-cli'],
   files: [

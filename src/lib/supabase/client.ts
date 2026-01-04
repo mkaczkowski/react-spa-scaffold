@@ -11,7 +11,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/types/database';
 
-import { env } from '../env';
+import { SUPABASE_CONFIG } from '../config';
 
 /**
  * Typed Supabase client with database schema.
@@ -44,17 +44,15 @@ export type GetTokenFn = () => Promise<string | null>;
  * ```
  */
 export function createSupabaseClient(getToken: GetTokenFn): TypedSupabaseClient {
-  const supabaseUrl = env.VITE_SUPABASE_DATABASE_URL;
-  const supabaseApiKey = env.VITE_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseApiKey) {
+  if (!SUPABASE_CONFIG.isConfigured) {
     throw new Error(
       'Missing Supabase environment variables. ' +
         'Set VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.',
     );
   }
 
-  return createClient<Database>(supabaseUrl, supabaseApiKey, {
+  // Type assertion safe here - isConfigured guarantees both are defined
+  return createClient<Database>(SUPABASE_CONFIG.url!, SUPABASE_CONFIG.anonKey!, {
     accessToken: getToken,
   });
 }

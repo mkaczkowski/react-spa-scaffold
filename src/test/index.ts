@@ -38,6 +38,15 @@ export {
   type Profile,
 } from './supabaseMock';
 
+// Fetch mock utilities
+export {
+  mockFetchError,
+  mockFetchNetworkError,
+  mockFetchNoContent,
+  mockFetchSuccess,
+  mockFetchUnknownError,
+} from './fetchMock';
+
 // MSW server instance
 export { server } from '@/mocks/node';
 

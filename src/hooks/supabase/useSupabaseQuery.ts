@@ -9,17 +9,7 @@ import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/r
 import type { PostgrestError } from '@supabase/supabase-js';
 
 import { useSupabase } from '@/contexts/supabaseContext';
-import type { Database } from '@/types/database';
-
-/**
- * Table names available in the database schema.
- */
-export type TableName = keyof Database['public']['Tables'];
-
-/**
- * Row type for a given table.
- */
-export type TableRowType<T extends TableName> = Database['public']['Tables'][T]['Row'];
+import type { TableName } from '@/types/database';
 
 /**
  * Options for useSupabaseQuery hook.

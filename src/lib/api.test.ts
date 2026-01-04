@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { api, ApiClientError } from '@/lib/api';
+import {
+  mockFetchError,
+  mockFetchNetworkError,
+  mockFetchNoContent,
+  mockFetchSuccess,
+  mockFetchUnknownError,
+} from '@/test';
 
 describe('api client', () => {
   beforeEach(() => {
@@ -19,11 +26,7 @@ describe('api client', () => {
       { method: 'patch', httpMethod: 'PATCH' },
       { method: 'delete', httpMethod: 'DELETE' },
     ] as const)('$method makes $httpMethod request', async ({ method, httpMethod }) => {
-      vi.mocked(global.fetch).mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({ id: 1 }),
-      } as Response);
+      mockFetchSuccess({ id: 1 });
 
       await api[method]('/test');
 
@@ -35,11 +38,7 @@ describe('api client', () => {
 
     it('sends request body for POST/PUT/PATCH', async () => {
       const body = { name: 'Test' };
-      vi.mocked(global.fetch).mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({ id: 1 }),
-      } as Response);
+      mockFetchSuccess({ id: 1 });
 
       await api.post('/test', body);
 
@@ -50,11 +49,7 @@ describe('api client', () => {
     });
 
     it('handles full URL without prepending base URL', async () => {
-      vi.mocked(global.fetch).mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({}),
-      } as Response);
+      mockFetchSuccess({});
 
       await api.get('https://external.api/data');
 
@@ -67,12 +62,7 @@ describe('api client', () => {
       { status: 404, message: 'Resource not found', hasJson: true },
       { status: 500, message: 'Internal Server Error', hasJson: false },
     ])('handles $status error response', async ({ status, message, hasJson }) => {
-      vi.mocked(global.fetch).mockResolvedValueOnce({
-        ok: false,
-        status,
-        statusText: message,
-        json: hasJson ? () => Promise.resolve({ message }) : () => Promise.reject(new Error('No JSON')),
-      } as Response);
+      mockFetchError(status, message, hasJson);
 
       const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
@@ -102,20 +92,26 @@ describe('api client', () => {
       vi.useRealTimers();
     });
 
-    it.each([
-      { rejection: new Error('Network failure'), code: 'NETWORK_ERROR' },
-      { rejection: 'string error', code: 'UNKNOWN' },
-    ])('handles $code errors', async ({ rejection, code }) => {
-      vi.mocked(global.fetch).mockRejectedValueOnce(rejection);
+    it('handles NETWORK_ERROR', async () => {
+      mockFetchNetworkError();
 
       const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
       expect(error).toBeInstanceOf(ApiClientError);
-      expect(error.code).toBe(code);
+      expect(error.code).toBe('NETWORK_ERROR');
+    });
+
+    it('handles UNKNOWN errors', async () => {
+      mockFetchUnknownError('string error');
+
+      const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
+
+      expect(error).toBeInstanceOf(ApiClientError);
+      expect(error.code).toBe('UNKNOWN');
     });
 
     it('returns undefined for 204 No Content', async () => {
-      vi.mocked(global.fetch).mockResolvedValueOnce({ ok: true, status: 204 } as Response);
+      mockFetchNoContent();
 
       const result = await api.delete('/test/1');
 
