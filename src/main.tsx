@@ -10,46 +10,22 @@ import { ClerkThemeProvider } from '@/contexts/clerkContext';
 import { MobileProvider } from '@/contexts/mobileContext';
 import { PerformanceProviderWrapper } from '@/contexts/performanceContext';
 import { QueryProvider } from '@/contexts/queryContext';
+import { SupabaseProvider } from '@/contexts/supabaseContext';
 import { i18n, initI18n } from '@/i18n';
-import { SENTRY_CONFIG } from '@/lib/config';
+import { CLERK_CONFIG } from '@/lib/config';
+import { initSentry } from '@/lib/sentry';
 import { initPreferencesSync } from '@/stores/preferencesStore';
 
 import App from './App';
 
-// Import Clerk Publishable Key (per official docs)
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Add your Clerk Publishable Key to the .env.local file');
-}
-
-/**
- * Lazy load Sentry after initial render to avoid blocking web vitals.
- * Returns the Sentry module for use in global error handlers.
- */
-async function initSentry() {
-  if (import.meta.env.PROD && SENTRY_CONFIG.enabled && SENTRY_CONFIG.dsn) {
-    try {
-      const Sentry = await import('@sentry/react');
-      Sentry.init({
-        dsn: SENTRY_CONFIG.dsn,
-        sendDefaultPii: true,
-        integrations: [Sentry.browserTracingIntegration()],
-        tracesSampleRate: SENTRY_CONFIG.tracesSampleRate,
-      });
-      return Sentry;
-    } catch (error) {
-      console.error('Failed to initialize Sentry:', error);
-    }
-  }
-  return null;
-}
+/** Sentry module type for error handlers */
+type SentryModule = Awaited<ReturnType<typeof initSentry>>;
 
 /**
  * Setup global error handlers for uncaught errors and promise rejections.
  * @param Sentry - The Sentry module or null if not available
  */
-function setupGlobalErrorHandlers(Sentry: Awaited<ReturnType<typeof initSentry>>) {
+function setupGlobalErrorHandlers(Sentry: SentryModule) {
   // Handle uncaught errors
   window.onerror = (message, source, lineno, colno, error) => {
     console.error('Uncaught error:', { message, source, lineno, colno, error });
@@ -82,15 +58,17 @@ initI18n().then(() => {
       <QueryProvider>
         <I18nProvider i18n={i18n}>
           <BrowserRouter>
-            <ClerkThemeProvider publishableKey={PUBLISHABLE_KEY}>
-              <MobileProvider>
-                <ErrorBoundary>
-                  <PerformanceProviderWrapper>
-                    <App />
-                    <Toaster />
-                  </PerformanceProviderWrapper>
-                </ErrorBoundary>
-              </MobileProvider>
+            <ClerkThemeProvider publishableKey={CLERK_CONFIG.publishableKey!}>
+              <SupabaseProvider>
+                <MobileProvider>
+                  <ErrorBoundary>
+                    <PerformanceProviderWrapper>
+                      <App />
+                      <Toaster />
+                    </PerformanceProviderWrapper>
+                  </ErrorBoundary>
+                </MobileProvider>
+              </SupabaseProvider>
             </ClerkThemeProvider>
           </BrowserRouter>
         </I18nProvider>

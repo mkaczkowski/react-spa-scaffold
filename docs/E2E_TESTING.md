@@ -10,16 +10,22 @@
 
 ```
 e2e/
+├── auth/
+│   └── auth.setup.ts      # Clerk authentication setup
 ├── fixtures/
 │   └── index.ts           # setupPage, setupCleanPage, test, expect
 ├── tests/                  # Functional E2E tests
 │   ├── home.spec.ts       # Page structure, accessibility
 │   ├── theme.spec.ts      # Theme toggle, persistence
 │   ├── language.spec.ts   # Language switcher
-│   └── navigation.spec.ts # Routing, 404
-└── performance/            # Performance regression tests
-    ├── setup.ts           # Performance test fixture
-    └── home.spec.ts       # Home page performance tests
+│   ├── navigation.spec.ts # Routing, 404
+│   ├── profile.spec.ts    # Unauthenticated profile tests
+│   └── profile.auth.spec.ts # Authenticated profile tests
+├── performance/            # Performance regression tests
+│   ├── setup.ts           # Performance test fixture
+│   └── home.spec.ts       # Home page performance tests
+└── .clerk/                 # Auth state storage (gitignored)
+    └── user.json          # Saved auth state for tests
 ```
 
 ## Imports
@@ -111,7 +117,78 @@ npm run e2e:all       # Run both desktop and mobile
 npm run e2e:ui        # Interactive UI mode
 npm run e2e:perf      # Run performance tests
 npm run e2e:perf:ui   # Performance tests with interactive UI
+
+# Authenticated tests (requires credentials)
+npx playwright test --project=authenticated
 ```
+
+## Authenticated Testing
+
+Tests requiring authentication use `@clerk/testing` with Playwright. These tests run with a real authenticated user session.
+
+### Setup
+
+1. Install the testing package (already included):
+
+   ```bash
+   npm install -D @clerk/testing
+   ```
+
+2. Set environment variables in `.env`:
+
+   ```bash
+   CLERK_SECRET_KEY=sk_test_xxxxx
+   E2E_CLERK_USER_USERNAME=test@example.com
+   E2E_CLERK_USER_PASSWORD=your-test-password
+   ```
+
+3. Create a test user in your Clerk dashboard with the above credentials.
+
+### File Naming Convention
+
+- `*.spec.ts` - Regular tests (run in `desktop`/`mobile` projects)
+- `*.auth.spec.ts` - Authenticated tests (run in `authenticated` project only)
+
+### Writing Authenticated Tests
+
+```typescript
+// e2e/tests/my-feature.auth.spec.ts
+import { expect, test } from '@playwright/test';
+import { existsSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const authFile = join(__dirname, '../.clerk/user.json');
+const hasAuthState = existsSync(authFile);
+
+test.describe('My Authenticated Feature', () => {
+  // Skip if auth state doesn't exist
+  test.skip(!hasAuthState, 'Authentication required');
+
+  test.beforeEach(async ({ page }) => {
+    // User is already authenticated via storageState
+    await page.goto('/protected-page');
+  });
+
+  test('can access protected content', async ({ page }) => {
+    await expect(page.getByText('Protected Content')).toBeVisible();
+  });
+});
+```
+
+### How It Works
+
+1. **Setup project** runs `auth.setup.ts` which:
+   - Calls `clerkSetup()` to get a testing token
+   - Signs in with test credentials
+   - Saves auth state to `e2e/.clerk/user.json`
+
+2. **Authenticated project** uses the saved state:
+   - Loads `storageState` from `user.json`
+   - Tests run with pre-authenticated session
+
+3. **Tests skip gracefully** when credentials aren't configured
 
 ## Mobile Testing
 

@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { Header } from '@/components/layout/Header';
-import { render } from '@/test';
+import { render, setMockClerkSignedIn } from '@/test';
 
 describe('Header', () => {
   it('renders the app title', () => {
@@ -29,5 +29,21 @@ describe('Header', () => {
 
     const header = screen.getByRole('banner');
     expect(header).toBeInTheDocument();
+  });
+
+  it('renders sign-in button when user is signed out', () => {
+    setMockClerkSignedIn(false);
+
+    render(<Header />);
+
+    expect(screen.getByTestId('sign-in-button')).toBeInTheDocument();
+  });
+
+  it('renders user button when user is signed in', () => {
+    setMockClerkSignedIn(true);
+
+    render(<Header />);
+
+    expect(screen.getByTestId('user-button')).toBeInTheDocument();
   });
 });

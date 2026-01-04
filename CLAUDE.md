@@ -19,6 +19,9 @@ npm run e2e:mobile       # Playwright E2E (mobile)
 npm run e2e:all          # Playwright E2E (all viewports)
 npm run e2e:perf         # Performance regression tests
 npm run i18n:extract     # Extract translations to .po
+npm run db:types         # Generate Supabase TypeScript types
+npm run db:push          # Push database migrations
+npm run db:studio        # Open Supabase Studio
 ```
 
 ## Project Structure
@@ -213,10 +216,183 @@ import { render, mockMatchMedia, server } from '@/test';
 
 MSW handlers auto-reset after each test.
 
+## Authentication (Clerk)
+
+When the auth feature is enabled, Clerk authentication is required.
+
+### Setup
+
+1. Create an account at [clerk.com](https://clerk.com)
+2. Get your Publishable Key from the dashboard
+3. Copy `.env.example` to `.env` and set your key:
+   ```
+   VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
+   ```
+
+### Usage
+
+```tsx
+// Protect routes that require authentication
+import { ProtectedRoute } from '@/components/shared';
+
+<Route
+  path="/dashboard"
+  element={
+    <ProtectedRoute>
+      <DashboardPage />
+    </ProtectedRoute>
+  }
+/>;
+```
+
+```tsx
+// Conditional rendering based on auth state
+import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/react-router';
+
+<SignedIn>
+  <UserButton />
+</SignedIn>
+<SignedOut>
+  <SignInButton mode="modal">
+    <Button>Sign In</Button>
+  </SignInButton>
+</SignedOut>
+```
+
+### Testing
+
+Clerk is automatically mocked in tests. Use test utilities to control auth state:
+
+```tsx
+import { setMockClerkSignedIn, resetClerkMocks } from '@/test';
+
+beforeEach(() => resetClerkMocks());
+
+it('shows sign-in when not authenticated', () => {
+  setMockClerkSignedIn(false);
+  // ...
+});
+```
+
+## Database (Supabase)
+
+Supabase provides PostgreSQL database with Row Level Security (RLS), integrated with Clerk authentication.
+
+### Setup
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Configure Clerk as third-party auth provider:
+   - Supabase Dashboard → Authentication → Providers → Third-Party Auth → Add Clerk
+3. Enable Supabase integration in Clerk:
+   - Clerk Dashboard → Integrations → Supabase → Activate
+4. Set environment variables in `.env`:
+   ```
+   VITE_SUPABASE_DATABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
+
+### Database Commands
+
+```bash
+npm run db:types    # Generate TypeScript types from schema
+npm run db:push     # Push migrations to database
+npm run db:reset    # Reset database (WARNING: destructive)
+npm run db:studio   # Open Supabase Studio
+```
+
+### Usage
+
+```tsx
+import { useSupabase, useSupabaseQuery, useProfile } from '@/hooks';
+
+// Direct client access
+const supabase = useSupabase();
+const { data } = await supabase.from('profiles').select();
+
+// TanStack Query wrapper for automatic caching
+const { data, isLoading } = useSupabaseQuery({
+  table: 'profiles',
+  queryKey: ['current'],
+});
+
+// Convenience hook for current user's profile
+const { profile, isLoading, exists } = useProfile();
+```
+
+### Profile Mutations
+
+```tsx
+import { useUpsertProfile, useUpdateProfile, useDeleteProfile } from '@/hooks';
+
+// Create or update profile (upsert)
+const upsertProfile = useUpsertProfile();
+await upsertProfile.mutateAsync({ id: userId, email: 'user@example.com' });
+
+// Update current user's profile
+const updateProfile = useUpdateProfile();
+await updateProfile.mutateAsync({ full_name: 'John' });
+
+// Delete current user's profile
+const deleteProfile = useDeleteProfile();
+await deleteProfile.mutateAsync();
+```
+
+### Auto-Sync with ProfileSync
+
+```tsx
+import { ProfileSync } from '@/components/shared';
+
+// Add to your app to auto-sync Clerk user data to Supabase
+function App() {
+  return (
+    <>
+      <ProfileSync />
+      <Routes>...</Routes>
+    </>
+  );
+}
+```
+
+### Row Level Security (RLS)
+
+All tables should have RLS enabled. Policies use `auth.uid()` which equals the Clerk user_id:
+
+```sql
+-- Users can only access their own data
+CREATE POLICY "Users can view own profile"
+  ON profiles FOR SELECT TO authenticated
+  USING (id = auth.uid());
+```
+
+### Testing
+
+Supabase context is mocked in tests with state controls:
+
+```tsx
+import { render, setMockSupabaseData, setMockSupabaseError, createProfile, resetSupabaseMocks } from '@/test';
+
+beforeEach(() => resetSupabaseMocks());
+
+it('displays profile data', async () => {
+  setMockSupabaseData([createProfile({ full_name: 'Test User' })]);
+  render(<ProfileCard />);
+  // Assert profile is displayed
+});
+
+it('handles error', async () => {
+  setMockSupabaseError({ message: 'Failed', code: 'ERROR' });
+  render(<ProfileCard />);
+  // Assert error state
+});
+```
+
 ## Common Gotchas
 
 1. **Node.js >= 22.0.0** required (check `.nvmrc`)
 2. **Conventional commits** enforced by commitlint
-3. **Context hooks throw** outside provider (e.g., `useMobileContext()`)
+3. **Context hooks throw** outside provider (e.g., `useMobileContext()`, `useSupabase()`)
 4. **Barrel exports** in each directory via `index.ts`
 5. **UI components** import directly: `@/components/ui/button` (no barrel)
+6. **Clerk auth required** when auth feature is enabled - set `VITE_CLERK_PUBLISHABLE_KEY` in `.env`
+7. **Supabase requires Clerk** - SupabaseProvider must be inside ClerkProvider
+8. **RLS policies required** - All Supabase tables should have Row Level Security enabled

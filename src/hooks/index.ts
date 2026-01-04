@@ -26,3 +26,20 @@ export { useExampleQuery } from './useExampleQuery';
 
 // Form hooks
 export { useRegisterForm } from './useRegisterForm';
+
+// Supabase hooks
+export {
+  // Generic query hook
+  useSupabaseQuery,
+  // Profile hooks (type-safe mutations)
+  useCurrentProfile,
+  useProfile,
+  useUpsertProfile,
+  useUpdateProfile,
+  useDeleteProfile,
+  // Types
+  type UseSupabaseQueryOptions,
+} from './supabase';
+
+// Supabase context
+export { useSupabase } from '@/contexts/supabaseContext';

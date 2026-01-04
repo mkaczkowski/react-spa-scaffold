@@ -1,39 +1,67 @@
+/**
+ * Clerk authentication mocks for testing.
+ *
+ * Provides mock implementations of Clerk components and hooks,
+ * with state controls for testing different auth scenarios.
+ */
+
 import type { ReactNode } from 'react';
 
+import { MOCK_AUTH_TOKEN, MOCK_SESSION_ID } from '@/mocks/constants';
+import { defaultUser, type MockUser } from '@/mocks/fixtures/users';
+
+// Re-export user fixtures for test convenience
+export { createUser, createUsers, defaultUser, mockUsers, type MockUser } from '@/mocks/fixtures/users';
+
 // =============================================================================
-// Mock State
+// Types
 // =============================================================================
 
 interface ClerkMockState {
   isSignedIn: boolean;
   isLoaded: boolean;
+  user: MockUser;
 }
+
+// =============================================================================
+// Default State
+// =============================================================================
 
 const defaultState: ClerkMockState = {
   isSignedIn: true,
   isLoaded: true,
+  user: defaultUser,
 };
 
 let mockState: ClerkMockState = { ...defaultState };
 
 // =============================================================================
-// Test Utilities
+// State Controls
 // =============================================================================
 
-export function setMockSignedIn(value: boolean) {
+/** Set whether the user is signed in */
+export function setMockClerkSignedIn(value: boolean) {
   mockState.isSignedIn = value;
 }
 
-export function setMockLoaded(value: boolean) {
+/** Set whether Clerk has finished loading */
+export function setMockClerkLoaded(value: boolean) {
   mockState.isLoaded = value;
 }
 
+/** Set multiple Clerk state values at once */
 export function setMockClerkState(state: Partial<ClerkMockState>) {
   mockState = { ...mockState, ...state };
 }
 
+/** Set mock user properties */
+export function setMockClerkUser(user: Partial<MockUser>) {
+  mockState.user = { ...mockState.user, ...user };
+}
+
+/** Reset all Clerk mocks to default state */
 export function resetClerkMocks() {
-  mockState = { ...defaultState };
+  mockState = { ...defaultState, user: { ...defaultUser } };
 }
 
 // =============================================================================
@@ -83,15 +111,27 @@ export function useAuth() {
   return {
     isLoaded: mockState.isLoaded,
     isSignedIn: mockState.isSignedIn,
-    userId: mockState.isSignedIn ? 'user_123' : null,
-    sessionId: mockState.isSignedIn ? 'sess_123' : null,
-    getToken: async () => (mockState.isSignedIn ? 'mock-token' : null),
+    userId: mockState.isSignedIn ? mockState.user.id : null,
+    sessionId: mockState.isSignedIn ? MOCK_SESSION_ID : null,
+    getToken: async () => (mockState.isSignedIn ? MOCK_AUTH_TOKEN : null),
   };
 }
 
 export function useUser() {
   return {
     isLoaded: mockState.isLoaded,
-    user: mockState.isSignedIn ? { id: 'user_123', firstName: 'Test', lastName: 'User' } : null,
+    user: mockState.isSignedIn ? mockState.user : null,
+  };
+}
+
+export function useSession() {
+  return {
+    isLoaded: mockState.isLoaded,
+    session: mockState.isSignedIn
+      ? {
+          id: MOCK_SESSION_ID,
+          getToken: async () => MOCK_AUTH_TOKEN,
+        }
+      : null,
   };
 }

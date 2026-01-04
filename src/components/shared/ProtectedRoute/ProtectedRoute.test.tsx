@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import { render, setMockSignedIn, setMockLoaded, resetClerkMocks } from '@/test';
+import { render, setMockClerkSignedIn, setMockClerkLoaded, resetClerkMocks } from '@/test';
 
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -20,7 +20,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('shows loading when auth is not loaded', () => {
-    setMockLoaded(false);
+    setMockClerkLoaded(false);
     const { container } = render(
       <ProtectedRoute>
         <div>Protected Content</div>
@@ -31,7 +31,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('redirects when not signed in', () => {
-    setMockSignedIn(false);
+    setMockClerkSignedIn(false);
     render(
       <ProtectedRoute>
         <div>Protected Content</div>

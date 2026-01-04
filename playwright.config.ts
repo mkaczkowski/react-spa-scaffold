@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import { AUTH_STATE_FILE } from './e2e/fixtures';
+
 // CI performance tests use preview server (serves pre-built dist) for faster startup
 // Local dev uses dev server with VITE_PERF_TEST for hot reload
 const isPerfCI = process.env.PERF_CI === 'true';
@@ -27,6 +29,12 @@ export default defineConfig({
     timeout: 10000,
   },
   projects: [
+    // Auth setup - runs first to create authenticated state
+    {
+      name: 'setup',
+      testDir: './e2e/auth',
+      testMatch: /.*\.setup\.ts/,
+    },
     {
       name: 'desktop',
       testDir: './e2e/tests',
@@ -36,6 +44,17 @@ export default defineConfig({
       name: 'mobile',
       testDir: './e2e/tests',
       use: { ...devices['Pixel 5'] },
+    },
+    // Authenticated tests - depend on setup project
+    {
+      name: 'authenticated',
+      testDir: './e2e/tests',
+      testMatch: /.*\.auth\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: AUTH_STATE_FILE,
+      },
     },
     {
       name: 'performance',

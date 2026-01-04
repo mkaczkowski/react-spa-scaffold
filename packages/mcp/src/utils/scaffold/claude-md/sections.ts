@@ -22,6 +22,10 @@ const SCRIPT_DESCRIPTIONS: Record<string, string> = {
   'e2e:ui': 'Playwright UI mode',
   'i18n:extract': 'Extract translations to .po',
   prepare: 'Initialize Husky hooks',
+  'db:types': 'Generate Supabase TypeScript types',
+  'db:push': 'Push database migrations',
+  'db:reset': 'Reset database (destructive)',
+  'db:studio': 'Open Supabase Studio',
 };
 
 export function generateHeader(projectName: string): string {
@@ -50,7 +54,12 @@ ${commandLines.join('\n')}
 export function generateStructureSection(featureIds: FeatureId[]): string {
   const parts: string[] = ['src/', '├── components/    # ui/ (primitives), layout/, shared/ (features)'];
 
-  if (featureIds.includes(FEATURE.API) || featureIds.includes(FEATURE.I18N) || featureIds.includes(FEATURE.MOBILE)) {
+  if (
+    featureIds.includes(FEATURE.API) ||
+    featureIds.includes(FEATURE.I18N) ||
+    featureIds.includes(FEATURE.MOBILE) ||
+    featureIds.includes(FEATURE.DATABASE)
+  ) {
     parts.push('├── contexts/      # React Context providers');
   }
 
@@ -60,6 +69,7 @@ export function generateStructureSection(featureIds: FeatureId[]): string {
   if (featureIds.includes(FEATURE.API)) libParts.push('api');
   if (featureIds.includes(FEATURE.ROUTING)) libParts.push('routes');
   if (featureIds.includes(FEATURE.STATE)) libParts.push('storage');
+  if (featureIds.includes(FEATURE.DATABASE)) libParts.push('supabase');
   parts.push(`├── lib/           # ${libParts.join(', ')}`);
 
   if (featureIds.includes(FEATURE.ROUTING)) parts.push('├── pages/         # Lazy-loaded route components');
@@ -192,6 +202,122 @@ The \`useThemeEffect\` hook automatically applies the \`.dark\` class to the doc
 The ThemeToggle component provides a UI for switching between light, dark, and system themes.`;
 }
 
+export function generateAuthSection(): string {
+  return `
+## Authentication (Clerk)
+
+Clerk provides authentication with modal-based sign-in.
+
+### Setup
+
+1. Create an account at [clerk.com](https://clerk.com)
+2. Get your Publishable Key from the dashboard
+3. Set \`VITE_CLERK_PUBLISHABLE_KEY\` in \`.env\`
+
+### Usage
+
+\`\`\`tsx
+import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/react-router';
+import { ProtectedRoute } from '@/components/shared';
+
+// Conditional rendering
+<SignedIn><UserButton /></SignedIn>
+<SignedOut><SignInButton mode="modal"><Button>Sign In</Button></SignInButton></SignedOut>
+
+// Protected routes
+<Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+\`\`\`
+
+### Testing
+
+\`\`\`tsx
+import { setMockClerkSignedIn, resetClerkMocks } from '@/test';
+
+beforeEach(() => resetClerkMocks());
+
+it('shows sign-in when not authenticated', () => {
+  setMockClerkSignedIn(false);
+  // ...
+});
+\`\`\``;
+}
+
+export function generateDatabaseSection(): string {
+  return `
+## Database (Supabase)
+
+Supabase provides PostgreSQL with Row Level Security (RLS), integrated with Clerk authentication.
+
+### Setup
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Configure Clerk as third-party auth provider in Supabase Dashboard
+3. Enable Supabase integration in Clerk Dashboard → Integrations
+4. Set environment variables in \`.env\`:
+   - \`VITE_SUPABASE_DATABASE_URL\` - Your project URL
+   - \`VITE_SUPABASE_ANON_KEY\` - Your anon/public key
+   - \`SUPABASE_PROJECT_ID\` - Project ID for CLI (subdomain from your URL)
+
+### Usage
+
+\`\`\`tsx
+import { useSupabase, useSupabaseQuery, useProfile } from '@/hooks';
+
+// Direct client access
+const supabase = useSupabase();
+const { data } = await supabase.from('profiles').select();
+
+// TanStack Query wrapper
+const { data, isLoading } = useSupabaseQuery({
+  table: 'profiles',
+  queryKey: ['current'],
+});
+
+// Current user's profile
+const { profile, isLoading, exists } = useProfile();
+\`\`\`
+
+### Profile Mutations
+
+\`\`\`tsx
+import { useUpsertProfile, useUpdateProfile, useDeleteProfile } from '@/hooks';
+
+const upsertProfile = useUpsertProfile();
+await upsertProfile.mutateAsync({ id: userId, email: 'user@example.com' });
+\`\`\`
+
+### Auto-Sync
+
+\`\`\`tsx
+import { ProfileSync } from '@/components/shared';
+
+// Add to app to auto-sync Clerk user to Supabase
+<ProfileSync />
+\`\`\`
+
+### Testing
+
+\`\`\`tsx
+import { render, setMockSupabaseData, setMockSupabaseError, createProfile, resetSupabaseMocks } from '@/test';
+
+beforeEach(() => resetSupabaseMocks());
+
+it('displays profile data', async () => {
+  setMockSupabaseData([createProfile({ full_name: 'Test User' })]);
+  render(<ProfileCard />);
+  // Assert profile is displayed
+});
+
+it('handles error', async () => {
+  setMockSupabaseError({ message: 'Failed', code: 'ERROR' });
+  render(<ProfileCard />);
+  // Assert error state
+});
+\`\`\`
+
+See [docs/SUPABASE_INTEGRATION.md](docs/SUPABASE_INTEGRATION.md) for full details.`;
+}
+
 export function generateMcpSection(featureIds: FeatureId[]): string {
   let section = `
 ## MCP Servers (PREFER OVER WebSearch)
@@ -273,11 +399,18 @@ export function generateGotchasSection(featureIds: FeatureId[]): string {
     gotchas.push('**Conventional commits** enforced by commitlint');
   }
   if (featureIds.includes(FEATURE.MOBILE)) {
-    gotchas.push('**Context hooks throw** outside provider (e.g., `useMobileContext()`)');
+    gotchas.push('**Context hooks throw** outside provider (e.g., `useMobileContext()`, `useSupabase()`)');
   }
   gotchas.push('**Barrel exports** in each directory via `index.ts`');
   if (featureIds.includes(FEATURE.UI)) {
     gotchas.push('**UI components** import directly: `@/components/ui/button` (no barrel)');
+  }
+  if (featureIds.includes(FEATURE.AUTH)) {
+    gotchas.push('**Clerk auth required** - set `VITE_CLERK_PUBLISHABLE_KEY` in `.env`');
+  }
+  if (featureIds.includes(FEATURE.DATABASE)) {
+    gotchas.push('**Supabase requires Clerk** - SupabaseProvider must be inside ClerkProvider');
+    gotchas.push('**RLS policies required** - All Supabase tables should have Row Level Security enabled');
   }
 
   return `

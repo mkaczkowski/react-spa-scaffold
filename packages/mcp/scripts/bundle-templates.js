@@ -28,7 +28,7 @@ if (existsSync(TEMPLATES_DIR)) {
 mkdirSync(TEMPLATES_DIR, { recursive: true });
 
 // Directories to copy
-const directories = ['docs', 'src', 'e2e', '.github', '.husky', 'public'];
+const directories = ['docs', 'src', 'e2e', '.github', '.husky', 'public', 'supabase'];
 
 for (const dir of directories) {
   const src = join(WEBAPP_BASE_DIR, dir);

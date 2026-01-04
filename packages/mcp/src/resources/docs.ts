@@ -43,6 +43,11 @@ const DOCS_MAP: Record<string, DocConfig> = {
     name: 'API Reference',
     description: 'API client utilities, hooks, and data fetching patterns',
   },
+  [DOCS_URI.DATABASE]: {
+    files: ['docs/SUPABASE_INTEGRATION.md'],
+    name: 'Database Integration',
+    description: 'Supabase database with Clerk auth, TanStack Query hooks, and Row Level Security',
+  },
   [DOCS_URI.CLAUDE]: {
     files: ['CLAUDE.md'],
     name: 'Claude AI Guidance',

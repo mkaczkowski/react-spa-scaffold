@@ -1,18 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { api, ApiClientError } from '@/lib/api';
+import {
+  mockFetchError,
+  mockFetchNetworkError,
+  mockFetchNoContent,
+  mockFetchSuccess,
+  mockFetchUnknownError,
+} from '@/test';
 
 describe('api client', () => {
-  const mockFetch = vi.fn();
-  const originalFetch = global.fetch;
-
   beforeEach(() => {
-    global.fetch = mockFetch;
-    vi.clearAllMocks();
+    vi.spyOn(global, 'fetch');
   });
 
   afterEach(() => {
-    global.fetch = originalFetch;
+    vi.restoreAllMocks();
   });
 
   describe('HTTP methods', () => {
@@ -23,15 +26,11 @@ describe('api client', () => {
       { method: 'patch', httpMethod: 'PATCH' },
       { method: 'delete', httpMethod: 'DELETE' },
     ] as const)('$method makes $httpMethod request', async ({ method, httpMethod }) => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({ id: 1 }),
-      });
+      mockFetchSuccess({ id: 1 });
 
       await api[method]('/test');
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/test'),
         expect.objectContaining({ method: httpMethod }),
       );
@@ -39,30 +38,22 @@ describe('api client', () => {
 
     it('sends request body for POST/PUT/PATCH', async () => {
       const body = { name: 'Test' };
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({ id: 1 }),
-      });
+      mockFetchSuccess({ id: 1 });
 
       await api.post('/test', body);
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(global.fetch).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({ body: JSON.stringify(body) }),
       );
     });
 
     it('handles full URL without prepending base URL', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({}),
-      });
+      mockFetchSuccess({});
 
       await api.get('https://external.api/data');
 
-      expect(mockFetch).toHaveBeenCalledWith('https://external.api/data', expect.anything());
+      expect(global.fetch).toHaveBeenCalledWith('https://external.api/data', expect.anything());
     });
   });
 
@@ -71,12 +62,7 @@ describe('api client', () => {
       { status: 404, message: 'Resource not found', hasJson: true },
       { status: 500, message: 'Internal Server Error', hasJson: false },
     ])('handles $status error response', async ({ status, message, hasJson }) => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status,
-        statusText: message,
-        json: hasJson ? () => Promise.resolve({ message }) : () => Promise.reject(new Error('No JSON')),
-      });
+      mockFetchError(status, message, hasJson);
 
       const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
@@ -87,7 +73,7 @@ describe('api client', () => {
 
     it('handles timeout with TIMEOUT code', async () => {
       vi.useFakeTimers();
-      mockFetch.mockImplementationOnce(
+      vi.mocked(global.fetch).mockImplementationOnce(
         () =>
           new Promise((_, reject) => {
             const error = new Error('Aborted');
@@ -106,20 +92,26 @@ describe('api client', () => {
       vi.useRealTimers();
     });
 
-    it.each([
-      { rejection: new Error('Network failure'), code: 'NETWORK_ERROR' },
-      { rejection: 'string error', code: 'UNKNOWN' },
-    ])('handles $code errors', async ({ rejection, code }) => {
-      mockFetch.mockRejectedValueOnce(rejection);
+    it('handles NETWORK_ERROR', async () => {
+      mockFetchNetworkError();
 
       const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
 
       expect(error).toBeInstanceOf(ApiClientError);
-      expect(error.code).toBe(code);
+      expect(error.code).toBe('NETWORK_ERROR');
+    });
+
+    it('handles UNKNOWN errors', async () => {
+      mockFetchUnknownError('string error');
+
+      const error = (await api.get('/error').catch((e) => e)) as ApiClientError;
+
+      expect(error).toBeInstanceOf(ApiClientError);
+      expect(error.code).toBe('UNKNOWN');
     });
 
     it('returns undefined for 204 No Content', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: true, status: 204 });
+      mockFetchNoContent();
 
       const result = await api.delete('/test/1');
 

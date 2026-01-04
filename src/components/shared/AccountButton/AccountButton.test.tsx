@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import { render, setMockSignedIn, setMockLoaded, resetClerkMocks } from '@/test';
+import { render, setMockClerkSignedIn, setMockClerkLoaded, resetClerkMocks } from '@/test';
 
 import { AccountButton } from './AccountButton';
 
@@ -11,7 +11,7 @@ describe('AccountButton', () => {
   });
 
   it('shows skeleton when not loaded', () => {
-    setMockLoaded(false);
+    setMockClerkLoaded(false);
     const { container } = render(<AccountButton />);
     expect(container.querySelector('.rounded-full')).toBeInTheDocument();
   });
@@ -22,7 +22,7 @@ describe('AccountButton', () => {
   });
 
   it('shows sign in button when signed out', () => {
-    setMockSignedIn(false);
+    setMockClerkSignedIn(false);
     render(<AccountButton />);
     expect(screen.getByTestId('sign-in-button')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();

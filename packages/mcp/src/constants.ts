@@ -19,6 +19,7 @@ export const FEATURE = {
   OBSERVABILITY: 'observability',
   THEMING: 'theming',
   AUTH: 'auth',
+  DATABASE: 'database',
 } as const;
 
 /** Script names for setup commands. */
@@ -34,5 +35,6 @@ export const DOCS_URI = {
   TESTING: 'docs://testing',
   I18N: 'docs://i18n',
   API: 'docs://api',
+  DATABASE: 'docs://database',
   CLAUDE: 'docs://claude',
 } as const;
