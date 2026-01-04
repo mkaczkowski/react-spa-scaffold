@@ -44,17 +44,17 @@ export type GetTokenFn = () => Promise<string | null>;
  * ```
  */
 export function createSupabaseClient(getToken: GetTokenFn): TypedSupabaseClient {
-  const supabaseUrl = env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = env.VITE_SUPABASE_DATABASE_URL;
+  const supabaseApiKey = env.VITE_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabaseUrl || !supabaseApiKey) {
     throw new Error(
       'Missing Supabase environment variables. ' +
-        'Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.',
+        'Set VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.',
     );
   }
 
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createClient<Database>(supabaseUrl, supabaseApiKey, {
     accessToken: getToken,
   });
 }

@@ -43,7 +43,7 @@ export function generateViteEnvDts(featureIds: FeatureId[]): string {
   }
 
   if (featureIds.includes(FEATURE.DATABASE)) {
-    envVars.push('  readonly VITE_SUPABASE_URL: string;');
+    envVars.push('  readonly VITE_SUPABASE_DATABASE_URL: string;');
     envVars.push('  readonly VITE_SUPABASE_ANON_KEY: string;');
   }
 
@@ -95,9 +95,9 @@ export function generateEnvTs(featureIds: FeatureId[]): string {
   }
 
   if (featureIds.includes(FEATURE.DATABASE)) {
-    schemaFields.push('  VITE_SUPABASE_URL: z.string().url().optional(),');
+    schemaFields.push('  VITE_SUPABASE_DATABASE_URL: z.string().url().optional(),');
     schemaFields.push('  VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),');
-    envFields.push('    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,');
+    envFields.push('    VITE_SUPABASE_DATABASE_URL: import.meta.env.VITE_SUPABASE_DATABASE_URL,');
     envFields.push('    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,');
   }
 
@@ -153,16 +153,24 @@ export const env = validateEnv();
 `;
 }
 
-/** Generates routes.ts content. */
-export function generateRoutesTs(): string {
+/** Generates routes.ts content based on selected features. */
+export function generateRoutesTs(featureIds: FeatureId[]): string {
+  const routes: string[] = ["  HOME: '/',"];
+
+  // Add PROFILE route when database feature is selected
+  if (featureIds.includes(FEATURE.DATABASE)) {
+    routes.push("  PROFILE: '/profile',");
+  }
+
+  routes.push("  NOT_FOUND: '*',");
+
   return `/**
  * Typed route constants.
  * Use these instead of hardcoded strings for type-safe navigation.
  */
 
 export const ROUTES = {
-  HOME: '/',
-  NOT_FOUND: '*',
+${routes.join('\n')}
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

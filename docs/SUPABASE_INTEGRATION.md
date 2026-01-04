@@ -10,17 +10,18 @@ This document provides a comprehensive guide to the Supabase database integratio
 4. [Configuration](#configuration)
 5. [Supabase Dashboard Setup](#supabase-dashboard-setup)
 6. [Database Schema & SQL](#database-schema--sql)
-7. [Authentication Flow](#authentication-flow)
-8. [Database Types](#database-types)
-9. [React Hooks](#react-hooks)
-10. [Provider Hierarchy](#provider-hierarchy)
-11. [Usage Examples](#usage-examples)
-12. [Server-Side Rendering](#server-side-rendering)
-13. [Testing](#testing)
-14. [Security](#security)
-15. [Netlify Deployment](#netlify-deployment)
-16. [Troubleshooting](#troubleshooting)
-17. [Migration Notes](#migration-notes)
+7. [Database Migrations](#database-migrations)
+8. [Authentication Flow](#authentication-flow)
+9. [Database Types](#database-types)
+10. [React Hooks](#react-hooks)
+11. [Provider Hierarchy](#provider-hierarchy)
+12. [Usage Examples](#usage-examples)
+13. [Server-Side Rendering](#server-side-rendering)
+14. [Testing](#testing)
+15. [Security](#security)
+16. [Netlify Deployment](#netlify-deployment)
+17. [Troubleshooting](#troubleshooting)
+18. [Migration Notes](#migration-notes)
 
 ---
 
@@ -183,7 +184,8 @@ src/
 │       └── index.ts               # Barrel exports
 │
 ├── types/
-│   └── database.ts            # TypeScript types for database schema
+│   ├── supabase.ts            # Auto-generated types (npm run db:types)
+│   └── database.ts            # Convenience aliases + re-exports (manual)
 │
 ├── mocks/
 │   ├── handlers/
@@ -207,18 +209,20 @@ Add to `.env`:
 
 ```bash
 # Supabase Database (required)
-VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_DATABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
+
+> **CLI Authentication**: The `db:types` command requires Supabase CLI authentication. Run `npx supabase login` first, or set `SUPABASE_ACCESS_TOKEN` environment variable.
 
 > **Note on API Keys**: Supabase is transitioning to new "publishable keys" with the format `sb_publishable_xxx`. During the transition period, both the legacy `anon` key and new publishable keys work. Get the correct key from your [Project's Connect dialog](https://supabase.com/dashboard/project/_?showConnect=true).
 
 Both variables must be set together. The application validates this at startup in `main.tsx`:
 
 ```typescript
-if ((SUPABASE_URL && !SUPABASE_ANON_KEY) || (!SUPABASE_URL && SUPABASE_ANON_KEY)) {
+if ((SUPABASE_URL && !VITE_SUPABASE_ANON_KEY) || (!SUPABASE_URL && VITE_SUPABASE_ANON_KEY)) {
   throw new Error(
-    'Supabase configuration incomplete. Both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
+    'Supabase configuration incomplete. Both VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
   );
 }
 ```
@@ -229,7 +233,7 @@ The `src/lib/env.ts` file validates environment variables using Zod:
 
 ```typescript
 const envSchema = z.object({
-  VITE_SUPABASE_URL: z.string().url().optional(),
+  VITE_SUPABASE_DATABASE_URL: z.string().url().optional(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),
   // ... other variables
 });
@@ -241,8 +245,8 @@ const envSchema = z.object({
 2. Select your project
 3. Go to **Project Settings > Data API**
 4. Copy:
-   - **Project URL** → `VITE_SUPABASE_URL`
-   - **Project API keys > anon/public** → `VITE_SUPABASE_ANON_KEY`
+   - **Project URL** → `VITE_SUPABASE_DATABASE_URL`
+   - **Project API keys** → `VITE_SUPABASE_ANON_KEY`
 
 ---
 
@@ -363,23 +367,23 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 -- Users can view their own profile
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT TO authenticated
-  USING (id = auth.uid());
+  USING (id = (auth.uid())::text);
 
 -- Users can insert their own profile (first login)
 CREATE POLICY "Users can insert own profile"
   ON profiles FOR INSERT TO authenticated
-  WITH CHECK (id = auth.uid());
+  WITH CHECK (id = (auth.uid())::text);
 
 -- Users can update their own profile
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE TO authenticated
-  USING (id = auth.uid())
-  WITH CHECK (id = auth.uid());
+  USING (id = (auth.uid())::text)
+  WITH CHECK (id = (auth.uid())::text);
 
 -- Users can delete their own profile
 CREATE POLICY "Users can delete own profile"
   ON profiles FOR DELETE TO authenticated
-  USING (id = auth.uid());
+  USING (id = (auth.uid())::text);
 
 -- ============================================================
 -- AUTO-UPDATE TIMESTAMP TRIGGER
@@ -405,10 +409,95 @@ CREATE TRIGGER profiles_updated_at
 
 | Function               | Returns                      | Example                                                 |
 | ---------------------- | ---------------------------- | ------------------------------------------------------- |
-| `auth.uid()`           | Clerk user_id (string)       | `'user_2abc123xyz'`                                     |
+| `auth.uid()`           | Clerk user_id (uuid type)    | Cast to text with `(auth.uid())::text`                  |
 | `auth.jwt()`           | Full JWT as JSON             | `{"sub": "user_2abc...", "role": "authenticated", ...}` |
-| `auth.jwt()->>'sub'`   | User ID from JWT             | `'user_2abc123xyz'`                                     |
+| `auth.jwt()->>'sub'`   | User ID from JWT (text)      | `'user_2abc123xyz'`                                     |
 | `auth.jwt()->>'email'` | Email from JWT (if included) | `'user@example.com'`                                    |
+
+---
+
+## Database Migrations
+
+Supabase tracks schema changes through migrations, providing version control for your database.
+
+### How It Works
+
+Migrations are stored in the `supabase_migrations.schema_migrations` table:
+
+| version        | name                                   |
+| -------------- | -------------------------------------- |
+| 20260104010905 | fix_rls_policies_and_function_security |
+
+The version is a timestamp (`YYYYMMDDHHMMSS`) ensuring migrations run in order.
+
+### Two Ways to Create Migrations
+
+| Method                                | When to Use                          |
+| ------------------------------------- | ------------------------------------ |
+| **Supabase MCP** (AI-assisted)        | Claude applies directly to remote DB |
+| **Supabase CLI** (version-controlled) | Local SQL files tracked in git       |
+
+### Supabase MCP (Model Context Protocol)
+
+The [Supabase MCP server](https://supabase.com/docs/guides/getting-started/mcp) enables AI assistants like Claude to interact directly with your Supabase project.
+
+**Available MCP tools:**
+
+| Tool                        | Description                                  |
+| --------------------------- | -------------------------------------------- |
+| `apply_migration`           | Apply DDL changes (CREATE, ALTER, DROP)      |
+| `execute_sql`               | Run queries (SELECT, INSERT, UPDATE, DELETE) |
+| `list_tables`               | List all tables in schemas                   |
+| `list_migrations`           | View applied migrations                      |
+| `get_advisors`              | Check security/performance recommendations   |
+| `generate_typescript_types` | Generate types from schema                   |
+
+**Example - Claude applying a migration:**
+
+```
+mcp__supabase__apply_migration
+  name: "add_user_preferences"
+  query: "CREATE TABLE user_preferences (...)"
+```
+
+### Supabase CLI Workflow (Recommended for Teams)
+
+```bash
+# Create a new migration file
+npx supabase migration new add_posts_table
+# Creates: supabase/migrations/20260104_add_posts_table.sql
+
+# Edit the SQL file, then push to remote
+npm run db:push   # or: npx supabase db push
+
+# Pull remote schema changes to local
+npx supabase db pull
+
+# List all migrations
+npx supabase migration list
+```
+
+### Project Commands
+
+```bash
+npm run db:push    # Push local migrations → Supabase
+npm run db:types   # Generate TypeScript types from schema
+npm run db:studio  # Open Supabase Studio (visual editor)
+```
+
+### Key Points
+
+- Migrations are **one-way** (applied once, never re-run)
+- Each migration should be **idempotent** where possible (use `IF EXISTS`, `IF NOT EXISTS`)
+- Track migrations in git via `supabase/migrations/` folder for team reproducibility
+- Use `npx supabase db pull` to sync remote schema changes to local migration files
+
+### Best Practices
+
+1. **Use `(select auth.uid())` in RLS policies** - Prevents re-evaluation per row for better performance
+2. **Set `search_path = ''` on functions** - Security best practice for `SECURITY DEFINER` functions
+3. **Name migrations descriptively** - Use snake_case: `add_user_preferences_table`, `fix_rls_policies`
+4. **Test migrations locally first** - Use `npx supabase start` for local development
 
 ---
 
@@ -420,7 +509,7 @@ The `createSupabaseClient` function in `src/lib/supabase/client.ts` creates a ty
 
 ```typescript
 export function createSupabaseClient(getToken: GetTokenFn): TypedSupabaseClient {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createClient<Database>(supabaseUrl, supabaseApiKey, {
     accessToken: getToken, // Called automatically on every request
   });
 }
@@ -519,7 +608,37 @@ After schema changes, regenerate types:
 
 ```bash
 npm run db:types
-# Runs: supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts
+```
+
+This requires `SUPABASE_PROJECT_ID` in your `.env` file. The project ID is the subdomain from your Supabase URL (e.g., `abc123xyz` from `https://abc123xyz.supabase.co`).
+
+The script uses `dotenv-cli` (installed as a dev dependency) to automatically load environment variables from `.env`.
+
+### Adding Convenience Type Aliases
+
+The auto-generated `supabase.ts` is overwritten on each regeneration. Convenience type aliases live in `database.ts` which provides a database-agnostic public API:
+
+```typescript
+// src/types/database.ts
+export * from './supabase'; // Re-export all generated types
+
+import type { Tables, TablesInsert, TablesUpdate } from './supabase';
+
+// Add aliases for your tables
+export type Profile = Tables<'profiles'>;
+export type ProfileInsert = TablesInsert<'profiles'>;
+export type ProfileUpdate = TablesUpdate<'profiles'>;
+
+// When adding new tables, add aliases here:
+// export type Post = Tables<'posts'>;
+// export type PostInsert = TablesInsert<'posts'>;
+// export type PostUpdate = TablesUpdate<'posts'>;
+```
+
+Import convenience types from `@/types/database`:
+
+```typescript
+import type { Profile, ProfileInsert } from '@/types/database';
 ```
 
 ---
@@ -1081,31 +1200,31 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 -- Users can only view their own profile
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT TO authenticated
-  USING (id = auth.uid());
+  USING (id = (auth.uid())::text);
 
 -- Users can only insert their own profile
 CREATE POLICY "Users can insert own profile"
   ON profiles FOR INSERT TO authenticated
-  WITH CHECK (id = auth.uid());
+  WITH CHECK (id = (auth.uid())::text);
 
 -- Users can only update their own profile
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE TO authenticated
-  USING (id = auth.uid())
-  WITH CHECK (id = auth.uid());
+  USING (id = (auth.uid())::text)
+  WITH CHECK (id = (auth.uid())::text);
 
 -- Users can only delete their own profile
 CREATE POLICY "Users can delete own profile"
   ON profiles FOR DELETE TO authenticated
-  USING (id = auth.uid());
+  USING (id = (auth.uid())::text);
 ```
 
 ### Security Best Practices
 
-1. **Never expose service role key** - Only use `anon` key in client code
+1. **Never expose service role key** - Only use api key in client code
 2. **Always enable RLS** - Every table should have RLS policies
 3. **Validate on server** - Don't trust client-side validation alone
-4. **Use `auth.uid()`** - This equals Clerk's `sub` claim (user_id)
+4. **Use `(auth.uid())::text`** - Cast to text when comparing with TEXT columns (Clerk user_id)
 5. **Audit policies** - Regularly review RLS policies for holes
 6. **Test with multiple accounts** - Verify users can't access each other's data
 
@@ -1145,11 +1264,11 @@ The integration automatically creates these environment variables:
 | --------------------------- | ---------------------------------------- |
 | `SUPABASE_DATABASE_URL`     | Direct database connection (server-side) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Admin operations (server-side only)      |
-| `SUPABASE_ANON_KEY`         | Client-side queries                      |
+| `VITE_SUPABASE_ANON_KEY`    | Client-side queries                      |
 
 With Vite prefix (`VITE_`):
 
-- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_DATABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
 ### Local Development with Netlify CLI
@@ -1179,7 +1298,7 @@ The Supabase integration authenticates at the user-level. When collaborating on 
 
 #### "Missing Supabase environment variables"
 
-- Both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` must be set
+- Both `VITE_SUPABASE_DATABASE_URL` and `VITE_SUPABASE_ANON_KEY` must be set
 - Check `.env` file exists and is loaded
 - Verify the variable names match exactly
 
@@ -1291,7 +1410,7 @@ const supabase = createClient(url, key, {
 ## NPM Scripts Reference
 
 ```bash
-npm run db:types    # Generate TypeScript types from schema
+npm run db:types    # Generate TypeScript types (requires SUPABASE_PROJECT_ID in .env)
 npm run db:push     # Push migrations to database
 npm run db:reset    # Reset database (destructive!)
 npm run db:studio   # Open Supabase Studio GUI

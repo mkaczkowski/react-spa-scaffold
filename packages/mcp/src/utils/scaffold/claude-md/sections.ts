@@ -253,7 +253,10 @@ Supabase provides PostgreSQL with Row Level Security (RLS), integrated with Cler
 1. Create a project at [supabase.com](https://supabase.com)
 2. Configure Clerk as third-party auth provider in Supabase Dashboard
 3. Enable Supabase integration in Clerk Dashboard → Integrations
-4. Set \`VITE_SUPABASE_URL\` and \`VITE_SUPABASE_ANON_KEY\` in \`.env\`
+4. Set environment variables in \`.env\`:
+   - \`VITE_SUPABASE_DATABASE_URL\` - Your project URL
+   - \`VITE_SUPABASE_ANON_KEY\` - Your anon/public key
+   - \`SUPABASE_PROJECT_ID\` - Project ID for CLI (subdomain from your URL)
 
 ### Usage
 

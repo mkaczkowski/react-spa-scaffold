@@ -6,11 +6,12 @@ export const database: Feature = {
   required: false,
   requires: ['auth', 'state'], // Requires Clerk auth and TanStack Query (from state)
   dependencies: ['@supabase/supabase-js'],
-  devDependencies: ['supabase'],
+  devDependencies: ['supabase', 'dotenv-cli'],
   files: [
     // Client and types
     'src/lib/supabase/client.ts',
     'src/lib/supabase/index.ts',
+    'src/types/supabase.ts',
     'src/types/database.ts',
     // Context
     'src/contexts/supabaseContext.tsx',
@@ -21,19 +22,23 @@ export const database: Feature = {
     // Components
     'src/components/shared/ProfileSync/ProfileSync.tsx',
     'src/components/shared/ProfileSync/index.ts',
+    // Pages - Profile demo page
+    'src/pages/Profile.tsx',
     // MSW handlers and fixtures
     'src/mocks/handlers/supabase.ts',
     'src/mocks/fixtures/profiles.ts',
+    // Migrations
+    'supabase/migrations/20260104000000_create_profiles_table.sql',
   ],
   testFiles: [
     'src/test/supabaseMock.ts',
-    'src/test/supabaseMock.test.ts',
     'src/contexts/supabaseContext.test.tsx',
-    'src/mocks/fixtures/profiles.test.ts',
     'src/components/shared/ProfileSync/ProfileSync.test.tsx',
+    'src/pages/Profile.test.tsx',
+    'e2e/tests/profile.spec.ts',
   ],
   scripts: {
-    'db:types': 'supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts',
+    'db:types': 'dotenv -- supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/supabase.ts',
     'db:push': 'supabase db push',
     'db:reset': 'supabase db reset',
     'db:studio': 'supabase studio',

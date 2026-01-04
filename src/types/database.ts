@@ -1,103 +1,32 @@
 /**
- * Supabase database types.
+ * Database type aliases and re-exports.
  *
- * This file can be auto-generated using the Supabase CLI:
- * ```bash
- * npm run db:types
- * ```
+ * This file provides a database-agnostic public API for type imports.
+ * The underlying types are auto-generated in supabase.ts via `npm run db:types`.
  *
- * For now, we define the types manually for the profiles table.
- * After connecting to a real Supabase project, regenerate this file.
+ * Usage:
+ *   import type { Profile, ProfileInsert, ProfileUpdate } from '@/types/database';
  *
- * @see https://supabase.com/docs/guides/api/rest/generating-types
+ * When adding new tables:
+ *   1. Run `npm run db:types` to regenerate supabase.ts
+ *   2. Add convenience aliases here for your new tables
  */
 
-/**
- * Database schema type definition.
- * This is the root type used by the Supabase client for type safety.
- */
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: {
-          /** Clerk user_id (from auth.uid()) */
-          id: string;
-          /** User's email address */
-          email: string;
-          /** User's full name (optional) */
-          full_name: string | null;
-          /** URL to user's avatar image (optional) */
-          avatar_url: string | null;
-          /** Timestamp when profile was created */
-          created_at: string;
-          /** Timestamp when profile was last updated */
-          updated_at: string;
-        };
-        Insert: {
-          /** Clerk user_id (required) */
-          id: string;
-          /** User's email address (required) */
-          email: string;
-          /** User's full name (optional) */
-          full_name?: string | null;
-          /** URL to user's avatar image (optional) */
-          avatar_url?: string | null;
-          /** Timestamp when profile was created (defaults to NOW()) */
-          created_at?: string;
-          /** Timestamp when profile was last updated (defaults to NOW()) */
-          updated_at?: string;
-        };
-        Update: {
-          /** Clerk user_id */
-          id?: string;
-          /** User's email address */
-          email?: string;
-          /** User's full name */
-          full_name?: string | null;
-          /** URL to user's avatar image */
-          avatar_url?: string | null;
-          /** Timestamp when profile was last updated */
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-    };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
-}
+// Re-export everything from the auto-generated Supabase types
+export * from './supabase';
 
-/**
- * User profile linked to Clerk user_id.
- * The `id` field matches `auth.uid()` from Clerk's JWT sub claim.
- */
-export type Profile = Database['public']['Tables']['profiles']['Row'];
+// Re-import for creating aliases
+import type { Tables, TablesInsert, TablesUpdate } from './supabase';
 
-/**
- * Data required to insert a new profile.
- */
-export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+// =============================================================================
+// Profile Types
+// =============================================================================
 
-/**
- * Data for updating an existing profile.
- * All fields are optional.
- */
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+/** Profile row type (read operations) */
+export type Profile = Tables<'profiles'>;
 
-/**
- * Helper type to extract a table's Row type from the Database.
- */
-export type TableRow<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+/** Profile insert type (create operations) */
+export type ProfileInsert = TablesInsert<'profiles'>;
 
-/**
- * Helper type to extract a table's Insert type from the Database.
- */
-export type TableInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
-
-/**
- * Helper type to extract a table's Update type from the Database.
- */
-export type TableUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
+/** Profile update type (update operations) */
+export type ProfileUpdate = TablesUpdate<'profiles'>;

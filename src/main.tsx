@@ -26,12 +26,12 @@ if (!CLERK_PUBLISHABLE_KEY) {
 }
 
 // Supabase - validate that both URL and key are set together
-const SUPABASE_URL = env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = env.VITE_SUPABASE_DATABASE_URL;
+const VITE_SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY;
 
-if ((SUPABASE_URL && !SUPABASE_ANON_KEY) || (!SUPABASE_URL && SUPABASE_ANON_KEY)) {
+if ((SUPABASE_URL && !VITE_SUPABASE_ANON_KEY) || (!SUPABASE_URL && VITE_SUPABASE_ANON_KEY)) {
   throw new Error(
-    'Supabase configuration incomplete. Both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
+    'Supabase configuration incomplete. Both VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY must be set together.',
   );
 }
 

@@ -65,7 +65,7 @@ export async function computeScaffold(
   const claudeMd = generateClaudeMd(resolvedFeatures, projectName, scripts);
   const viteEnvDts = generateViteEnvDts(resolvedFeatures);
   const envTs = generateEnvTs(resolvedFeatures);
-  const routesTs = resolvedFeatures.includes(FEATURE.ROUTING) ? generateRoutesTs() : undefined;
+  const routesTs = resolvedFeatures.includes(FEATURE.ROUTING) ? generateRoutesTs(resolvedFeatures) : undefined;
 
   return {
     packageJson: { name: projectName, dependencies, devDependencies, scripts, engines },

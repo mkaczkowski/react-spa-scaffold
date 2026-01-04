@@ -287,7 +287,7 @@ Supabase provides PostgreSQL database with Row Level Security (RLS), integrated 
    - Clerk Dashboard → Integrations → Supabase → Activate
 4. Set environment variables in `.env`:
    ```
-   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_DATABASE_URL=https://your-project.supabase.co
    VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
 

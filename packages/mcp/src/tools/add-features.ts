@@ -74,7 +74,7 @@ export async function addFeatures(input: AddFeaturesInput) {
   } = {};
 
   if (resolvedFeatureIds.includes('routing')) {
-    regenerated.routesTs = generateRoutesTs();
+    regenerated.routesTs = generateRoutesTs(resolvedFeatureIds);
   }
 
   // Always generate env files if api or observability is added
