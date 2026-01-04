@@ -50,7 +50,7 @@ interface ProfileSyncProps {
 export function ProfileSync({ onSyncComplete, onSyncError }: ProfileSyncProps) {
   const { user, isLoaded: isUserLoaded } = useUser();
   const { data: profiles, isLoading: isProfileLoading } = useCurrentProfile();
-  const upsertProfile = useUpsertProfile();
+  const { mutate: upsertProfile } = useUpsertProfile();
 
   // Track if we've already synced this session to prevent infinite loops
   const hasSynced = useRef(false);
@@ -77,7 +77,7 @@ export function ProfileSync({ onSyncComplete, onSyncError }: ProfileSyncProps) {
     // Perform the sync
     isSyncing.current = true;
 
-    upsertProfile.mutate(
+    upsertProfile(
       {
         id: user.id,
         email: user.primaryEmailAddress?.emailAddress ?? '',
