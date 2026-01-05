@@ -1,5 +1,11 @@
 # @react-spa-scaffold/mcp
 
+## 2.3.1
+
+### Patch Changes
+
+- [#31](https://github.com/mkaczkowski/react-spa-scaffold/pull/31) [`8631dc1`](https://github.com/mkaczkowski/react-spa-scaffold/commit/8631dc14cea31a0ded1d2021857c5216ea96b46a) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - Add TanStack Query DevTools to api feature devDependencies
+
 ## 2.3.0
 
 ### Minor Changes
