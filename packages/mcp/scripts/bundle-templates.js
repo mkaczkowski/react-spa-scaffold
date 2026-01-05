@@ -122,9 +122,9 @@ for (const file of electronSrcFiles) {
 // Copy electron config files to templates root
 const electronConfigFiles = [
   'forge.config.js',
-  'vite.main.config.mjs',
-  'vite.preload.config.mjs',
-  'vite.renderer.config.mjs',
+  'vite.main.config.js',
+  'vite.preload.config.js',
+  'vite.renderer.config.js',
 ];
 for (const file of electronConfigFiles) {
   const srcPath = join(electronPkgDir, file);
