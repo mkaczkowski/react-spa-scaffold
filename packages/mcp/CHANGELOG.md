@@ -1,5 +1,18 @@
 # @react-spa-scaffold/mcp
 
+## 2.4.0
+
+### Minor Changes
+
+- [#33](https://github.com/mkaczkowski/react-spa-scaffold/pull/33) [`e87d53a`](https://github.com/mkaczkowski/react-spa-scaffold/commit/e87d53ac158376e069e5605e55c0aeac1f679871) Thanks [@mkaczkowski](https://github.com/mkaczkowski)! - Add electron as scaffoldable feature
+  - New `electron` feature for desktop app support via Electron Forge + Vite
+  - Auto-includes `routing` dependency (for HashRouter support)
+  - Adds `generateGlobalDts()` for feature-aware type generation
+  - Includes electron scripts: `electron:dev`, `electron:build`, `electron:make`
+  - Adds CLAUDE.md section with electron-specific guidance
+  - Supports flat layout with files at `src/main.ts`, `src/preload.ts`
+  - macOS-only builders (DMG + ZIP)
+
 ## 2.3.1
 
 ### Patch Changes
