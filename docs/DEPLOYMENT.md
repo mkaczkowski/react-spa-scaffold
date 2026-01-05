@@ -19,10 +19,35 @@ Push to main → GitHub Actions → Build → Netlify Production
 - Automatic preview deploys for pull requests
 - Production deploys on push to main/master
 - PR comments with preview URLs
-- Manual deploy via workflow_dispatch
+- Manual deploy via workflow_dispatch (with environment selector)
 - Security headers pre-configured
+- Sentry source map upload (when configured)
+- **CI-gated**: Deploy only runs after all checks pass
 
 **Note:** Enable branch protection rules to require CI to pass before merging to main.
+
+### How It Works
+
+```
+Push/PR → CI Workflow → lint, typecheck, security, build, test, e2e → deploy
+                                    ↓
+                           (all must pass)
+```
+
+**Two workflows:**
+
+1. **CI workflow** (`ci.yml`): Runs all checks, then deploys if all pass
+2. **Manual deploy** (`deploy.yml`): Emergency escape hatch, skips CI checks
+
+**Two deployment modes:**
+
+1. **GitHub Actions (primary)**: Builds in CI, uploads pre-built files to Netlify
+2. **Netlify CLI (fallback)**: Use `netlify build` and `netlify deploy` locally
+
+The `netlify.toml` file configures both:
+
+- `[build]` section: Used by Netlify CLI and `netlify dev`
+- `[[headers]]` and `[[redirects]]`: Applied at CDN level regardless of build method
 
 ---
 
@@ -151,11 +176,14 @@ Pushing to main/master triggers production deployment:
 
 ### Manual Deploys
 
-Use workflow_dispatch for manual production deploys:
+Use the manual deploy workflow for emergency or ad-hoc deploys (skips CI checks):
 
-1. Go to Actions → Deploy → Run workflow
+1. Go to Actions → Deploy (Manual) → Run workflow
 2. Select branch
-3. Click "Run workflow"
+3. Choose environment: `preview` or `production`
+4. Click "Run workflow"
+
+> **Warning:** Manual deploys skip CI checks. Use only for emergencies or hotfixes.
 
 ---
 

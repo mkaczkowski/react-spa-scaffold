@@ -1,24 +1,24 @@
-name: Deploy
+name: Deploy (Manual)
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
 
 permissions:
   contents: read
-  pull-requests: write
   deployments: write
-
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy (${{ inputs.environment }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -28,32 +28,19 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Deploy Preview
-        if: github.event_name == 'pull_request'
-        uses: nwtgck/actions-netlify@v3
-        with:
-          publish-dir: './dist'
-          production-deploy: false
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Preview deploy from PR #${{ github.event.number }}'
-          enable-pull-request-comment: true
-          enable-commit-comment: false
-          overwrites-pull-request-comment: true
-          alias: pr-${{ github.event.number }}
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
-      - name: Deploy Production
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Deploy
         uses: nwtgck/actions-netlify@v3
         with:
           publish-dir: './dist'
-          production-deploy: true
+          production-deploy: ${{ inputs.environment == 'production' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Production deploy from ${{ github.sha }}'
-          enable-commit-comment: true
+          deploy-message: 'Manual ${{ inputs.environment }} deploy from ${{ github.sha }}'
+          enable-commit-comment: ${{ inputs.environment == 'production' }}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
