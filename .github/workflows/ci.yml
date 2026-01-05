@@ -20,6 +20,7 @@ jobs:
       - uses: ./.github/actions/setup-node-deps
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run sync:check
 
   typecheck:
     name: Type Check

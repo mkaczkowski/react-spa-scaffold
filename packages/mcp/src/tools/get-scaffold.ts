@@ -74,6 +74,7 @@ export async function getScaffold(input: GetScaffoldInput) {
     viteEnvDts: scaffold.viteEnvDts,
     envTs: scaffold.envTs,
     routesTs: scaffold.routesTs,
+    globalDts: scaffold.globalDts,
     docs: scaffold.docs,
     instructions: generateInstructions(scaffold.setupCommands, resolvedFeatures),
   };
@@ -81,6 +82,7 @@ export async function getScaffold(input: GetScaffoldInput) {
 
 function generateInstructions(setupCommands: string[], features: string[]): string {
   const hasRouting = features.includes('routing');
+  const hasElectron = features.includes('electron');
 
   return `## Setup Instructions
 
@@ -88,7 +90,7 @@ function generateInstructions(setupCommands: string[], features: string[]): stri
 2. Write generated content directly:
    - \`CLAUDE.md\` ← from \`claudeMd\`
    - \`src/vite-env.d.ts\` ← from \`viteEnvDts\`
-   - \`src/lib/env.ts\` ← from \`envTs\`${hasRouting ? '\n   - `src/lib/routes.ts` ← from `routesTs`' : ''}
+   - \`src/lib/env.ts\` ← from \`envTs\`${hasRouting ? '\n   - `src/lib/routes.ts` ← from `routesTs`' : ''}${hasElectron ? '\n   - `src/types/global.d.ts` ← from `globalDts`' : ''}
 
 3. **Create progress tracking file** at project root:
 
@@ -145,6 +147,7 @@ These three lists are **non-overlapping** - concatenate them for complete file l
 - \`claudeMd\`: CLAUDE.md content
 - \`viteEnvDts\`, \`envTs\`: TypeScript declarations
 - \`routesTs\`: Route constants (if routing feature selected)
+- \`globalDts\`: Electron API types (if electron feature selected)
 
 ## File Tracking Protocol (MUST FOLLOW)
 

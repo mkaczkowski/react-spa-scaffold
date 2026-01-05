@@ -57,7 +57,9 @@
     "mcp:inspect": "npm run inspect -w @react-spa-scaffold/mcp",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "sync:check": "syncpack lint",
+    "sync:fix": "syncpack fix-mismatches"
   },
   "dependencies": {
     "@clerk/react-router": "^2.3.7",
@@ -128,6 +130,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "shadcn": "^3.6.2",
     "supabase": "^2.70.5",
+    "syncpack": "^13.0.4",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.0",
     "typescript-eslint": "^8.33.0",

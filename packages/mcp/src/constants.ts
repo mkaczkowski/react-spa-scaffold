@@ -21,6 +21,7 @@ export const FEATURE = {
   AUTH: 'auth',
   DATABASE: 'database',
   DEPLOYMENT: 'deployment',
+  ELECTRON: 'electron',
 } as const;
 
 /** Script names for setup commands. */

@@ -101,6 +101,42 @@ for (const { src, dest } of dotfileRenames) {
   }
 }
 
+// ============================================================================
+// Electron feature files (from packages/electron → flat layout in templates)
+// ============================================================================
+const electronPkgDir = join(PACKAGES_DIR, 'electron');
+
+// Copy electron source files (main.ts, preload.ts) to templates/src/
+const electronSrcFiles = ['main.ts', 'preload.ts'];
+for (const file of electronSrcFiles) {
+  const srcPath = join(electronPkgDir, 'src', file);
+  const destPath = join(TEMPLATES_DIR, 'src', file);
+  if (existsSync(srcPath)) {
+    cpSync(srcPath, destPath);
+    console.log(`  Copied packages/electron/src/${file} → src/${file}`);
+  } else {
+    console.warn(`  Warning: packages/electron/src/${file} not found, skipping`);
+  }
+}
+
+// Copy electron config files to templates root
+const electronConfigFiles = [
+  'forge.config.js',
+  'vite.main.config.mjs',
+  'vite.preload.config.mjs',
+  'vite.renderer.config.mjs',
+];
+for (const file of electronConfigFiles) {
+  const srcPath = join(electronPkgDir, file);
+  const destPath = join(TEMPLATES_DIR, file);
+  if (existsSync(srcPath)) {
+    cpSync(srcPath, destPath);
+    console.log(`  Copied packages/electron/${file} → ${file}`);
+  } else {
+    console.warn(`  Warning: packages/electron/${file} not found, skipping`);
+  }
+}
+
 // Create marker file to indicate this is a bundled distribution
 writeFileSync(join(TEMPLATES_DIR, '.bundled'), '');
 console.log('  Created .bundled marker');

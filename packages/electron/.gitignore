@@ -1,0 +1,7 @@
+# Electron Forge build output
+.vite/
+out/
+
+# Packages
+*.dmg
+*.zip

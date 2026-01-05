@@ -55,6 +55,7 @@ export interface ScaffoldResult {
   viteEnvDts: string;
   envTs: string;
   routesTs?: string; // Only when routing feature is selected
+  globalDts?: string; // Only when electron feature is selected
   /** Documentation file paths (use get_file to fetch content) */
   docs: string[];
 }

@@ -59,4 +59,13 @@ describe('get_features tool', () => {
     expect(theming?.required).toBe(false);
     expect(theming?.name).toBe('Theming');
   });
+
+  it('electron feature exists and is not required', () => {
+    const features = getFeatures();
+    const electron = features.find((f) => f.id === 'electron');
+
+    expect(electron).toBeDefined();
+    expect(electron?.required).toBe(false);
+    expect(electron?.name).toBe('Electron Desktop');
+  });
 });

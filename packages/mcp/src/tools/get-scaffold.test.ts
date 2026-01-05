@@ -90,6 +90,62 @@ describe('get_scaffold tool', () => {
     expect(result.fileStructure).not.toContain('src/hooks/useMediaQuery.ts');
   });
 
+  // Electron feature tests
+  it('electron feature auto-includes routing feature', async () => {
+    const result = await getScaffold({ features: ['electron'] });
+
+    expect(result.resolvedFeatures).toContain('electron');
+    expect(result.resolvedFeatures).toContain('routing');
+    expect(result.resolvedFeatures).toContain('core');
+  });
+
+  it('includes electron files when electron feature is selected', async () => {
+    const result = await getScaffold({ features: ['electron'] });
+
+    expect(result.fileStructure).toContain('src/main.ts');
+    expect(result.fileStructure).toContain('src/preload.ts');
+    // global.d.ts is generated content, not in fileStructure
+    expect(result.fileStructure).not.toContain('src/types/global.d.ts');
+  });
+
+  it('returns globalDts when electron feature is selected', async () => {
+    const result = await getScaffold({ features: ['electron'] });
+
+    expect(result.globalDts).toBeDefined();
+    expect(result.globalDts).toContain('ElectronAPI');
+    expect(result.globalDts).toContain('electronAPI');
+    expect(result.globalDts).toContain('isElectron: true');
+  });
+
+  it('does not return globalDts when electron not selected', async () => {
+    const result = await getScaffold({ features: ['routing'] });
+
+    expect(result.globalDts).toBeUndefined();
+  });
+
+  it('excludes electron files when electron not selected', async () => {
+    const result = await getScaffold({ features: ['routing'] });
+
+    expect(result.fileStructure).not.toContain('src/main.ts');
+    expect(result.fileStructure).not.toContain('src/preload.ts');
+  });
+
+  it('includes electron config files when electron feature is selected', async () => {
+    const result = await getScaffold({ features: ['electron'] });
+
+    expect(result.configFiles).toContain('forge.config.js');
+    expect(result.configFiles).toContain('vite.main.config.mjs');
+    expect(result.configFiles).toContain('vite.preload.config.mjs');
+    expect(result.configFiles).toContain('vite.renderer.config.mjs');
+  });
+
+  it('excludes electron config files when electron not selected', async () => {
+    const result = await getScaffold({ features: ['routing'] });
+
+    expect(result.configFiles).not.toContain('forge.config.js');
+    expect(result.configFiles).not.toContain('vite.main.config.mjs');
+  });
+
   it('returns valid package.json structure', async () => {
     const result = await getScaffold({ features: ['routing'], projectName: 'test-app' });
 
@@ -207,6 +263,16 @@ describe('get_scaffold tool', () => {
     expect(withTheming.claudeMd).toContain('## Theming');
     expect(withTheming.claudeMd).toContain('usePreferencesStore');
     expect(withoutTheming.claudeMd).not.toContain('## Theming');
+  });
+
+  it('claudeMd includes electron section only when electron feature selected', async () => {
+    const withElectron = await getScaffold({ features: ['electron'] });
+    const withoutElectron = await getScaffold({ features: ['routing'] });
+
+    expect(withElectron.claudeMd).toContain('## Electron Desktop');
+    expect(withElectron.claudeMd).toContain('HashRouter');
+    expect(withElectron.claudeMd).toContain('contextIsolation');
+    expect(withoutElectron.claudeMd).not.toContain('## Electron Desktop');
   });
 
   it('claudeMd project structure shows contexts when mobile is selected', async () => {

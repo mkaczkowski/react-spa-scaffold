@@ -1,0 +1,38 @@
+{
+  "$schema": "https://unpkg.com/syncpack@13.0.0/dist/schema.json",
+  "lintFormatting": false,
+  "lintSemverRanges": false,
+  "sortFirst": ["name", "version", "description", "type", "main", "scripts", "dependencies", "devDependencies"],
+  "formatRepository": false,
+  "formatBugs": false,
+  "versionGroups": [
+    {
+      "label": "Use workspace protocol for internal packages",
+      "dependencies": ["@react-spa-scaffold/*"],
+      "dependencyTypes": ["dev"],
+      "pinVersion": "*"
+    },
+    {
+      "label": "Config packages peerDependencies (intentionally broader ranges)",
+      "packages": [
+        "@react-spa-scaffold/eslint-config",
+        "@react-spa-scaffold/prettier-config",
+        "@react-spa-scaffold/tsconfig"
+      ],
+      "dependencyTypes": ["peer"],
+      "isIgnored": true
+    },
+    {
+      "label": "Electron-specific packages (not in root)",
+      "packages": ["@react-spa-scaffold/electron"],
+      "dependencies": [
+        "electron",
+        "@electron-forge/cli",
+        "@electron-forge/maker-dmg",
+        "@electron-forge/maker-zip",
+        "@electron-forge/plugin-vite"
+      ],
+      "isIgnored": true
+    }
+  ]
+}
