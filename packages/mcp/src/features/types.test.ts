@@ -19,10 +19,11 @@ describe('FEATURE_IDS', () => {
     expect(FEATURE_IDS).toContain('auth');
     expect(FEATURE_IDS).toContain('database');
     expect(FEATURE_IDS).toContain('deployment');
+    expect(FEATURE_IDS).toContain('electron');
   });
 
-  it('has 17 features', () => {
-    expect(FEATURE_IDS).toHaveLength(17);
+  it('has 18 features', () => {
+    expect(FEATURE_IDS).toHaveLength(18);
   });
 });
 

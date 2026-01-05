@@ -26,6 +26,9 @@ const SCRIPT_DESCRIPTIONS: Record<string, string> = {
   'db:push': 'Push database migrations',
   'db:reset': 'Reset database (destructive)',
   'db:studio': 'Open Supabase Studio',
+  'electron:dev': 'Start Electron in development',
+  'electron:build': 'Package Electron app',
+  'electron:make': 'Create distributable (DMG/ZIP)',
 };
 
 export function generateHeader(projectName: string): string {
@@ -391,6 +394,43 @@ import { render, mockMatchMedia, server } from '@/test';
 MSW handlers auto-reset after each test.`;
 }
 
+export function generateElectronSection(): string {
+  return `
+## Electron Desktop
+
+Electron wraps the React app as a native desktop application.
+
+### Architecture
+
+- \`src/main.ts\` - Electron main process (window creation, IPC handlers)
+- \`src/preload.ts\` - Context bridge (secure API exposure to renderer)
+- \`src/types/global.d.ts\` - TypeScript types for \`window.electronAPI\`
+- \`forge.config.js\` - Electron Forge configuration
+
+### Router Detection
+
+The app automatically uses HashRouter when running in Electron (for \`file://\` protocol support):
+
+\`\`\`tsx
+const isElectron = window.electronAPI?.isElectron === true;
+const Router = isElectron ? HashRouter : BrowserRouter;
+\`\`\`
+
+### Adding IPC Handlers
+
+1. Add handler in \`src/main.ts\`: \`ipcMain.handle('channel', handler)\`
+2. Expose in \`src/preload.ts\` via \`contextBridge.exposeInMainWorld\`
+3. Update \`ElectronAPI\` interface in both \`preload.ts\` and \`global.d.ts\`
+4. Call from renderer: \`window.electronAPI?.yourMethod()\`
+
+### Security
+
+- \`contextIsolation: true\` - Preload is isolated from page context
+- \`nodeIntegration: false\` - No Node.js APIs in renderer
+- \`sandbox: true\` - OS-level sandboxing enabled
+`;
+}
+
 export function generateGotchasSection(featureIds: FeatureId[]): string {
   const gotchas: string[] = [];
 
@@ -411,6 +451,9 @@ export function generateGotchasSection(featureIds: FeatureId[]): string {
   if (featureIds.includes(FEATURE.DATABASE)) {
     gotchas.push('**Supabase requires Clerk** - SupabaseProvider must be inside ClerkProvider');
     gotchas.push('**RLS policies required** - All Supabase tables should have Row Level Security enabled');
+  }
+  if (featureIds.includes(FEATURE.ELECTRON)) {
+    gotchas.push('**Electron uses HashRouter** - file:// protocol requires hash-based routing');
   }
 
   return `

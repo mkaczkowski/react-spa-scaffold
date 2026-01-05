@@ -15,7 +15,13 @@ import { resolveTemplatePath } from '../paths.js';
 import { resolveFeatureDependencies, mergeDependencies, mergeScripts } from './dependencies.js';
 import { computeFileStructure, getConfigFiles } from './file-structure.js';
 import { getSetupCommands } from './commands.js';
-import { generateClaudeMd, generateViteEnvDts, generateEnvTs, generateRoutesTs } from './generators.js';
+import {
+  generateClaudeMd,
+  generateViteEnvDts,
+  generateEnvTs,
+  generateRoutesTs,
+  generateGlobalDts,
+} from './generators.js';
 
 async function readSourcePackageJson(): Promise<Record<string, unknown>> {
   const path = resolveTemplatePath('package.json');
@@ -66,6 +72,7 @@ export async function computeScaffold(
   const viteEnvDts = generateViteEnvDts(resolvedFeatures);
   const envTs = generateEnvTs(resolvedFeatures);
   const routesTs = resolvedFeatures.includes(FEATURE.ROUTING) ? generateRoutesTs(resolvedFeatures) : undefined;
+  const globalDts = generateGlobalDts(resolvedFeatures);
 
   return {
     packageJson: { name: projectName, dependencies, devDependencies, scripts, engines },
@@ -76,6 +83,7 @@ export async function computeScaffold(
     viteEnvDts,
     envTs,
     routesTs,
+    globalDts,
     docs,
   };
 }

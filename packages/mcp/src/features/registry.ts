@@ -21,6 +21,7 @@ import {
   auth,
   database,
   deployment,
+  electron,
 } from './definitions/index.js';
 
 /** All available features for scaffolding. */
@@ -42,6 +43,7 @@ export const FEATURES: FeatureRegistry = {
   auth,
   database,
   deployment,
+  electron,
 };
 
 export type { FeatureId } from './types.js';

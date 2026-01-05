@@ -199,3 +199,50 @@ ${routes.join('\n')}
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
 `;
 }
+
+/**
+ * Generates global.d.ts content based on selected features.
+ * Currently only includes ElectronAPI types when electron feature is selected.
+ */
+export function generateGlobalDts(featureIds: FeatureId[]): string | undefined {
+  const sections: string[] = [];
+
+  // Electron API types
+  if (featureIds.includes(FEATURE.ELECTRON)) {
+    sections.push(`/**
+ * Global type declarations for Electron integration.
+ * These types are automatically available in the renderer process
+ * when running inside Electron.
+ */
+
+interface ElectronWindowAPI {
+  setAlwaysOnTop: (enable: boolean) => Promise<boolean>;
+  setContentProtection: (enable: boolean) => Promise<boolean>;
+  getState: () => Promise<{
+    alwaysOnTop: boolean;
+    contentProtection: boolean;
+  }>;
+}
+
+interface ElectronAPI {
+  window: ElectronWindowAPI;
+  platform: NodeJS.Platform;
+  isElectron: true;
+}
+
+declare global {
+  interface Window {
+    electronAPI?: ElectronAPI;
+  }
+}
+
+export {};`);
+  }
+
+  // Return undefined if no content needed
+  if (sections.length === 0) {
+    return undefined;
+  }
+
+  return sections.join('\n\n') + '\n';
+}

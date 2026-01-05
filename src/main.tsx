@@ -1,7 +1,19 @@
 import { I18nProvider } from '@lingui/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router';
+import { BrowserRouter, HashRouter } from 'react-router';
+
+/**
+ * Detect if running in Electron environment.
+ * Uses the electronAPI exposed by preload script.
+ */
+const isElectron = typeof window !== 'undefined' && window.electronAPI?.isElectron === true;
+
+/**
+ * Router selection: HashRouter for Electron (file:// protocol compatibility),
+ * BrowserRouter for web.
+ */
+const Router = isElectron ? HashRouter : BrowserRouter;
 
 import './index.css';
 import { ErrorBoundary } from '@/components/shared';
@@ -57,7 +69,7 @@ initI18n().then(() => {
     <StrictMode>
       <QueryProvider>
         <I18nProvider i18n={i18n}>
-          <BrowserRouter>
+          <Router>
             <ClerkThemeProvider publishableKey={CLERK_CONFIG.publishableKey!}>
               <SupabaseProvider>
                 <MobileProvider>
@@ -70,7 +82,7 @@ initI18n().then(() => {
                 </MobileProvider>
               </SupabaseProvider>
             </ClerkThemeProvider>
-          </BrowserRouter>
+          </Router>
         </I18nProvider>
       </QueryProvider>
     </StrictMode>,
