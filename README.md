@@ -148,6 +148,13 @@ Open [http://localhost:5173](http://localhost:5173) — you're ready to build.
 | ---------------------- | --------------------------- |
 | `npm run i18n:extract` | Extract translation strings |
 
+### Monorepo
+
+| Command              | Description                        |
+| -------------------- | ---------------------------------- |
+| `npm run sync:check` | Check dependency version alignment |
+| `npm run sync:fix`   | Auto-fix version mismatches        |
+
 ## Adding Components
 
 ```bash

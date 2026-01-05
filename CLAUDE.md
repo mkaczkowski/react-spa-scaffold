@@ -22,6 +22,8 @@ npm run i18n:extract     # Extract translations to .po
 npm run db:types         # Generate Supabase TypeScript types
 npm run db:push          # Push database migrations
 npm run db:studio        # Open Supabase Studio
+npm run sync:check       # Check monorepo dependency versions
+npm run sync:fix         # Auto-fix version mismatches
 ```
 
 ## Project Structure
@@ -396,3 +398,4 @@ it('handles error', async () => {
 6. **Clerk auth required** when auth feature is enabled - set `VITE_CLERK_PUBLISHABLE_KEY` in `.env`
 7. **Supabase requires Clerk** - SupabaseProvider must be inside ClerkProvider
 8. **RLS policies required** - All Supabase tables should have Row Level Security enabled
+9. **Monorepo deps** - Run `npm run sync:check` to detect version mismatches across packages
