@@ -4,7 +4,9 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+out/
 *.tsbuildinfo
+.vite/
 
 # IDE
 .vscode/

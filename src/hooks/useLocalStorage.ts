@@ -1,6 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 
 /**
+ * Read value from localStorage with error handling.
+ */
+function readFromStorage<T>(key: string, initialValue: T): T {
+  if (typeof window === 'undefined') {
+    return initialValue;
+  }
+  try {
+    const item = localStorage.getItem(key);
+    return item ? (JSON.parse(item) as T) : initialValue;
+  } catch {
+    console.warn(`Failed to parse localStorage key "${key}"`);
+    return initialValue;
+  }
+}
+
+/**
  * useState-like hook with localStorage persistence.
  * Syncs state across tabs via storage events.
  *
@@ -8,34 +24,12 @@ import { useCallback, useEffect, useState } from 'react';
  * @param initialValue - Default value when key doesn't exist
  */
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
-  // Lazy initialization reads from localStorage on first render
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialValue;
-    }
-    try {
-      const item = localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
-    } catch {
-      console.warn(`Failed to parse localStorage key "${key}"`);
-      return initialValue;
-    }
-  });
+  const [storedValue, setStoredValue] = useState<T>(() => readFromStorage(key, initialValue));
 
-  // Track the previous key to detect changes
-  const [prevKey, setPrevKey] = useState(key);
-
-  // Re-read from localStorage when key changes
-  if (key !== prevKey) {
-    setPrevKey(key);
-    try {
-      const item = localStorage.getItem(key);
-      const newValue = item ? (JSON.parse(item) as T) : initialValue;
-      setStoredValue(newValue);
-    } catch {
-      setStoredValue(initialValue);
-    }
-  }
+  // Re-read from localStorage when key changes (intentional external store sync)
+  useEffect(() => {
+    setStoredValue(readFromStorage(key, initialValue));
+  }, [key, initialValue]);
 
   // Sync to localStorage whenever value changes
   useEffect(() => {

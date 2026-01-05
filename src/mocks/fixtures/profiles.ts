@@ -5,7 +5,7 @@
 
 import type { Profile } from '@/types/database';
 
-import { MOCK_TIMESTAMPS, MOCK_USER } from '../constants';
+import { MOCK_TIMESTAMPS, MOCK_USER } from '@/mocks/constants';
 
 /** Counter for unique ID generation */
 let idCounter = 0;

@@ -37,4 +37,8 @@ export const devtools: Feature = {
     prepare: 'husky',
   },
   configFiles: ['eslint.config.js', 'prettier.config.js', 'commitlint.config.js'],
+  lintStaged: {
+    '*.{ts,tsx,js}': ['eslint --fix', 'prettier --write'],
+    '*.{json,md,yml,yaml,css}': ['prettier --write'],
+  },
 };

@@ -19,9 +19,9 @@ describe('useDebouncedCallback', () => {
     const { result } = renderHook(() => useDebouncedCallback(callback));
 
     act(() => {
-      result.current('arg1');
-      result.current('arg2');
-      result.current('arg3');
+      result.current.call('arg1');
+      result.current.call('arg2');
+      result.current.call('arg3');
     });
 
     // Not called yet
@@ -42,7 +42,7 @@ describe('useDebouncedCallback', () => {
     const { result } = renderHook(() => useDebouncedCallback(callback));
 
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     // Just before default delay
@@ -64,7 +64,7 @@ describe('useDebouncedCallback', () => {
     const { result } = renderHook(() => useDebouncedCallback(callback, customDelay));
 
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     act(() => {
@@ -84,7 +84,7 @@ describe('useDebouncedCallback', () => {
     const { result } = renderHook(() => useDebouncedCallback(callback, delay));
 
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     // Advance halfway
@@ -94,7 +94,7 @@ describe('useDebouncedCallback', () => {
 
     // Call again - resets timer
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     // Advance another 50ms (100ms total from first call)
@@ -110,7 +110,7 @@ describe('useDebouncedCallback', () => {
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
-  it('maintains stable callback reference', () => {
+  it('maintains stable object reference', () => {
     const callback = vi.fn();
     const { result, rerender } = renderHook(() => useDebouncedCallback(callback, 100));
 
@@ -118,6 +118,7 @@ describe('useDebouncedCallback', () => {
     rerender();
     const secondRef = result.current;
 
+    // Object reference is stable
     expect(firstRef).toBe(secondRef);
   });
 
@@ -128,7 +129,7 @@ describe('useDebouncedCallback', () => {
     });
 
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     // Update callback before debounce fires
@@ -149,7 +150,7 @@ describe('useDebouncedCallback', () => {
     const { result, unmount } = renderHook(() => useDebouncedCallback(callback, 100));
 
     act(() => {
-      result.current();
+      result.current.call();
     });
 
     unmount();
@@ -160,5 +161,61 @@ describe('useDebouncedCallback', () => {
 
     // Callback should not be called after unmount
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('cancels pending call when cancel() is invoked', () => {
+    const callback = vi.fn();
+    const { result } = renderHook(() => useDebouncedCallback(callback, 100));
+
+    act(() => {
+      result.current.call();
+    });
+
+    // Advance halfway
+    act(() => {
+      vi.advanceTimersByTime(50);
+    });
+    expect(callback).not.toHaveBeenCalled();
+
+    // Cancel the pending call
+    act(() => {
+      result.current.cancel();
+    });
+
+    // Advance past the delay
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    // Callback should not be called after cancel
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('can call again after cancel', () => {
+    const callback = vi.fn();
+    const { result } = renderHook(() => useDebouncedCallback(callback, 100));
+
+    // First call
+    act(() => {
+      result.current.call();
+    });
+
+    // Cancel
+    act(() => {
+      result.current.cancel();
+    });
+
+    // New call
+    act(() => {
+      result.current.call();
+    });
+
+    // Advance past the delay
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    // New call should have executed
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 });

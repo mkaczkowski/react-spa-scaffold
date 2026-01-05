@@ -3,7 +3,7 @@
  * Used by clerkMock.tsx to simulate authenticated users.
  */
 
-import { MOCK_USER } from '../constants';
+import { MOCK_USER } from '@/mocks/constants';
 
 // =============================================================================
 // Types

@@ -29,6 +29,8 @@ export interface Feature {
   testFiles?: string[];
   scripts?: Record<string, string>;
   configFiles?: string[];
+  /** lint-staged configuration - merged into package.json when feature is selected. */
+  lintStaged?: Record<string, string[]>;
 }
 
 /** Type-safe feature registry mapping FeatureId to Feature */
@@ -46,6 +48,7 @@ export interface ScaffoldResult {
     devDependencies: Record<string, string>;
     scripts: Record<string, string>;
     engines: Record<string, string>;
+    'lint-staged'?: Record<string, string[]>;
   };
   structure: string[];
   /** Config file paths (use get_file to fetch content) */

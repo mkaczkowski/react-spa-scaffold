@@ -21,6 +21,24 @@ export default [
     },
   },
 
+  // Enforce @/ alias imports - disallow relative parent imports in src/
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*'],
+              message: 'Use @/ alias instead of relative parent imports (e.g., @/lib/config instead of ../config)',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Packages use Node.js rules (override the React/i18n rules from main config)
   {
     files: ['packages/**/*.ts'],

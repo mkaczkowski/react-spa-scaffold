@@ -11,7 +11,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/types/database';
 
-import { SUPABASE_CONFIG } from '../config';
+import { SUPABASE_CONFIG } from '@/lib/config';
 
 /**
  * Typed Supabase client with database schema.

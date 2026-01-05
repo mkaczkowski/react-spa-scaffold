@@ -51,6 +51,28 @@ export function resetSupabaseMocks() {
 // Mock Query Builder
 // =============================================================================
 
+/**
+ * Creates a thenable object that works with both `.then()` and `await`.
+ * This is necessary because Supabase queries can be used either way:
+ *   - await supabase.from('table').select()
+ *   - supabase.from('table').select().then(...)
+ */
+function createThenable<T>(resolver: () => T) {
+  return {
+    then<TResult1 = T, TResult2 = never>(
+      onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+      onRejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
+    ): Promise<TResult1 | TResult2> {
+      return Promise.resolve(resolver()).then(onFulfilled, onRejected);
+    },
+    catch<TResult = never>(
+      onRejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | null,
+    ): Promise<T | TResult> {
+      return Promise.resolve(resolver()).catch(onRejected);
+    },
+  };
+}
+
 function createMockQueryBuilder() {
   const resolveQuery = () => {
     if (mockState.error) {
@@ -66,21 +88,35 @@ function createMockQueryBuilder() {
     return { data: mockState.data[0] ?? null, error: null };
   };
 
-  return {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    upsert: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    neq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockImplementation(() => Promise.resolve(resolveSingle())),
-    maybeSingle: vi.fn().mockImplementation(() => Promise.resolve(resolveSingle())),
-    then: (resolve: (value: { data: unknown[] | null; error: unknown }) => void) => {
-      resolve(resolveQuery());
-      return { catch: () => {} };
-    },
+  // Create a chainable builder that is also thenable
+  const createChainableBuilder = (): ReturnType<typeof createChainableMethods> => {
+    const methods = createChainableMethods();
+    return methods;
   };
+
+  const createChainableMethods = () => {
+    const thenable = createThenable(resolveQuery);
+
+    return {
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      range: vi.fn().mockReturnThis(),
+      single: vi.fn().mockImplementation(() => createThenable(resolveSingle)),
+      maybeSingle: vi.fn().mockImplementation(() => createThenable(resolveSingle)),
+      // Make the builder itself thenable (supports both await and .then())
+      then: thenable.then,
+      catch: thenable.catch,
+    };
+  };
+
+  return createChainableBuilder();
 }
 
 // =============================================================================

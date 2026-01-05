@@ -7,8 +7,8 @@
 
 import { http, HttpResponse } from 'msw';
 
-import { MOCK_SUPABASE_URL, MOCK_USER } from '../constants';
-import { createProfile, mockProfiles } from '../fixtures/profiles';
+import { MOCK_SUPABASE_URL, MOCK_USER } from '@/mocks/constants';
+import { createProfile, mockProfiles } from '@/mocks/fixtures/profiles';
 
 export const supabaseHandlers = [
   // GET /rest/v1/profiles

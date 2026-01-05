@@ -15,6 +15,7 @@ import {
   collectFeatureFiles,
   getConfigFiles,
   mergeDependencies,
+  mergeLintStaged,
   mergeScripts,
   resolveFeatureDependencies,
 } from '../utils/scaffold/index.js';
@@ -54,8 +55,9 @@ export async function addFeatures(input: AddFeaturesInput) {
   // 2. Merge dependencies from all features
   const { dependencies, devDependencies, warnings } = await mergeDependencies(resolvedFeatureIds);
 
-  // 3. Merge scripts
+  // 3. Merge scripts and lint-staged config
   const scripts = mergeScripts(resolvedFeatureIds);
+  const lintStaged = mergeLintStaged(resolvedFeatureIds);
 
   // 4. Collect file paths from all features
   const { files, testFiles } = collectFeatureFiles(resolvedFeatureIds);
@@ -108,6 +110,9 @@ export async function addFeatures(input: AddFeaturesInput) {
     // Scripts to add to package.json
     scripts,
 
+    // lint-staged config to add to package.json (if devtools feature selected)
+    lintStaged,
+
     // Files to create (fetch via get_file)
     files,
     testFiles,
@@ -139,7 +144,7 @@ function generateInstructions(features: FeatureId[]): string {
    \`npm install <dependencies>\`
    \`npm install -D <devDependencies>\`
 
-2. Add scripts to package.json
+2. Add scripts and lint-staged config to package.json
 
 3. Write generated content (if any):${hasRouting ? '\n   - `src/lib/routes.ts` ← from `regenerated.routesTs`' : ''}${hasEnvChanges ? '\n   - `src/lib/env.ts` ← from `regenerated.envTs`\n   - `src/vite-env.d.ts` ← from `regenerated.viteEnvDts`' : ''}
 
@@ -171,6 +176,7 @@ Does NOT auto-include \`core\` feature (assumes project already has core).
 - \`dependencies\`: npm packages to install (production)
 - \`devDependencies\`: npm packages to install (dev)
 - \`scripts\`: npm scripts to add
+- \`lintStaged\`: lint-staged config to add (if devtools feature selected)
 - \`files\`: Source files to create (fetch via get_file)
 - \`testFiles\`: Test files to create (fetch via get_file)
 - \`configFiles\`: Config files that may need updates

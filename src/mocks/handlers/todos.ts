@@ -7,7 +7,7 @@ import { delay, http, HttpResponse } from 'msw';
 import { API_CONFIG } from '@/lib/config';
 import type { Todo } from '@/types/api';
 
-import { mockTodos } from '../fixtures/todos';
+import { mockTodos } from '@/mocks/fixtures/todos';
 
 const BASE_URL = API_CONFIG.baseUrl;
 

@@ -149,3 +149,19 @@ export function mergeScripts(featureIds: FeatureId[]): Record<string, string> {
 
   return scripts;
 }
+
+/**
+ * Merge lint-staged config from multiple features
+ */
+export function mergeLintStaged(featureIds: FeatureId[]): Record<string, string[]> | undefined {
+  const config: Record<string, string[]> = {};
+
+  for (const featureId of featureIds) {
+    const feature = FEATURES[featureId];
+    if (feature.lintStaged) {
+      Object.assign(config, feature.lintStaged);
+    }
+  }
+
+  return Object.keys(config).length > 0 ? config : undefined;
+}

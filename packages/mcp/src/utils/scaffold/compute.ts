@@ -12,7 +12,7 @@ import type { ScaffoldResult } from '../../features/types.js';
 import { computeDocsForFeatures } from '../docs.js';
 import { resolveTemplatePath } from '../paths.js';
 
-import { resolveFeatureDependencies, mergeDependencies, mergeScripts } from './dependencies.js';
+import { resolveFeatureDependencies, mergeDependencies, mergeScripts, mergeLintStaged } from './dependencies.js';
 import { computeFileStructure, getConfigFiles } from './file-structure.js';
 import { getSetupCommands } from './commands.js';
 import {
@@ -57,6 +57,7 @@ export async function computeScaffold(
 
   // Sync operations
   const scripts = mergeScripts(resolvedFeatures);
+  const lintStaged = mergeLintStaged(resolvedFeatures);
   const docs = computeDocsForFeatures(resolvedFeatures);
   const setupCommands = getSetupCommands(resolvedFeatures);
 
@@ -75,7 +76,14 @@ export async function computeScaffold(
   const globalDts = generateGlobalDts(resolvedFeatures);
 
   return {
-    packageJson: { name: projectName, dependencies, devDependencies, scripts, engines },
+    packageJson: {
+      name: projectName,
+      dependencies,
+      devDependencies,
+      scripts,
+      engines,
+      ...(lintStaged && { 'lint-staged': lintStaged }),
+    },
     structure,
     configFiles,
     setupCommands,

@@ -1,6 +1,14 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { TIMING } from '@/lib/constants';
+
+/** Debounced callback with cancel capability */
+export interface DebouncedCallback<T extends (...args: never[]) => void> {
+  /** Call the debounced function */
+  call: (...args: Parameters<T>) => void;
+  /** Cancel any pending debounced calls */
+  cancel: () => void;
+}
 
 /**
  * Returns a debounced version of a callback that only fires after a delay
@@ -8,11 +16,25 @@ import { TIMING } from '@/lib/constants';
  *
  * @param callback - Function to debounce
  * @param delay - Delay in ms (defaults to TIMING.DEBOUNCE_DELAY)
+ * @returns Object with `call()` to invoke the debounced function and `cancel()` to clear pending calls
+ *
+ * @example
+ * ```tsx
+ * const debouncedSave = useDebouncedCallback((value: string) => {
+ *   saveToServer(value);
+ * }, 500);
+ *
+ * // Call the debounced function
+ * debouncedSave.call(inputValue);
+ *
+ * // Cancel pending calls (e.g., when component unmounts or feature is disabled)
+ * debouncedSave.cancel();
+ * ```
  */
 export function useDebouncedCallback<T extends (...args: never[]) => void>(
   callback: T,
   delay: number = TIMING.DEBOUNCE_DELAY,
-): T {
+): DebouncedCallback<T> {
   const callbackRef = useRef(callback);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -30,8 +52,16 @@ export function useDebouncedCallback<T extends (...args: never[]) => void>(
     };
   }, []);
 
-  // Stable reference via useCallback (delay is the only dependency)
-  const debouncedCallback = useCallback(
+  // Cancel function
+  const cancel = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = undefined;
+    }
+  }, []);
+
+  // Debounced call function
+  const call = useCallback(
     (...args: Parameters<T>) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -41,7 +71,8 @@ export function useDebouncedCallback<T extends (...args: never[]) => void>(
       }, delay);
     },
     [delay],
-  ) as T;
+  );
 
-  return debouncedCallback;
+  // Return stable object reference
+  return useMemo(() => ({ call, cancel }), [call, cancel]);
 }
