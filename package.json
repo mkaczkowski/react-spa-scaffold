@@ -128,7 +128,7 @@
     "msw": "^2.12.7",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
-    "shadcn": "^3.6.2",
+    "shadcn": "^3.6.3",
     "supabase": "^2.70.5",
     "syncpack": "^13.0.4",
     "tailwindcss": "^4.1.17",
