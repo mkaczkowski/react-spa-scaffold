@@ -91,7 +91,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
-    "@clerk/testing": "^1.13.26",
+    "@clerk/testing": "^1.13.28",
     "@commitlint/config-conventional": "^20.2.0",
     "@eslint/js": "^9.28.0",
     "@lingui/babel-plugin-lingui-macro": "^5.7.0",
