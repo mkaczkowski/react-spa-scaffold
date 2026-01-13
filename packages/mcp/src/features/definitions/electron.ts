@@ -20,5 +20,5 @@ export const electron: Feature = {
     'electron:build': 'electron-forge package',
     'electron:make': 'electron-forge make',
   },
-  configFiles: ['forge.config.js', 'vite.main.config.mjs', 'vite.preload.config.mjs', 'vite.renderer.config.mjs'],
+  configFiles: ['forge.config.js', 'vite.main.config.js', 'vite.preload.config.js', 'vite.renderer.config.js'],
 };

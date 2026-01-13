@@ -30,19 +30,19 @@ const config = {
         build: [
           {
             entry: 'src/main.ts',
-            config: 'vite.main.config.mjs',
+            config: 'vite.main.config.js',
             target: 'main',
           },
           {
             entry: 'src/preload.ts',
-            config: 'vite.preload.config.mjs',
+            config: 'vite.preload.config.js',
             target: 'preload',
           },
         ],
         renderer: [
           {
             name: 'main_window',
-            config: 'vite.renderer.config.mjs',
+            config: 'vite.renderer.config.js',
           },
         ],
       },

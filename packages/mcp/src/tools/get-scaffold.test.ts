@@ -134,16 +134,16 @@ describe('get_scaffold tool', () => {
     const result = await getScaffold({ features: ['electron'] });
 
     expect(result.configFiles).toContain('forge.config.js');
-    expect(result.configFiles).toContain('vite.main.config.mjs');
-    expect(result.configFiles).toContain('vite.preload.config.mjs');
-    expect(result.configFiles).toContain('vite.renderer.config.mjs');
+    expect(result.configFiles).toContain('vite.main.config.js');
+    expect(result.configFiles).toContain('vite.preload.config.js');
+    expect(result.configFiles).toContain('vite.renderer.config.js');
   });
 
   it('excludes electron config files when electron not selected', async () => {
     const result = await getScaffold({ features: ['routing'] });
 
     expect(result.configFiles).not.toContain('forge.config.js');
-    expect(result.configFiles).not.toContain('vite.main.config.mjs');
+    expect(result.configFiles).not.toContain('vite.main.config.js');
   });
 
   it('returns valid package.json structure', async () => {
