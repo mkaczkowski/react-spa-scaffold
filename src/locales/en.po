@@ -11,34 +11,262 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#. Default site-wide meta description for SEO
+#: src/App.tsx:30
+msgid "A modern React 19 application with TypeScript and Vite"
+msgstr "A modern React 19 application with TypeScript and Vite"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:25
+msgid "An unexpected error occurred. You can try again or reload the page."
+msgstr "An unexpected error occurred. You can try again or reload the page."
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:30
+msgid "App ready to work offline"
+msgstr "App ready to work offline"
+
 #. Button label to navigate back to the home page from 404 error
 #: src/pages/NotFound.tsx:23
 msgid "Back to Home"
 msgstr "Back to Home"
+
+#. Cancel button label
+#: src/pages/Profile.tsx:145
+msgid "Cancel"
+msgstr "Cancel"
 
 #. Accessibility label for the language selector dropdown button
 #: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:24
 msgid "Change language"
 msgstr "Change language"
 
+#: src/components/shared/SyncToggle/SyncToggle.tsx:46
+#: src/components/shared/SyncToggle/SyncToggle.tsx:66
+msgid "Cloud sync disabled"
+msgstr "Cloud sync disabled"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:44
+#: src/components/shared/SyncToggle/SyncToggle.tsx:66
+msgid "Cloud sync enabled"
+msgstr "Cloud sync enabled"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:59
+msgid "Cloud sync error"
+msgstr "Cloud sync error"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:65
+msgid "Cloud sync unavailable"
+msgstr "Cloud sync unavailable"
+
+#. Register form confirm password field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:69
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+#. Register form submit button
+#: src/components/shared/RegisterForm/RegisterForm.tsx:86
+msgid "Create Account"
+msgstr "Create Account"
+
+#. Register form submitting state
+#: src/components/shared/RegisterForm/RegisterForm.tsx:84
+msgid "Creating account..."
+msgstr "Creating account..."
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:61
+msgid "Disable cloud sync"
+msgstr "Disable cloud sync"
+
+#. File drop zone card description
+#: src/pages/Home.tsx:77
+msgid "Drag and drop text files here or click to browse"
+msgstr "Drag and drop text files here or click to browse"
+
+#. File drop zone instructions
+#: src/pages/Home.tsx:90
+msgid "Drop .txt, .md, .json, or .csv files"
+msgstr "Drop .txt, .md, .json, or .csv files"
+
+#. Edit button label
+#: src/pages/Profile.tsx:160
+msgid "Edit"
+msgstr "Edit"
+
+#. Register form email field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:36
+msgid "Email"
+msgstr "Email"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:61
+msgid "Enable cloud sync"
+msgstr "Enable cloud sync"
+
+#. Name input placeholder
+#: src/pages/Profile.tsx:134
+msgid "Enter your name"
+msgstr "Enter your name"
+
+#. Error message when profile fails to load
+#: src/pages/Profile.tsx:90
+msgid "Failed to load profile: {fetchErrorMessage}"
+msgstr "Failed to load profile: {fetchErrorMessage}"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:29
+msgid "Failed to load sync status"
+msgstr "Failed to load sync status"
+
+#: src/pages/Home.tsx:38
+msgid "Failed to read files"
+msgstr "Failed to read files"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:50
+msgid "Failed to update cloud sync"
+msgstr "Failed to update cloud sync"
+
+#. Error message when update fails
+#: src/pages/Profile.tsx:150
+msgid "Failed to update: {updateErrorMessage}"
+msgstr "Failed to update: {updateErrorMessage}"
+
+#: src/pages/Home.tsx:32
+msgid "File \"{fileName}\" exceeds 1MB limit"
+msgstr "File \"{fileName}\" exceeds 1MB limit"
+
+#. File drop zone card title
+#: src/pages/Home.tsx:74
+msgid "File Drop"
+msgstr "File Drop"
+
+#. Full name field label
+#: src/pages/Profile.tsx:126
+msgid "Full Name"
+msgstr "Full Name"
+
 #. Instructions for developers on how to start customizing the app
-#: src/pages/Home.tsx:10
+#: src/pages/Home.tsx:64
 msgid "Get started by editing <0>src/App.tsx</0>"
 msgstr "Get started by editing <0>src/App.tsx</0>"
+
+#. Home page title for SEO
+#: src/pages/Home.tsx:52
+msgid "Home"
+msgstr "Home"
+
+#. Email placeholder example
+#: src/components/shared/RegisterForm/RegisterForm.tsx:41
+msgid "john@example.com"
+msgstr "john@example.com"
+
+#. Username placeholder example
+#: src/components/shared/RegisterForm/RegisterForm.tsx:26
+msgid "johndoe"
+msgstr "johndoe"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:60
+msgid "Loading sync status"
+msgstr "Loading sync status"
 
 #: src/components/ui/loading.tsx:54
 msgid "Loading..."
 msgstr "Loading..."
 
+#. Profile page meta description for SEO
+#: src/pages/Profile.tsx:58
+msgid "Manage your profile information"
+msgstr "Manage your profile information"
+
+#. Profile page card description
+#: src/pages/Profile.tsx:70
+msgid "Manage your profile information stored in Supabase"
+msgstr "Manage your profile information stored in Supabase"
+
+#. Password requirements hint
+#: src/components/shared/RegisterForm/RegisterForm.tsx:56
+msgid "Min 8 chars, uppercase, lowercase, number"
+msgstr "Min 8 chars, uppercase, lowercase, number"
+
 #. Application name displayed in the header navigation
-#: src/components/layout/Header.tsx:10
+#: src/components/layout/Header.tsx:14
 msgid "My App"
 msgstr "My App"
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:36
+msgid "New version available"
+msgstr "New version available"
+
+#. Placeholder when no name is set
+#: src/pages/Profile.tsx:157
+msgid "Not set"
+msgstr "Not set"
+
+#: src/pages/Home.tsx:23
+msgid "Only text files are supported"
+msgstr "Only text files are supported"
 
 #. Heading shown on 404 error page when URL doesn't exist
 #: src/pages/NotFound.tsx:13
 msgid "Page Not Found"
 msgstr "Page Not Found"
+
+#. Register form password field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:51
+msgid "Password"
+msgstr "Password"
+
+#. Profile navigation link in header
+#. Profile page title for SEO
+#: src/components/layout/Header.tsx:20
+#: src/pages/Profile.tsx:57
+msgid "Profile"
+msgstr "Profile"
+
+#. Alt text for profile avatar image
+#: src/pages/Profile.tsx:107
+msgid "Profile avatar"
+msgstr "Profile avatar"
+
+#. Confirm password placeholder
+#: src/components/shared/RegisterForm/RegisterForm.tsx:74
+msgid "Re-enter your password"
+msgstr "Re-enter your password"
+
+#. Register form card description
+#: src/pages/Home.tsx:114
+msgid "React Hook Form + Zod validation demo"
+msgstr "React Hook Form + Zod validation demo"
+
+#. Register form card title
+#: src/pages/Home.tsx:111
+msgid "Registration Form"
+msgstr "Registration Form"
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:39
+msgid "Reload"
+msgstr "Reload"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:40
+msgid "Reload Page"
+msgstr "Reload Page"
+
+#. Save button label
+#: src/pages/Profile.tsx:141
+msgid "Save"
+msgstr "Save"
+
+#. Save button loading state
+#: src/pages/Profile.tsx:139
+msgid "Saving..."
+msgstr "Saving..."
+
+#. Screen reader label for sign in button
+#. Sign in button aria label
+#: src/components/shared/AccountButton/AccountButton.tsx:27
+#: src/components/shared/AccountButton/AccountButton.tsx:31
+msgid "Sign in"
+msgstr "Sign in"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:21
+msgid "Something went wrong"
+msgstr "Something went wrong"
 
 #. Accessibility label when clicking will switch to dark theme
 #. Accessibility label when clicking will switch to dark theme
@@ -59,7 +287,28 @@ msgstr "Switch to light mode"
 msgid "The page you're looking for doesn't exist or has been moved."
 msgstr "The page you're looking for doesn't exist or has been moved."
 
+#. Retry button label
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:36
+#: src/pages/Profile.tsx:95
+msgid "Try Again"
+msgstr "Try Again"
+
+#. Register form username field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:22
+msgid "Username"
+msgstr "Username"
+
 #. Main heading on the home page
-#: src/pages/Home.tsx:7
+#: src/pages/Home.tsx:61
 msgid "Welcome to My App"
 msgstr "Welcome to My App"
+
+#. Home page meta description for SEO
+#: src/pages/Home.tsx:53
+msgid "Welcome to our modern React application"
+msgstr "Welcome to our modern React application"
+
+#. Profile page card title
+#: src/pages/Profile.tsx:67
+msgid "Your Profile"
+msgstr "Your Profile"

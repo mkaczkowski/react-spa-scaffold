@@ -11,34 +11,262 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#. Default site-wide meta description for SEO
+#: src/App.tsx:30
+msgid "A modern React 19 application with TypeScript and Vite"
+msgstr "Una aplicación moderna con React 19, TypeScript y Vite"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:25
+msgid "An unexpected error occurred. You can try again or reload the page."
+msgstr "Ocurrió un error inesperado. Puedes intentar de nuevo o recargar la página."
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:30
+msgid "App ready to work offline"
+msgstr "Aplicación lista para funcionar sin conexión"
+
 #. Button label to navigate back to the home page from 404 error
 #: src/pages/NotFound.tsx:23
 msgid "Back to Home"
-msgstr ""
+msgstr "Volver al inicio"
+
+#. Cancel button label
+#: src/pages/Profile.tsx:145
+msgid "Cancel"
+msgstr "Cancelar"
 
 #. Accessibility label for the language selector dropdown button
 #: src/components/shared/LanguageSwitcher/LanguageSwitcher.tsx:24
 msgid "Change language"
 msgstr "Cambiar idioma"
 
+#: src/components/shared/SyncToggle/SyncToggle.tsx:46
+#: src/components/shared/SyncToggle/SyncToggle.tsx:66
+msgid "Cloud sync disabled"
+msgstr "Sincronización en la nube desactivada"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:44
+#: src/components/shared/SyncToggle/SyncToggle.tsx:66
+msgid "Cloud sync enabled"
+msgstr "Sincronización en la nube activada"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:59
+msgid "Cloud sync error"
+msgstr "Error de sincronización en la nube"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:65
+msgid "Cloud sync unavailable"
+msgstr "Sincronización en la nube no disponible"
+
+#. Register form confirm password field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:69
+msgid "Confirm Password"
+msgstr "Confirmar contraseña"
+
+#. Register form submit button
+#: src/components/shared/RegisterForm/RegisterForm.tsx:86
+msgid "Create Account"
+msgstr "Crear cuenta"
+
+#. Register form submitting state
+#: src/components/shared/RegisterForm/RegisterForm.tsx:84
+msgid "Creating account..."
+msgstr "Creando cuenta..."
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:61
+msgid "Disable cloud sync"
+msgstr "Desactivar sincronización en la nube"
+
+#. File drop zone card description
+#: src/pages/Home.tsx:77
+msgid "Drag and drop text files here or click to browse"
+msgstr "Arrastra y suelta archivos de texto aquí o haz clic para explorar"
+
+#. File drop zone instructions
+#: src/pages/Home.tsx:90
+msgid "Drop .txt, .md, .json, or .csv files"
+msgstr "Suelta archivos .txt, .md, .json o .csv"
+
+#. Edit button label
+#: src/pages/Profile.tsx:160
+msgid "Edit"
+msgstr "Editar"
+
+#. Register form email field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:36
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:61
+msgid "Enable cloud sync"
+msgstr "Activar sincronización en la nube"
+
+#. Name input placeholder
+#: src/pages/Profile.tsx:134
+msgid "Enter your name"
+msgstr "Ingresa tu nombre"
+
+#. Error message when profile fails to load
+#: src/pages/Profile.tsx:90
+msgid "Failed to load profile: {fetchErrorMessage}"
+msgstr "Error al cargar perfil: {fetchErrorMessage}"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:29
+msgid "Failed to load sync status"
+msgstr "Error al cargar el estado de sincronización"
+
+#: src/pages/Home.tsx:38
+msgid "Failed to read files"
+msgstr "Error al leer archivos"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:50
+msgid "Failed to update cloud sync"
+msgstr "Error al actualizar la sincronización en la nube"
+
+#. Error message when update fails
+#: src/pages/Profile.tsx:150
+msgid "Failed to update: {updateErrorMessage}"
+msgstr "Error al actualizar: {updateErrorMessage}"
+
+#: src/pages/Home.tsx:32
+msgid "File \"{fileName}\" exceeds 1MB limit"
+msgstr "El archivo \"{fileName}\" supera el límite de 1MB"
+
+#. File drop zone card title
+#: src/pages/Home.tsx:74
+msgid "File Drop"
+msgstr "Soltar archivos"
+
+#. Full name field label
+#: src/pages/Profile.tsx:126
+msgid "Full Name"
+msgstr "Nombre completo"
+
 #. Instructions for developers on how to start customizing the app
-#: src/pages/Home.tsx:10
+#: src/pages/Home.tsx:64
 msgid "Get started by editing <0>src/App.tsx</0>"
 msgstr "Comienza editando <0>src/App.tsx</0>"
 
+#. Home page title for SEO
+#: src/pages/Home.tsx:52
+msgid "Home"
+msgstr "Inicio"
+
+#. Email placeholder example
+#: src/components/shared/RegisterForm/RegisterForm.tsx:41
+msgid "john@example.com"
+msgstr "juan@ejemplo.com"
+
+#. Username placeholder example
+#: src/components/shared/RegisterForm/RegisterForm.tsx:26
+msgid "johndoe"
+msgstr "juanperez"
+
+#: src/components/shared/SyncToggle/SyncToggle.tsx:60
+msgid "Loading sync status"
+msgstr "Cargando estado de sincronización"
+
 #: src/components/ui/loading.tsx:54
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
+
+#. Profile page meta description for SEO
+#: src/pages/Profile.tsx:58
+msgid "Manage your profile information"
+msgstr "Administra tu información de perfil"
+
+#. Profile page card description
+#: src/pages/Profile.tsx:70
+msgid "Manage your profile information stored in Supabase"
+msgstr "Administra tu información de perfil almacenada en Supabase"
+
+#. Password requirements hint
+#: src/components/shared/RegisterForm/RegisterForm.tsx:56
+msgid "Min 8 chars, uppercase, lowercase, number"
+msgstr "Mín. 8 caracteres, mayúscula, minúscula, número"
 
 #. Application name displayed in the header navigation
-#: src/components/layout/Header.tsx:10
+#: src/components/layout/Header.tsx:14
 msgid "My App"
 msgstr "Mi App"
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:36
+msgid "New version available"
+msgstr "Nueva versión disponible"
+
+#. Placeholder when no name is set
+#: src/pages/Profile.tsx:157
+msgid "Not set"
+msgstr "No establecido"
+
+#: src/pages/Home.tsx:23
+msgid "Only text files are supported"
+msgstr "Solo se admiten archivos de texto"
 
 #. Heading shown on 404 error page when URL doesn't exist
 #: src/pages/NotFound.tsx:13
 msgid "Page Not Found"
-msgstr ""
+msgstr "Página no encontrada"
+
+#. Register form password field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:51
+msgid "Password"
+msgstr "Contraseña"
+
+#. Profile navigation link in header
+#. Profile page title for SEO
+#: src/components/layout/Header.tsx:20
+#: src/pages/Profile.tsx:57
+msgid "Profile"
+msgstr "Perfil"
+
+#. Alt text for profile avatar image
+#: src/pages/Profile.tsx:107
+msgid "Profile avatar"
+msgstr "Avatar de perfil"
+
+#. Confirm password placeholder
+#: src/components/shared/RegisterForm/RegisterForm.tsx:74
+msgid "Re-enter your password"
+msgstr "Vuelve a ingresar tu contraseña"
+
+#. Register form card description
+#: src/pages/Home.tsx:114
+msgid "React Hook Form + Zod validation demo"
+msgstr "Demo de validación con React Hook Form + Zod"
+
+#. Register form card title
+#: src/pages/Home.tsx:111
+msgid "Registration Form"
+msgstr "Formulario de registro"
+
+#: src/components/shared/PWAUpdatePrompt/PWAUpdatePrompt.tsx:39
+msgid "Reload"
+msgstr "Recargar"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:40
+msgid "Reload Page"
+msgstr "Recargar página"
+
+#. Save button label
+#: src/pages/Profile.tsx:141
+msgid "Save"
+msgstr "Guardar"
+
+#. Save button loading state
+#: src/pages/Profile.tsx:139
+msgid "Saving..."
+msgstr "Guardando..."
+
+#. Screen reader label for sign in button
+#. Sign in button aria label
+#: src/components/shared/AccountButton/AccountButton.tsx:27
+#: src/components/shared/AccountButton/AccountButton.tsx:31
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:21
+msgid "Something went wrong"
+msgstr "Algo salió mal"
 
 #. Accessibility label when clicking will switch to dark theme
 #. Accessibility label when clicking will switch to dark theme
@@ -57,9 +285,30 @@ msgstr "Cambiar a modo claro"
 #. Explanation message on 404 error page
 #: src/pages/NotFound.tsx:16
 msgid "The page you're looking for doesn't exist or has been moved."
-msgstr ""
+msgstr "La página que buscas no existe o ha sido movida."
+
+#. Retry button label
+#: src/components/shared/ErrorBoundary/ErrorFallbackUI.tsx:36
+#: src/pages/Profile.tsx:95
+msgid "Try Again"
+msgstr "Intentar de nuevo"
+
+#. Register form username field label
+#: src/components/shared/RegisterForm/RegisterForm.tsx:22
+msgid "Username"
+msgstr "Nombre de usuario"
 
 #. Main heading on the home page
-#: src/pages/Home.tsx:7
+#: src/pages/Home.tsx:61
 msgid "Welcome to My App"
 msgstr "Bienvenido a Mi App"
+
+#. Home page meta description for SEO
+#: src/pages/Home.tsx:53
+msgid "Welcome to our modern React application"
+msgstr "Bienvenido a nuestra aplicación moderna de React"
+
+#. Profile page card title
+#: src/pages/Profile.tsx:67
+msgid "Your Profile"
+msgstr "Tu perfil"
