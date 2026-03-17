@@ -11,8 +11,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Support both flat layout (config at root) and packages/electron layout
 // Flat: __dirname is project root, packages: __dirname is packages/electron
-const isPackagesLayout = existsSync(path.join(__dirname, '..', '..', 'package.json')) &&
-  __dirname.includes('packages/electron');
+const isPackagesLayout =
+  existsSync(path.join(__dirname, '..', '..', 'package.json')) && __dirname.includes('packages/electron');
 const rootDir = isPackagesLayout ? path.resolve(__dirname, '../..') : __dirname;
 
 export default defineConfig({
