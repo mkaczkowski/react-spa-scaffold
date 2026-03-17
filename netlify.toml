@@ -8,7 +8,7 @@
 
 [build.environment]
   # Node version for build (matches .nvmrc)
-  NODE_VERSION = "22"
+  NODE_VERSION = "25"
   # Suppress npm update notifications
   NPM_CONFIG_UPDATE_NOTIFIER = "false"
 
