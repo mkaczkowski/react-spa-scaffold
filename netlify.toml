@@ -16,6 +16,20 @@
 [context.dev.environment]
   NODE_ENV = "development"
 
+# Service worker must not be cached
+[[redirects]]
+  from = "/sw.js"
+  to = "/sw.js"
+  status = 200
+  force = true
+
+# Web app manifest must be fresh
+[[redirects]]
+  from = "/manifest.webmanifest"
+  to = "/manifest.webmanifest"
+  status = 200
+  force = true
+
 # SPA fallback - redirect all requests to index.html for client-side routing
 [[redirects]]
   from = "/*"

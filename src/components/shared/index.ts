@@ -5,4 +5,6 @@ export { ProfileSync } from './ProfileSync';
 export { ProtectedRoute } from './ProtectedRoute';
 export { RegisterForm } from './RegisterForm';
 export { SEO } from './SEO';
+export { SyncToggle } from './SyncToggle';
 export { ThemeToggle } from './ThemeToggle';
+export { PWAUpdatePrompt } from './PWAUpdatePrompt';

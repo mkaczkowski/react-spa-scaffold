@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+import { i18n } from '@lingui/core';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 // =============================================================================
@@ -44,6 +45,11 @@ vi.mock('@/contexts/supabaseContext', async () => import('@/test/supabaseMock'))
 // =============================================================================
 // MSW Server Setup
 // =============================================================================
+
+// Initialize i18n catalog for tests
+beforeAll(() => {
+  i18n.loadAndActivate({ locale: 'en', messages: {} });
+});
 
 // Start MSW server before all tests
 beforeAll(() => {

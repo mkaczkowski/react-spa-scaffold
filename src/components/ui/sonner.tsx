@@ -1,33 +1,50 @@
 import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon } from 'lucide-react';
-import type React from 'react';
-import { Toaster as Sonner, type ToasterProps } from 'sonner';
+import React, { useCallback, useRef } from 'react';
+import { toast, Toaster as Sonner, type ToasterProps } from 'sonner';
 
 import { usePreferencesStore } from '@/stores';
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const theme = usePreferencesStore((state) => state.theme);
+  const getResolvedTheme = usePreferencesStore((state) => state.getResolvedTheme);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const toastEl = target.closest<HTMLElement>('[data-sonner-toast]');
+    if (!toastEl) return;
+
+    // Don't dismiss toasts with action/cancel buttons
+    if (toastEl.querySelector('[data-action]') || toastEl.querySelector('[data-cancel]')) return;
+
+    const toastId = toastEl.getAttribute('data-sonner-toast');
+    if (toastId) toast.dismiss(toastId);
+  }, []);
 
   return (
-    <Sonner
-      theme={theme}
-      className="toaster group"
-      icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
-      }}
-      style={
-        {
-          '--normal-bg': 'var(--popover)',
-          '--normal-text': 'var(--popover-foreground)',
-          '--normal-border': 'var(--border)',
-          '--border-radius': 'var(--radius)',
-        } as React.CSSProperties
-      }
-      {...props}
-    />
+    <div ref={containerRef} onClick={handleClick} role="presentation">
+      <Sonner
+        theme={getResolvedTheme()}
+        className="toaster group"
+        duration={2000}
+        toastOptions={{ className: 'cursor-pointer' }}
+        icons={{
+          success: <CircleCheckIcon className="size-4" />,
+          info: <InfoIcon className="size-4" />,
+          warning: <TriangleAlertIcon className="size-4" />,
+          error: <OctagonXIcon className="size-4" />,
+          loading: <Loader2Icon className="size-4 animate-spin" />,
+        }}
+        style={
+          {
+            '--normal-bg': 'var(--popover)',
+            '--normal-text': 'var(--popover-foreground)',
+            '--normal-border': 'var(--border)',
+            '--border-radius': 'var(--radius)',
+          } as React.CSSProperties
+        }
+        {...props}
+      />
+    </div>
   );
 };
 

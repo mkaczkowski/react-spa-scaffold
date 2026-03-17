@@ -5,6 +5,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
@@ -15,6 +16,23 @@ export default defineConfig({
     }),
     lingui(),
     tailwindcss(),
+    VitePWA({
+      registerType: 'prompt',
+      includeAssets: ['favicon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
+      manifest: {
+        name: process.env.VITE_APP_NAME || 'My App',
+        short_name: process.env.VITE_APP_NAME || 'My App',
+        description: 'A modern web application',
+        theme_color: '#7033ff',
+        icons: [
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      },
+    }),
     // Sentry source map upload (CI only, requires SENTRY_AUTH_TOKEN)
     process.env.SENTRY_AUTH_TOKEN
       ? sentryVitePlugin({
@@ -46,7 +64,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router'],
           i18n: ['@lingui/core', '@lingui/react'],
-          ui: ['@radix-ui/react-slot', 'class-variance-authority'],
+          ui: ['radix-ui', 'class-variance-authority'],
         },
       },
     },

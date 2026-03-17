@@ -22,6 +22,8 @@ export const database: Feature = {
     // Components
     'src/components/shared/ProfileSync/ProfileSync.tsx',
     'src/components/shared/ProfileSync/index.ts',
+    'src/components/shared/SyncToggle/SyncToggle.tsx',
+    'src/components/shared/SyncToggle/index.ts',
     // Pages - Profile demo page
     'src/pages/Profile.tsx',
     // MSW handlers and fixtures
@@ -34,6 +36,7 @@ export const database: Feature = {
     'src/test/supabaseMock.ts',
     'src/contexts/supabaseContext.test.tsx',
     'src/components/shared/ProfileSync/ProfileSync.test.tsx',
+    'src/components/shared/SyncToggle/SyncToggle.test.tsx',
     'src/pages/Profile.test.tsx',
     'e2e/tests/profile.spec.ts',
   ],

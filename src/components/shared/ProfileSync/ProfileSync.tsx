@@ -53,12 +53,12 @@ export function ProfileSync({ onSyncComplete, onSyncError }: ProfileSyncProps) {
   const { mutate: upsertProfile } = useUpsertProfile();
 
   // Track if we've already synced this session to prevent infinite loops
-  const hasSynced = useRef(false);
+  const hasAttempted = useRef(false);
   const isSyncing = useRef(false);
 
   useEffect(() => {
     // Skip if already synced, currently syncing, or data not ready
-    if (hasSynced.current || isSyncing.current) return;
+    if (hasAttempted.current || isSyncing.current) return;
     if (!isUserLoaded || !user) return;
     if (isProfileLoading) return;
 
@@ -70,7 +70,7 @@ export function ProfileSync({ onSyncComplete, onSyncError }: ProfileSyncProps) {
     const needsSync = !existingProfile || existingProfile.email !== user.primaryEmailAddress?.emailAddress;
 
     if (!needsSync) {
-      hasSynced.current = true;
+      hasAttempted.current = true;
       return;
     }
 
@@ -86,13 +86,13 @@ export function ProfileSync({ onSyncComplete, onSyncError }: ProfileSyncProps) {
       },
       {
         onSuccess: () => {
-          hasSynced.current = true;
+          hasAttempted.current = true;
           isSyncing.current = false;
           onSyncComplete?.();
         },
         onError: (error) => {
           isSyncing.current = false;
-          // Don't set hasSynced so it can retry on next render
+          // Don't set hasAttempted so it can retry on next render
           onSyncError?.(new Error(error.message));
         },
       },

@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
 import { Header } from '@/components/layout';
-import { ProfileSync, ProtectedRoute, SEO } from '@/components/shared';
+import { ProfileSync, ProtectedRoute, PWAUpdatePrompt, SEO } from '@/components/shared';
 import { PageLoading } from '@/components/ui/loading';
 import { SkipLink } from '@/components/ui/visually-hidden';
 import { useThemeEffect } from '@/hooks';
@@ -24,6 +24,7 @@ export default function App() {
   return (
     <>
       <ProfileSync />
+      <PWAUpdatePrompt />
       <div className="bg-background text-foreground min-h-screen">
         <SEO
           description={t({

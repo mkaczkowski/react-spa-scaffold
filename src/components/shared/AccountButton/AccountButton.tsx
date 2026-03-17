@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut, SignInButton, useAuth, UserButton } from '@clerk/react-router';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,9 @@ export function AccountButton() {
             aria-label={t({ message: 'Sign in', comment: 'Sign in button aria label' })}
           >
             <User className="size-5" />
+            <span className="sr-only">
+              <Trans comment="Screen reader label for sign in button">Sign in</Trans>
+            </span>
           </Button>
         </SignInButton>
       </SignedOut>

@@ -7,4 +7,6 @@ export const TIMING = {
   DEBOUNCE_DELAY: 300,
   /** Duration to show "Copied!" feedback in milliseconds */
   COPY_FEEDBACK_DURATION: 2000,
+  /** Debounce delay for cloud sync operations in milliseconds */
+  SYNC_DEBOUNCE_DELAY: 1000,
 } as const;

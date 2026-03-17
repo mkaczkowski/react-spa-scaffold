@@ -2,7 +2,7 @@ import { SignedIn } from '@clerk/react-router';
 import { Trans } from '@lingui/react/macro';
 import { Link } from 'react-router';
 
-import { AccountButton, LanguageSwitcher, ThemeToggle } from '@/components/shared';
+import { AccountButton, LanguageSwitcher, SyncToggle, ThemeToggle } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/lib/routes';
 
@@ -21,6 +21,7 @@ export function Header() {
               </Link>
             </Button>
           </SignedIn>
+          <SyncToggle />
           <LanguageSwitcher />
           <ThemeToggle />
           <AccountButton />

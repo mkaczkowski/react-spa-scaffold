@@ -51,6 +51,12 @@ describe('useLanguage', () => {
     expect(typeof result.current.changeLanguage).toBe('function');
   });
 
+  it('returns isLoading state', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+
+    expect(result.current.isLoading).toBe(false);
+  });
+
   it('changeLanguage calls dynamicActivate and setStorageItem', async () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
 

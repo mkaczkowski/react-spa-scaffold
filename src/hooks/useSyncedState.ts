@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
 
 /**
  * Syncs local state with an external value, but only when not actively editing.
@@ -11,14 +11,16 @@ export function useSyncedState<T>(externalValue: T, isActive: boolean): [T, Disp
   const [localValue, setLocalValue] = useState<T>(externalValue);
   const prevIsActiveRef = useRef(isActive);
 
-  // Sync external value to local state when:
-  // 1. Not active (external updates flow through)
-  // 2. Activity state changed (sync on open/close transitions)
+  // Sync when:
+  // 1. Not active (external value changed while inactive)
+  // 2. Just switched from active to inactive (sync to latest external value)
+  // 3. Just switched from inactive to active (populate with initial value, e.g., opening drawer)
   // This is an intentional pattern for synchronizing external props to local state
   useEffect(() => {
-    const activityChanged = prevIsActiveRef.current !== isActive;
+    const justBecameInactive = prevIsActiveRef.current && !isActive;
+    const justBecameActive = !prevIsActiveRef.current && isActive;
 
-    if (!isActive || activityChanged) {
+    if (!isActive || justBecameInactive || justBecameActive) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional sync pattern
       setLocalValue(externalValue);
     }

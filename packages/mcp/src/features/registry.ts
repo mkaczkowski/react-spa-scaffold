@@ -22,6 +22,7 @@ import {
   database,
   deployment,
   electron,
+  pwa,
 } from './definitions/index.js';
 
 /** All available features for scaffolding. */
@@ -44,6 +45,7 @@ export const FEATURES: FeatureRegistry = {
   database,
   deployment,
   electron,
+  pwa,
 };
 
 export type { FeatureId } from './types.js';

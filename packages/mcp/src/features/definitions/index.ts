@@ -16,3 +16,4 @@ export { auth } from './auth.js';
 export { database } from './database.js';
 export { deployment } from './deployment.js';
 export { electron } from './electron.js';
+export { pwa } from './pwa.js';

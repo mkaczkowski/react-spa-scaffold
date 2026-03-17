@@ -22,6 +22,7 @@ export const FEATURE = {
   DATABASE: 'database',
   DEPLOYMENT: 'deployment',
   ELECTRON: 'electron',
+  PWA: 'pwa',
 } as const;
 
 /** Script names for setup commands. */
