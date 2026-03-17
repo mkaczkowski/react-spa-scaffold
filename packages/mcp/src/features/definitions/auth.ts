@@ -6,6 +6,7 @@ export const auth: Feature = {
   required: false,
   requires: ['routing'], // Uses @clerk/react-router which requires React Router
   dependencies: ['@clerk/react-router', '@clerk/themes'],
+  devDependencies: ['@clerk/testing'], // For E2E authenticated tests
   files: [
     'src/contexts/clerkContext.tsx',
     'src/components/shared/AccountButton/AccountButton.tsx',
@@ -13,6 +14,10 @@ export const auth: Feature = {
     'src/components/shared/ProtectedRoute/ProtectedRoute.tsx',
     'src/components/shared/ProtectedRoute/index.ts',
   ],
-  testFiles: ['src/test/clerkMock.tsx'],
+  testFiles: [
+    'src/test/clerkMock.tsx',
+    'e2e/auth/auth.setup.ts', // Clerk E2E auth setup
+    'e2e/tests/profile.auth.spec.ts', // Authenticated E2E tests
+  ],
   scripts: {},
 };
